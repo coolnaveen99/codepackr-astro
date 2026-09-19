@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Tamil jathagam — Thirukanitham and Vakya charts, rasi, nakshatra, dasa, panchangam",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },

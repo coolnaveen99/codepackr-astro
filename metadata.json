@@ -1,0 +1,6 @@
+{
+  "name": "தமிழ் ஜாதகம் - Tamil Jathagam",
+  "description": "Tamil jathagam with Thirukanitham and Vakya calculation — rasi, nakshatra, lagna, dasa, panchangam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
