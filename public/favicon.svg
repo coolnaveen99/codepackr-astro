@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="தமிழ் ஜாதகம்">
+  <rect width="32" height="32" rx="6" fill="#1A120C"/>
+  <rect x="10" y="10" width="12" height="12" fill="#24180F"/>
+  <g fill="none" stroke="#B8892E" stroke-width="1.7" stroke-linejoin="miter" stroke-linecap="square">
+    <rect x="5" y="5" width="22" height="22"/>
+    <rect x="10" y="10" width="12" height="12"/>
+    <path d="M10 5v5M16 5v5M22 5v5M10 22v5M16 22v5M22 22v5M5 10h5M5 16h5M5 22h5M22 10h5M22 16h5M22 22h5"/>
+  </g>
+  <rect x="14" y="14" width="4" height="4" fill="#9C3B1E"/>
+</svg>

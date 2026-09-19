@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f3eee6;
+  --color-fg: #1c1612;
+  --color-muted: #6e6458;
+  --color-surface: #fffaf3;
+  --color-elevated: #ebe4d6;
+  --color-border: #d9cfc0;
+  --color-accent: #8b3d2a;
+  --color-accent-fg: #fffaf3;
+  --color-ink: #1c1612;
+  --font-display: "Fraunces", "Noto Serif Tamil", Georgia, serif;
+  --font-sans: "Source Sans 3", "Noto Sans Tamil", ui-sans-serif, system-ui, sans-serif;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --shadow-card:
+    0px 0px 0px 1px rgba(28, 22, 18, 0.08), 0px 1px 2px -1px rgba(28, 22, 18, 0.06),
+    0px 2px 8px 0px rgba(28, 22, 18, 0.04);
+  --shadow-card-hover:
+    0px 0px 0px 1px rgba(28, 22, 18, 0.12), 0px 1px 3px -1px rgba(28, 22, 18, 0.08),
+    0px 4px 12px 0px rgba(28, 22, 18, 0.06);
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+}
+
+@layer components {
+  .south-chart {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    aspect-ratio: 1;
+    background: var(--color-ink);
+    box-shadow: var(--shadow-card);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  header,
+  .no-print,
+  [data-print-hide] {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  main {
+    display: block !important;
+  }
+}
