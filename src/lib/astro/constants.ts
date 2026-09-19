@@ -322,6 +322,11 @@ export const PLANET_BY_ID = Object.fromEntries(PLANETS.map((p) => [p.id, p])) as
   (typeof PLANETS)[number]
 >;
 
+export function planetName(id: PlanetId, lang: "ta" | "en") {
+  const p = PLANET_BY_ID[id];
+  return lang === "ta" ? p.ta : p.en;
+}
+
 export type School = "thirukanitham" | "vakya" | "lahiri";
 
 export const SCHOOLS: { id: School; en: string; ta: string; hintEn: string; hintTa: string }[] = [

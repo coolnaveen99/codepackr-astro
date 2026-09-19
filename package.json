@@ -1,9 +1,15 @@
 {
   "name": "codepackr-astro",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
-  "description": "Codepackr Astro — Tamil jathagam with Thirukanitham and Vakya",
+  "description": "Codepackr Astro — Tamil jathagam, dasakoota porutham, and marriage biodata",
+  "homepage": "https://www.codepackr.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/coolnaveen99/codepackr-astro.git"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc --noEmit && vite build",
@@ -14,6 +20,8 @@
     "astronomy-engine": "^2.1.19",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.510.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

@@ -1,6 +1,6 @@
 {
-  "name": "தமிழ் ஜாதகம் - Tamil Jathagam",
-  "description": "Tamil jathagam with Thirukanitham and Vakya calculation — rasi, nakshatra, lagna, dasa, panchangam.",
+  "name": "Codepackr Astro",
+  "description": "Tamil jathagam with Thirukanitham and Vakya — rasi, nakshatra, dasakoota porutham, marriage biodata.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": []
 }

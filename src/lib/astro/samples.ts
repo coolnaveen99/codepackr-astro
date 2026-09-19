@@ -3,7 +3,7 @@ import type { BirthInput } from "./engine";
 export const DEFAULT_INPUT: BirthInput = {
   name: "",
   sex: "M",
-  year: 0,
+  year: 1990,
   month: 1,
   day: 1,
   hour: 6,
@@ -11,7 +11,7 @@ export const DEFAULT_INPUT: BirthInput = {
   tz: 5.5,
   lat: 13.0667,
   lon: 80.25,
-  place: "",
+  place: "Madras",
   school: "thirukanitham",
 };
 
