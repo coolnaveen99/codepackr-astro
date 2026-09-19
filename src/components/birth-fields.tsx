@@ -36,12 +36,42 @@ export const MONTHS_EN = [
   "December",
 ];
 
-const YEARS = Array.from({ length: 136 }, (_, i) => 1900 + i);
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+const DIM = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+export const MIN_BIRTH_YEAR = 1900;
+
+export function todayParts(now = new Date()) {
+  return {
+    year: now.getFullYear(),
+    month: now.getMonth() + 1,
+    day: now.getDate(),
+  };
+}
+
+export function isLeapYear(year: number) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
 
 export function daysInMonth(year: number, month: number) {
-  return new Date(year, month, 0).getDate();
+  const m = Math.min(Math.max(month | 0, 1), 12);
+  if (m === 2) return isLeapYear(year) ? 29 : 28;
+  return DIM[m - 1]!;
+}
+
+export function clampBirthDate(year: number, month: number, day: number, now = new Date()) {
+  const today = todayParts(now);
+  const yRaw = Math.trunc(Number(year));
+  const y = Number.isFinite(yRaw)
+    ? Math.min(Math.max(yRaw, MIN_BIRTH_YEAR), today.year)
+    : Math.min(1990, today.year);
+  let m = Math.min(Math.max(Math.trunc(Number(month)) || 1, 1), 12);
+  if (y === today.year) m = Math.min(m, today.month);
+  let maxD = daysInMonth(y, m);
+  if (y === today.year && m === today.month) maxD = Math.min(maxD, today.day);
+  const d = Math.min(Math.max(Math.trunc(Number(day)) || 1, 1), maxD);
+  return { year: y, month: m, day: d };
 }
 
 export function to12(hour24: number) {
@@ -84,6 +114,79 @@ export function FieldSelect({
   );
 }
 
+function YearInput({
+  year,
+  min,
+  max,
+  onCommit,
+}: {
+  year: number;
+  min: number;
+  max: number;
+  onCommit: (year: number) => void;
+}) {
+  const [text, setText] = useState(String(year));
+
+  useEffect(() => {
+    setText(String(year));
+  }, [year]);
+
+  function clamp(n: number) {
+    return Math.min(Math.max(n, min), max);
+  }
+
+  function commitDigits(raw: string) {
+    if (raw.length !== 4) {
+      setText(String(year));
+      return;
+    }
+    const n = Number(raw);
+    if (!Number.isFinite(n)) {
+      setText(String(year));
+      return;
+    }
+    onCommit(clamp(n));
+  }
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      autoComplete="bday-year"
+      spellCheck={false}
+      maxLength={4}
+      aria-label="Year"
+      value={text}
+      placeholder="1990"
+      data-testid="birth-year"
+      className={cn(
+        "h-11 w-full rounded-md bg-surface px-2 text-center text-sm tabular-nums text-fg shadow-card",
+        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none",
+      )}
+      onChange={(e) => {
+        const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
+        setText(digits);
+        if (digits.length === 4) {
+          const n = Number(digits);
+          if (Number.isFinite(n)) onCommit(clamp(n));
+        }
+      }}
+      onBlur={() => commitDigits(text)}
+      onFocus={(e) => e.currentTarget.select()}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          onCommit(clamp(year + 1));
+        } else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          onCommit(clamp(year - 1));
+        }
+      }}
+    />
+  );
+}
+
 export function DateTimeFields({
   lang,
   value,
@@ -94,15 +197,42 @@ export function DateTimeFields({
   onChange: (next: BirthInput) => void;
 }) {
   const clock = to12(value.hour);
-  const dim = daysInMonth(value.year || 1990, value.month || 1);
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+  }, []);
+  const today = now ? todayParts(now) : { year: 2099, month: 12, day: 31 };
+  const safe = now
+    ? clampBirthDate(value.year, value.month, value.day, now)
+    : {
+        year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), 2099),
+        month: Math.min(Math.max(value.month || 1, 1), 12),
+        day: Math.min(Math.max(value.day || 1, 1), daysInMonth(value.year || 1990, value.month || 1)),
+      };
   const months = lang === "ta" ? MONTHS_TA : MONTHS_EN;
+  const monthLimit = safe.year === today.year ? today.month : 12;
+  const dayLimit =
+    safe.year === today.year && safe.month === today.month
+      ? Math.min(daysInMonth(safe.year, safe.month), today.day)
+      : daysInMonth(safe.year, safe.month);
+  const wantedDay = useRef(value.day);
+
+  useEffect(() => {
+    if (!now) return;
+    if (safe.year !== value.year || safe.month !== value.month || safe.day !== value.day) {
+      onChange({ ...value, year: safe.year, month: safe.month, day: safe.day });
+    }
+  }, [now, safe.year, safe.month, safe.day, value, onChange]);
 
   function setDate(patch: Partial<Pick<BirthInput, "year" | "month" | "day">>) {
-    const year = patch.year ?? value.year;
-    const month = patch.month ?? value.month;
-    const max = daysInMonth(year, month);
-    const day = Math.min(patch.day ?? value.day, max);
-    onChange({ ...value, year, month, day });
+    if (patch.day != null) wantedDay.current = patch.day;
+    const next = clampBirthDate(
+      patch.year ?? value.year,
+      patch.month ?? value.month,
+      patch.day ?? wantedDay.current,
+    );
+    if (next.year === value.year && next.month === value.month && next.day === value.day) return;
+    onChange({ ...value, ...next });
   }
 
   return (
@@ -111,19 +241,19 @@ export function DateTimeFields({
         <Label>{t(lang, "date")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "year")}</span>
-            <FieldSelect value={value.year} onChange={(v) => setDate({ year: Number(v) })}>
-              {YEARS.map((y) => (
-                <option key={y} value={y}>
-                  {y}
+            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "day")}</span>
+            <FieldSelect value={safe.day} onChange={(v) => setDate({ day: Number(v) })}>
+              {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => (
+                <option key={d} value={d}>
+                  {d}
                 </option>
               ))}
             </FieldSelect>
           </div>
           <div>
             <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "calMonth")}</span>
-            <FieldSelect value={value.month} onChange={(v) => setDate({ month: Number(v) })}>
-              {months.map((m, i) => (
+            <FieldSelect value={safe.month} onChange={(v) => setDate({ month: Number(v) })}>
+              {months.slice(0, monthLimit).map((m, i) => (
                 <option key={m} value={i + 1}>
                   {m}
                 </option>
@@ -131,16 +261,16 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "day")}</span>
-            <FieldSelect value={value.day} onChange={(v) => setDate({ day: Number(v) })}>
-              {Array.from({ length: dim }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </FieldSelect>
+            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "year")}</span>
+            <YearInput
+              year={safe.year}
+              min={MIN_BIRTH_YEAR}
+              max={today.year}
+              onCommit={(year) => setDate({ year })}
+            />
           </div>
         </div>
+        <p className="mt-1.5 text-xs text-muted">{t(lang, "dateHint")}</p>
       </div>
       <div>
         <Label>{t(lang, "time")}</Label>

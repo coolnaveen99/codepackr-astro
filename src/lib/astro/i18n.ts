@@ -20,6 +20,10 @@ const COPY = {
   am: { ta: "மு.ப.", en: "AM" },
   pm: { ta: "பி.ப.", en: "PM" },
   calMonth: { ta: "மாதம்", en: "Month" },
+  dateHint: {
+    ta: "ஆண்டை தட்டச்சு செய்க. நாள் மாதத்துடன் மாறும். எதிர்கால தேதி இல்லை.",
+    en: "Type the year. Days follow the month. Future dates are hidden.",
+  },
   place: { ta: "ஊர்", en: "Place" },
   school: { ta: "கணம் முறை", en: "Calculation school" },
   compute: { ta: "ஜாதகம் காட்டு", en: "Cast chart" },
