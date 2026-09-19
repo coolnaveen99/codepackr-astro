@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
-export type Page = "jathagam" | "porutham" | "biodata";
+export type Page = "jathagam" | "porutham" | "biodata" | "contact";
 
 const NavCtx = createContext<{ page: Page; go: (p: Page) => void } | null>(null);
 
