@@ -1,0 +1,5 @@
+# Codepackr Astro — https://astro.codepackr.com
+User-agent: *
+Allow: /
+
+Sitemap: https://astro.codepackr.com/sitemap.xml
