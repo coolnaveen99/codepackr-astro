@@ -4,10 +4,11 @@ import { useLang } from "@/lib/lang";
 import { useNav, type Page } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-const NAV: { id: Page; key: "navChart" | "navPorutham" | "navBiodata" }[] = [
-  { id: "jathagam", key: "navChart" },
-  { id: "porutham", key: "navPorutham" },
-  { id: "biodata", key: "navBiodata" },
+const NAV: { id: Page; label: string }[] = [
+  { id: "jathagam", label: "navChart" },
+  { id: "porutham", label: "navPorutham" },
+  { id: "biodata", label: "navBiodata" },
+  { id: "contact", label: "Contact" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -35,7 +36,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   page === n.id ? "bg-ink text-accent-fg" : "text-muted hover:text-fg",
                 )}
               >
-                {t(lang, n.key)}
+                {n.id === "contact" ? "Contact" : t(lang, n.label as "navChart" | "navPorutham" | "navBiodata")}
               </button>
             ))}
             <div className="ml-2 flex rounded-full bg-elevated p-1">
@@ -45,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => setLang(l)}
                   className={cn(
-                    "h-8 rounded-full px-3 text-sm font-medium transition-[background-color,color] duration-150",
+                    "h-8 rounded-full px-3 text-sm font-medium",
                     lang === l ? "bg-ink text-accent-fg" : "text-muted hover:text-fg",
                   )}
                 >
