@@ -5,7 +5,6 @@ import {
   KARANA_TA,
   NAK_EN,
   NAK_TA,
-  PLANETS,
   SIGNS_EN,
   SIGNS_TA,
   TAMIL_MONTH_EN,
@@ -16,24 +15,35 @@ import {
   WEEK_TA,
   YOGA_EN,
   YOGA_TA,
+  planetName,
 } from "@/lib/astro/constants";
+import { analyse } from "@/lib/astro/analysis";
 import {
-  ashtakoot,
+  antardasas,
   bhuktis,
   formatClock,
   formatJD,
+  nowJD,
+  vargaSign,
   type BodyPos,
   type ChartResult,
-  vargaSign,
 } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
-import { planetLabel, SouthChart } from "@/components/south-chart";
+import { useNav } from "@/lib/nav";
+import { SouthChart } from "@/components/south-chart";
+import {
+  BavGrid,
+  BhavaStrip,
+  GocharaPane,
+  GrahaTable,
+  Panel,
+  PhalanPane,
+  YogaPane,
+} from "@/components/analysis-panes";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-type Tab = "chart" | "pan" | "dasa" | "varga" | "match";
+type Tab = "chart" | "phalan" | "yoga" | "pan" | "dasa" | "gochara" | "varga";
 
 function signName(lang: Lang, i: number) {
   return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
@@ -48,20 +58,38 @@ function find(list: BodyPos[], id: string) {
 
 export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }) {
   const [tab, setTab] = useState<Tab>("chart");
+  const { go } = useNav();
+  const analysis = useMemo(() => analyse(result), [result]);
   const moon = find(result.list, "moon");
   const lagna = find(result.list, "lagna");
-  const tabs: { id: Tab; key: "tabChart" | "tabPan" | "tabDasa" | "tabVarga" | "tabMatch" }[] = [
+  const tabs: { id: Tab; key: "tabChart" | "tabPhalan" | "tabYoga" | "tabPan" | "tabDasa" | "tabGochara" | "tabVarga" }[] = [
     { id: "chart", key: "tabChart" },
+    { id: "phalan", key: "tabPhalan" },
+    { id: "yoga", key: "tabYoga" },
     { id: "pan", key: "tabPan" },
     { id: "dasa", key: "tabDasa" },
+    { id: "gochara", key: "tabGochara" },
     { id: "varga", key: "tabVarga" },
-    { id: "match", key: "tabMatch" },
   ];
+
+  const body = (
+    <>
+      {tab === "chart" && <ChartsPane result={result} analysis={analysis} lang={lang} />}
+      {tab === "phalan" && <PhalanPane result={result} analysis={analysis} lang={lang} />}
+      {tab === "yoga" && <YogaPane analysis={analysis} lang={lang} />}
+      {tab === "pan" && <PanchangPane result={result} lang={lang} />}
+      {tab === "dasa" && <DasaPane result={result} lang={lang} />}
+      {tab === "gochara" && <GocharaPane analysis={analysis} lang={lang} />}
+      {tab === "varga" && <VargaPane result={result} lang={lang} />}
+    </>
+  );
 
   return (
     <div className="flex flex-col gap-5">
       <div className="rounded-xl bg-ink px-5 py-6 text-accent-fg shadow-card sm:px-8">
-        <p className="text-xs tracking-widest text-accent-fg/60 uppercase">{result.input.name}</p>
+        <p className="text-xs tracking-widest text-accent-fg/60 uppercase">
+          {result.input.name || t(lang, "brand")}
+        </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
           <Stat k={t(lang, "rasi")} v={signName(lang, moon.sign)} />
           <Stat
@@ -83,10 +111,26 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
           <span>
             {t(lang, "sunset")}: {formatClock(result.sunsetJD, result.input.tz)}
           </span>
+          <span>
+            {t(lang, "naming")}: {lang === "ta" ? analysis.naming.ta : analysis.naming.en}
+          </span>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {analysis.dasaNow ? (
+            <Chip>
+              {t(lang, "current")}: {planetName(analysis.dasaNow.maha, lang)}–{planetName(analysis.dasaNow.bhukti, lang)}
+            </Chip>
+          ) : null}
+          <Chip tone={analysis.chevvai.present ? "warn" : "ok"}>
+            {t(lang, "chevvai")}: {analysis.chevvai.present ? t(lang, "present") : t(lang, "absent")}
+          </Chip>
+          <Chip tone={analysis.sadeSati.present ? "warn" : "ok"}>
+            {t(lang, "sadesati")}: {analysis.sadeSati.present ? t(lang, "present") : t(lang, "absent")}
+          </Chip>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3" data-print-hide>
+      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden" data-print-hide>
         <div className="flex flex-wrap gap-1 rounded-lg bg-elevated p-1">
           {tabs.map((tb) => (
             <button
@@ -102,18 +146,41 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
             </button>
           ))}
         </div>
-        <Button variant="outline" size="sm" className="no-print" onClick={() => window.print()}>
-          <Printer className="size-4" />
-          {t(lang, "print")}
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="no-print" onClick={() => go("porutham")}>
+            {t(lang, "openPorutham")}
+          </Button>
+          <Button variant="outline" size="sm" className="no-print" onClick={() => window.print()}>
+            <Printer className="size-4" />
+            {t(lang, "print")}
+          </Button>
+        </div>
       </div>
 
-      {tab === "chart" && <ChartsPane result={result} lang={lang} />}
-      {tab === "pan" && <PanchangPane result={result} lang={lang} />}
-      {tab === "dasa" && <DasaPane result={result} lang={lang} />}
-      {tab === "varga" && <VargaPane result={result} lang={lang} />}
-      {tab === "match" && <MatchPane result={result} lang={lang} />}
+      <div className="print:hidden">{body}</div>
+      <div className="hidden print:flex print:flex-col print:gap-8">
+        <ChartsPane result={result} analysis={analysis} lang={lang} />
+        <PhalanPane result={result} analysis={analysis} lang={lang} />
+        <YogaPane analysis={analysis} lang={lang} />
+        <PanchangPane result={result} lang={lang} />
+        <DasaPane result={result} lang={lang} />
+        <GocharaPane analysis={analysis} lang={lang} />
+        <VargaPane result={result} lang={lang} />
+      </div>
     </div>
+  );
+}
+
+function Chip({ children, tone }: { children: ReactNode; tone?: "ok" | "warn" }) {
+  return (
+    <span
+      className={cn(
+        "rounded-full px-3 py-1 text-xs",
+        tone === "warn" ? "bg-accent/30 text-accent-fg" : "bg-elevated/15 text-accent-fg/85",
+      )}
+    >
+      {children}
+    </span>
   );
 }
 
@@ -127,7 +194,15 @@ function Stat({ k, v, note }: { k: string; v: string; note?: string }) {
   );
 }
 
-function ChartsPane({ result, lang }: { result: ChartResult; lang: Lang }) {
+function ChartsPane({
+  result,
+  analysis,
+  lang,
+}: {
+  result: ChartResult;
+  analysis: ReturnType<typeof analyse>;
+  lang: Lang;
+}) {
   return (
     <div className="flex flex-col gap-5">
       <div className="grid gap-4 md:grid-cols-2">
@@ -140,40 +215,8 @@ function ChartsPane({ result, lang }: { result: ChartResult; lang: Lang }) {
           <SouthChart positions={result.list} lang={lang} mode="navamsa" caption="D9" />
         </figure>
       </div>
-      <div className="overflow-x-auto rounded-lg bg-surface shadow-card">
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs tracking-wide text-muted uppercase">
-            <tr>
-              <th className="px-3 py-3 sm:px-4">{t(lang, "planet")}</th>
-              <th className="px-3 py-3 sm:px-4">{t(lang, "sign")}</th>
-              <th className="hidden px-4 py-3 sm:table-cell">{t(lang, "longitude")}</th>
-              <th className="px-3 py-3 sm:px-4">{t(lang, "nakshatra")}</th>
-              <th className="hidden px-4 py-3 md:table-cell">{t(lang, "navamsa")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.list.map((p) => (
-              <tr key={p.id} className="border-t border-border">
-                <td className="px-3 py-2.5 font-medium sm:px-4">
-                  {planetLabel(p.id, lang)}
-                  {p.retrograde && p.id !== "lagna" ? (
-                    <span className="ml-1 text-xs text-muted">{t(lang, "retro")}</span>
-                  ) : null}
-                </td>
-                <td className="px-3 py-2.5 sm:px-4">
-                  <span className="block">{signName(lang, p.sign)}</span>
-                  <span className="block text-xs tabular-nums text-muted sm:hidden">{p.dms}</span>
-                </td>
-                <td className="hidden px-4 py-2.5 tabular-nums sm:table-cell">{p.dms}</td>
-                <td className="px-3 py-2.5 sm:px-4">
-                  {nakName(lang, p.nak)} {p.pada}
-                </td>
-                <td className="hidden px-4 py-2.5 md:table-cell">{signName(lang, p.navamsa)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <BhavaStrip analysis={analysis} lang={lang} />
+      <GrahaTable result={result} analysis={analysis} lang={lang} />
     </div>
   );
 }
@@ -239,12 +282,27 @@ function PanchangPane({ result, lang }: { result: ChartResult; lang: Lang }) {
   );
 }
 
+function KeyTable({ rows }: { rows: string[][] }) {
+  return (
+    <table className="w-full text-sm">
+      <tbody>
+        {rows.map(([k, v]) => (
+          <tr key={k} className="border-b border-border last:border-0">
+            <td className="py-2 pr-3 text-muted">{k}</td>
+            <td className="py-2 font-medium">{v}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
 function span(result: ChartResult, w: { start: number; end: number }) {
   return `${formatClock(w.start, result.input.tz)} – ${formatClock(w.end, result.input.tz)}`;
 }
 
 function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
-  const nowJD = Date.now() / 86400000 + 2440587.5;
+  const at = nowJD();
   const [open, setOpen] = useState<string | null>(null);
   return (
     <Panel title={t(lang, "dasa")}>
@@ -253,9 +311,8 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
       </p>
       <ul className="flex flex-col gap-2">
         {result.dasa.periods.map((p) => {
-          const current = nowJD >= p.startJD && nowJD < p.endJD;
-          const lord = PLANETS.find((x) => x.id === p.lord);
-          const label = lord ? (lang === "ta" ? lord.ta : lord.en) : p.lord;
+          const current = at >= p.startJD && at < p.endJD;
+          const label = planetName(p.lord, lang);
           const id = p.lord + p.startJD;
           const shown = open === id || current;
           const antars = shown ? bhuktis(p) : [];
@@ -278,17 +335,33 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
               {shown ? (
                 <ul className="mt-2 space-y-1 text-xs">
                   {antars.map((b) => {
-                    const bl = PLANETS.find((x) => x.id === b.lord);
-                    const bn = bl ? (lang === "ta" ? bl.ta : bl.en) : b.lord;
-                    const on = nowJD >= b.startJD && nowJD < b.endJD;
+                    const on = at >= b.startJD && at < b.endJD;
+                    const thirds = on ? antardasas(b) : [];
                     return (
-                      <li key={b.lord + b.startJD} className="flex justify-between">
-                        <span className={on ? "font-semibold" : ""}>
-                          {t(lang, "bhukti")} {bn}
-                        </span>
-                        <span className={current ? "text-accent-fg/60" : "text-muted"}>
-                          {formatJD(b.startJD, result.input.tz).slice(0, 10)}
-                        </span>
+                      <li key={b.lord + b.startJD}>
+                        <div className="flex justify-between">
+                          <span className={on ? "font-semibold" : ""}>
+                            {t(lang, "bhukti")} {planetName(b.lord, lang)}
+                          </span>
+                          <span className={current ? "text-accent-fg/60" : "text-muted"}>
+                            {formatJD(b.startJD, result.input.tz).slice(0, 10)}
+                          </span>
+                        </div>
+                        {on ? (
+                          <ul className="mt-1 ml-3 space-y-0.5 opacity-80">
+                            {thirds.map((a) => {
+                              const aOn = at >= a.startJD && at < a.endJD;
+                              return (
+                                <li key={a.lord + a.startJD} className="flex justify-between">
+                                  <span className={aOn ? "font-semibold" : ""}>
+                                    {t(lang, "antara")} {planetName(a.lord, lang)}
+                                  </span>
+                                  <span>{formatJD(a.startJD, result.input.tz).slice(0, 10)}</span>
+                                </li>
+                              );
+                            })}
+                          </ul>
+                        ) : null}
                       </li>
                     );
                   })}
@@ -304,15 +377,20 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
 
 function VargaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
   const d3 = result.list.map((p) => ({ ...p, sign: vargaSign(p.lon, 3) }));
+  const d7 = result.list.map((p) => ({ ...p, sign: vargaSign(p.lon, 7) }));
   const d10 = result.list.map((p) => ({ ...p, sign: vargaSign(p.lon, 10) }));
   const d12 = result.list.map((p) => ({ ...p, sign: vargaSign(p.lon, 12) }));
   const maxSav = Math.max(...result.sav, 1);
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         <figure className="rounded-lg bg-surface p-3 shadow-card">
           <figcaption className="mb-2 font-display">{t(lang, "d3")}</figcaption>
           <SouthChart positions={d3} lang={lang} />
+        </figure>
+        <figure className="rounded-lg bg-surface p-3 shadow-card">
+          <figcaption className="mb-2 font-display">{t(lang, "d7")}</figcaption>
+          <SouthChart positions={d7} lang={lang} />
         </figure>
         <figure className="rounded-lg bg-surface p-3 shadow-card">
           <figcaption className="mb-2 font-display">{t(lang, "d10")}</figcaption>
@@ -336,87 +414,7 @@ function VargaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
           ))}
         </div>
       </Panel>
+      <BavGrid result={result} lang={lang} />
     </div>
-  );
-}
-
-function MatchPane({ result, lang }: { result: ChartResult; lang: Lang }) {
-  const [name, setName] = useState(lang === "ta" ? "இணையர்" : "Partner");
-  const [nak, setNak] = useState(16);
-  const [done, setDone] = useState(true);
-  const score = useMemo(() => {
-    const lon = (nak + 0.5) * (360 / 27);
-    return ashtakoot(result.bodies.moon, lon);
-  }, [nak, result.bodies.moon]);
-
-  return (
-    <Panel title={t(lang, "koot")}>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <div>
-          <Label htmlFor="pname">{t(lang, "partnerName")}</Label>
-          <Input id="pname" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div>
-          <Label htmlFor="pnak">{t(lang, "partner")}</Label>
-          <select
-            id="pnak"
-            value={nak}
-            onChange={(e) => setNak(Number(e.target.value))}
-            className="h-11 w-full rounded-md bg-surface px-3 text-sm shadow-card focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none"
-          >
-            {(lang === "ta" ? NAK_TA : NAK_EN).map((n, i) => (
-              <option key={n} value={i}>
-                {n}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <Button className="mt-4" type="button" onClick={() => setDone(true)}>
-        {t(lang, "seeMatch")}
-      </Button>
-      {done ? (
-        <div className="mt-6">
-          <p className="font-display text-3xl tabular-nums">
-            {score.total}
-            <span className="text-lg text-muted">{t(lang, "of36")}</span>
-          </p>
-          <ul className="mt-4 divide-y divide-border">
-            {score.items.map((it) => (
-              <li key={it.id} className="flex items-center justify-between py-2 text-sm">
-                <span>{lang === "ta" ? it.ta : it.en}</span>
-                <span className="tabular-nums">
-                  {it.pts} / {it.max}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </Panel>
-  );
-}
-
-function Panel({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="rounded-lg bg-surface p-4 shadow-card sm:p-5">
-      <h3 className="font-display mb-3 text-lg">{title}</h3>
-      {children}
-    </section>
-  );
-}
-
-function KeyTable({ rows }: { rows: string[][] }) {
-  return (
-    <table className="w-full text-sm">
-      <tbody>
-        {rows.map(([k, v]) => (
-          <tr key={k} className="border-b border-border last:border-0">
-            <td className="py-2 pr-3 text-muted">{k}</td>
-            <td className="py-2 font-medium">{v}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
   );
 }

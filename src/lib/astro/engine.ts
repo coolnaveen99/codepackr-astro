@@ -20,6 +20,7 @@ import {
   type PlanetId,
   type School,
 } from "./constants";
+import { BAV, BAV_FROM, BAV_PLANETS, type BavPlanet } from "./tables";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -46,6 +47,7 @@ export type BodyPos = {
   nak: number;
   pada: number;
   navamsa: number;
+  house: number;
   retrograde: boolean;
 };
 
@@ -86,6 +88,7 @@ export type ChartResult = {
   };
   dasa: { nak: number; pada: number; lord: string; periods: DasaPeriod[] };
   sav: number[];
+  bav: Record<BavPlanet, number[]>;
 };
 
 export function norm360(x: number) {
@@ -129,6 +132,14 @@ export function ayanamsaLahiri(jd: number) {
 export function ayanamsaThirukanitham(jd: number) {
   const years = (jd - 2415020.0) / 365.2422;
   return 22 + 50.016 / 60 + (50.016 / 3600) * years;
+}
+
+export function houseFrom(sign: number, fromSign: number) {
+  return ((sign - fromSign + 12) % 12) + 1;
+}
+
+export function angDist(a: number, b: number) {
+  return Math.abs(norm360(a - b + 180) - 180);
 }
 
 export function signIndex(lon: number) {
@@ -176,6 +187,12 @@ export function vargaSign(lon: number, n: number) {
     const s = signIndex(lon);
     const part = Math.floor((norm360(lon) % 30) / 10);
     return (s + part * 4) % 12;
+  }
+  if (n === 7) {
+    const s = signIndex(lon);
+    const part = Math.floor((norm360(lon) % 30) / (30 / 7));
+    const start = s % 2 === 0 ? s : (s + 6) % 12;
+    return (start + part) % 12;
   }
   if (n === 10) {
     const s = signIndex(lon);
@@ -408,26 +425,38 @@ export function bhuktis(maha: DasaPeriod) {
   return out;
 }
 
-function ashtakavarga(bodies: Record<string, number>) {
-  const signs = Array(12).fill(0);
-  const order = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"] as const;
-  const exalt: Record<string, number> = {
-    sun: 0,
-    moon: 1,
-    mars: 9,
-    mercury: 5,
-    jupiter: 3,
-    venus: 11,
-    saturn: 6,
-  };
-  for (const id of order) {
-    const s = signIndex(bodies[id]);
-    signs[s] += 4;
-    signs[(s + 4) % 12] += 3;
-    signs[(s + 8) % 12] += 3;
-    if (exalt[id] !== undefined) signs[exalt[id]] += 1;
+export function antardasas(bhukti: { lord: (typeof DASA_ORDER)[number]; startJD: number; endJD: number }) {
+  const si = DASA_ORDER.indexOf(bhukti.lord);
+  const span = bhukti.endJD - bhukti.startJD;
+  let cursor = bhukti.startJD;
+  const out: { lord: (typeof DASA_ORDER)[number]; startJD: number; endJD: number }[] = [];
+  for (let i = 0; i < 9; i++) {
+    const a = DASA_ORDER[(si + i) % 9];
+    const days = span * (DASA_YEARS[a] / 120);
+    const st = cursor;
+    const en = cursor + days;
+    cursor = en;
+    out.push({ lord: a, startJD: st, endJD: Math.min(en, bhukti.endJD) });
   }
-  return signs;
+  return out;
+}
+
+function ashtakavarga(bodies: Record<string, number>) {
+  const bav = {} as Record<BavPlanet, number[]>;
+  const sav = Array(12).fill(0);
+  for (const planet of BAV_PLANETS) {
+    const signs = Array(12).fill(0);
+    const table = BAV[planet];
+    for (const from of BAV_FROM) {
+      const fromSign = signIndex(bodies[from] ?? 0);
+      for (const h of table[from]) {
+        signs[(fromSign + h - 1) % 12] += 1;
+      }
+    }
+    bav[planet] = signs;
+    for (let i = 0; i < 12; i++) sav[i] += signs[i];
+  }
+  return { sav, bav };
 }
 
 const VARNA_SIGN_STD = [2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3];
@@ -510,13 +539,61 @@ export function formatClock(jd: number, tz: number) {
   return s.split(" ")[1] ?? s;
 }
 
+export function nowJD() {
+  return Date.now() / 86400000 + 2440587.5;
+}
+
+export function ayanamsaFor(jd: number, school: School) {
+  return school === "lahiri" ? ayanamsaLahiri(jd) : ayanamsaThirukanitham(jd);
+}
+
+export function siderealGrahas(jd: number, school: School) {
+  const aya = ayanamsaFor(jd, school);
+  const retro: Partial<Record<PlanetId, boolean>> = {};
+  if (school === "vakya") {
+    const v = vakyaMean(jd);
+    return {
+      aya,
+      bodies: {
+        sun: v.sun,
+        moon: v.moon,
+        mercury: v.mercury,
+        venus: v.venus,
+        mars: v.mars,
+        jupiter: v.jupiter,
+        saturn: v.saturn,
+        rahu: v.rahu,
+        ketu: norm360(v.rahu + 180),
+      } as Record<Exclude<PlanetId, "lagna" | "gulika">, number>,
+      retro,
+    };
+  }
+  const trop = tropicalBodies(jd);
+  const sid = (x: number) => norm360(x - aya);
+  Object.assign(retro, trop.retro);
+  return {
+    aya,
+    bodies: {
+      sun: sid(trop.sun),
+      moon: sid(trop.moon),
+      mercury: sid(trop.mercury),
+      venus: sid(trop.venus),
+      mars: sid(trop.mars),
+      jupiter: sid(trop.jupiter),
+      saturn: sid(trop.saturn),
+      rahu: sid(trop.rahu),
+      ketu: sid(trop.ketu),
+    } as Record<Exclude<PlanetId, "lagna" | "gulika">, number>,
+    retro,
+  };
+}
+
 export function compute(input: BirthInput): ChartResult {
   const localHours = input.hour + input.minute / 60;
   const jd = julianDay(input.year, input.month, input.day, localHours - input.tz);
   const school = input.school;
-  const aya =
-    school === "lahiri" ? ayanamsaLahiri(jd) : ayanamsaThirukanitham(jd);
-  const trop = tropicalBodies(jd);
+  const grahas = siderealGrahas(jd, school);
+  const aya = grahas.aya;
   const tropAsc = tropicalAscendant(jd, input.lat, input.lon);
   const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
   const isDay = jd >= ss.sunriseJD && jd < ss.sunsetJD;
@@ -531,41 +608,13 @@ export function compute(input: BirthInput): ChartResult {
     (isDay ? ss.sunriseJD : ss.sunsetJD) + (satIdx / 8) * (isDay ? dayLen : nightLen);
   const tropGulika = tropicalAscendant(gulikaJD, input.lat, input.lon);
 
-  let bodies: Record<PlanetId, number>;
-  const retro: Partial<Record<PlanetId, boolean>> = {};
-
-  if (school === "vakya") {
-    const v = vakyaMean(jd);
-    bodies = {
-      lagna: tropAsc - aya,
-      sun: v.sun,
-      moon: v.moon,
-      mercury: v.mercury,
-      venus: v.venus,
-      mars: v.mars,
-      jupiter: v.jupiter,
-      saturn: v.saturn,
-      rahu: v.rahu,
-      ketu: norm360(v.rahu + 180),
-      gulika: tropGulika - aya,
-    };
-  } else {
-    const sid = (x: number) => norm360(x - aya);
-    bodies = {
-      lagna: sid(tropAsc),
-      sun: sid(trop.sun),
-      moon: sid(trop.moon),
-      mercury: sid(trop.mercury),
-      venus: sid(trop.venus),
-      mars: sid(trop.mars),
-      jupiter: sid(trop.jupiter),
-      saturn: sid(trop.saturn),
-      rahu: sid(trop.rahu),
-      ketu: sid(trop.ketu),
-      gulika: sid(tropGulika),
-    };
-    Object.assign(retro, trop.retro);
-  }
+  const bodies: Record<PlanetId, number> = {
+    ...grahas.bodies,
+    lagna: norm360(tropAsc - aya),
+    gulika: norm360(tropGulika - aya),
+  };
+  const retro = grahas.retro;
+  const lagnaSign = signIndex(bodies.lagna);
 
   const list: BodyPos[] = PLANETS.map((p) => {
     const lon = norm360(bodies[p.id]);
@@ -579,9 +628,12 @@ export function compute(input: BirthInput): ChartResult {
       nak: nak.idx,
       pada: nak.pada,
       navamsa: navamsa(lon),
+      house: houseFrom(sd.sign, lagnaSign),
       retrograde: !!retro[p.id] || p.id === "rahu" || p.id === "ketu",
     };
   });
+
+  const { sav, bav } = ashtakavarga(bodies);
 
   return {
     input,
@@ -597,7 +649,8 @@ export function compute(input: BirthInput): ChartResult {
     pan: panchanga(bodies.sun, bodies.moon, wd),
     muh: muhurta(ss.sunriseJD, ss.sunsetJD, wd),
     dasa: vimshottari(bodies.moon, jd),
-    sav: ashtakavarga(bodies),
+    sav,
+    bav,
   };
 }
 

@@ -67,6 +67,12 @@
     background: var(--color-ink);
     box-shadow: var(--shadow-card);
   }
+  .biodata-photo {
+    aspect-ratio: 3 / 4;
+  }
+  .biodata-sheet {
+    color: var(--color-fg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -90,5 +96,13 @@
   }
   main {
     display: block !important;
+  }
+  .biodata-sheet {
+    box-shadow: none !important;
+    max-width: none !important;
+  }
+  @page {
+    size: A4;
+    margin: 8mm;
   }
 }

@@ -49,6 +49,11 @@ export function SouthChart({
             <span className="absolute top-1 right-1 font-display text-xs tracking-wide text-accent-fg/70">
               {shorts[sign]}
             </span>
+            {lagnaSign >= 0 ? (
+              <span className="absolute bottom-1 left-1 text-xs tabular-nums text-accent-fg/45">
+                {((sign - lagnaSign + 12) % 12) + 1}
+              </span>
+            ) : null}
             <div className="mt-4 flex flex-wrap gap-0.5">
               {bySign[sign].map((p) => {
                 const meta = PLANET_MAP[p.id];
