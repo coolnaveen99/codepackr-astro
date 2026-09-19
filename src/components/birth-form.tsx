@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { SCHOOLS, type School } from "@/lib/astro/constants";
 import type { BirthInput, City } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
-import { POPULAR_CITIES, SAMPLES } from "@/lib/astro/samples";
+import { POPULAR_CITIES } from "@/lib/astro/samples";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -83,27 +83,6 @@ export function BirthForm({
         <p className="mt-1 text-sm text-muted">{t(lang, "rasiNote")}</p>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {SAMPLES.map((s) => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => {
-              onChange({ ...s.input, school: value.school });
-              setQuery(s.input.place);
-            }}
-            className={cn(
-              "h-9 rounded-full px-3 text-xs font-medium shadow-card transition-transform duration-150 active:scale-[0.96]",
-              value.name === s.input.name
-                ? "bg-ink text-accent-fg"
-                : "bg-surface text-muted hover:text-fg",
-            )}
-          >
-            {lang === "ta" ? s.labelTa : s.labelEn}
-          </button>
-        ))}
-      </div>
-
       <div>
         <Label htmlFor="name">{t(lang, "name")}</Label>
         <Input id="name" value={value.name} onChange={(e) => set("name", e.target.value)} />
@@ -134,7 +113,7 @@ export function BirthForm({
           <Input
             id="date"
             type="date"
-            value={`${value.year}-${pad(value.month)}-${pad(value.day)}`}
+            value={value.year ? `${value.year}-${pad(value.month)}-${pad(value.day)}` : ""}
             onChange={(e) => {
               const [y, m, d] = e.target.value.split("-").map(Number);
               if (y && m && d) onChange({ ...value, year: y, month: m, day: d });
@@ -146,7 +125,7 @@ export function BirthForm({
           <Input
             id="time"
             type="time"
-            value={`${pad(value.hour)}:${pad(value.minute)}`}
+            value={value.year ? `${pad(value.hour)}:${pad(value.minute)}` : ""}
             onChange={(e) => {
               const [h, m] = e.target.value.split(":").map(Number);
               if (Number.isFinite(h) && Number.isFinite(m)) onChange({ ...value, hour: h, minute: m });

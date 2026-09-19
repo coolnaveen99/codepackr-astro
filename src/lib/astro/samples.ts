@@ -1,51 +1,21 @@
 import type { BirthInput } from "./engine";
 
-export const SAMPLES: { id: string; labelTa: string; labelEn: string; input: BirthInput }[] = [
-  {
-    id: "thiru",
-    labelTa: "திருக்குமரேசன் · வேலூர்",
-    labelEn: "Thirukumaresan · Vellore",
-    input: {
-      name: "Thirukumaresan",
-      sex: "M",
-      year: 2012,
-      month: 7,
-      day: 25,
-      hour: 13,
-      minute: 58,
-      tz: 5.5,
-      lat: 12.9333,
-      lon: 79.1167,
-      place: "Vellore",
-      school: "thirukanitham",
-    },
-  },
-  {
-    id: "naveen",
-    labelTa: "நவீன் குமார் · வாணியம்பாடி",
-    labelEn: "Naveen Kumar T · Vaniyambadi",
-    input: {
-      name: "Naveen Kumar T",
-      sex: "M",
-      year: 1990,
-      month: 8,
-      day: 15,
-      hour: 4,
-      minute: 20,
-      tz: 5.5,
-      lat: 12.6833,
-      lon: 78.65,
-      place: "Vaniyambadi (Tn)",
-      school: "thirukanitham",
-    },
-  },
-];
-
-export const DEFAULT_INPUT = SAMPLES[0].input;
+export const DEFAULT_INPUT: BirthInput = {
+  name: "",
+  sex: "M",
+  year: 0,
+  month: 1,
+  day: 1,
+  hour: 6,
+  minute: 0,
+  tz: 5.5,
+  lat: 13.0667,
+  lon: 80.25,
+  place: "",
+  school: "thirukanitham",
+};
 
 export const POPULAR_CITIES = [
-  { n: "Vellore", tz: 5.5, lon: 79.1167, lat: 12.9333 },
-  { n: "Vaniyambadi (Tn)", tz: 5.5, lon: 78.65, lat: 12.6833 },
   { n: "Madras", tz: 5.5, lon: 80.25, lat: 13.0667 },
   { n: "Madurai", tz: 5.5, lon: 78.1167, lat: 9.9167 },
   { n: "Coimbatore", tz: 5.5, lon: 76.9333, lat: 11.0 },

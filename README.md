@@ -1,12 +1,12 @@
-# தமிழ் ஜாதகம்
+# Codepackr Astro
 
-Tamil jathagam website with **திருக்கணிதம் (Thirukanitham / Drik)** and **வாக்கியம் (Vakya Karana)** calculation.
+Tamil jathagam in the [Codepackr](https://www.codepackr.com) family.
 
-In Tamil usage, **ராசி is the Moon sign**, not lagna. The headline of every chart shows rasi, nakshatra + pada, then lagna.
+**திருக்கணிதம் (Thirukanitham / Drik)** and **வாக்கியம் (Vakya Karana)** calculation. In Tamil usage, **ராசி is the Moon sign**, not lagna.
 
 ## Features
 
-- Birth form with 5,000+ places (Predict. city list)
+- Birth form with 5,000+ places
 - Schools: Thirukanitham (default), Vakya, Lahiri / Chitrapaksha
 - South-Indian rasi (D1) and navamsa (D9) charts
 - Graha table, panchangam, muhurta, Vimshottari dasa, vargas, ashtakoot porutham
@@ -19,8 +19,6 @@ npm install
 npm run dev
 ```
 
-Open the URL Vite prints (default `http://localhost:5173`).
-
 ```bash
 npm run build
 npm run preview
@@ -28,13 +26,11 @@ npm run preview
 
 ## Calculation notes
 
-- **Thirukanitham** — geocentric ecliptic-of-date longitudes minus the Predict. Thirukanitham ayanamsa (`22°50.016′` at 1900.0, ~50.016″/year). This is the usual Tamilcube / online Tamil jathagam mode.
+- **Thirukanitham** — geocentric ecliptic-of-date longitudes minus the Predict. Thirukanitham ayanamsa (`22°50.016′` at 1900.0, ~50.016″/year).
 - **Vakya** — Kali-epoch mean motions with a simple manda equation. Temple vakya panchangams can still differ near nakshatra edges.
 - **Lahiri** — same tropical positions with Lahiri / Chitrapaksha ayanamsa, for comparison.
 
-Positions use [astronomy-engine](https://github.com/cosinekitty/astronomy) (VSOP87 / ELP-2000 class). This is not Swiss Ephemeris.
-
-Sample chart: Thirukumaresan, Vellore, 25 Jul 2012, 13:58 IST — Moon in கன்னி / சித்திரை under Thirukanitham.
+Positions use [astronomy-engine](https://github.com/cosinekitty/astronomy).
 
 ## License
 

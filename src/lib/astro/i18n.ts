@@ -1,10 +1,10 @@
 export type Lang = "ta" | "en";
 
 const COPY = {
-  brand: { ta: "தமிழ் ஜாதகம்", en: "Tamil Jathagam" },
+  brand: { ta: "Codepackr Astro", en: "Codepackr Astro" },
   tagline: {
-    ta: "திருக்கணிதம் · வாக்கியம் · ராசி · நட்சத்திரம் · தசை",
-    en: "Thirukanitham · Vakya · rasi · nakshatra · dasa",
+    ta: "தமிழ் ஜாதகம் · திருக்கணிதம் · வாக்கியம்",
+    en: "Tamil jathagam · Thirukanitham · Vakya",
   },
   birth: { ta: "பிறப்பு விவரம்", en: "Birth details" },
   name: { ta: "பெயர்", en: "Name" },
@@ -16,7 +16,11 @@ const COPY = {
   place: { ta: "ஊர்", en: "Place" },
   school: { ta: "கணம் முறை", en: "Calculation school" },
   compute: { ta: "ஜாதகம் காட்டு", en: "Cast chart" },
-  samples: { ta: "மாதிரி ஜாதகம்", en: "Sample charts" },
+  emptyTitle: { ta: "ஜாதகம் காட்ட", en: "Cast a chart" },
+  emptyBody: {
+    ta: "பெயர், பிறந்த தேதி, நேரம், ஊரை உள்ளிட்டு ஜாதகம் காட்டு என்பதை அழுத்தவும்.",
+    en: "Enter name, date, time and place, then cast the chart.",
+  },
   rasi: { ta: "ராசி", en: "Rasi" },
   rasiNote: {
     ta: "தமிழில் ராசி என்பது சந்திரன் நிற்கும் இராசி — லக்னம் அல்ல.",
