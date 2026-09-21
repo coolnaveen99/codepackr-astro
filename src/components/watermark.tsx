@@ -1,3 +1,4 @@
+// Codepackr Astro - Printable Watermark Component
 import { cn } from "@/lib/utils";
 
 export function Watermark({

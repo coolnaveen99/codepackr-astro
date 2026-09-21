@@ -1,3 +1,4 @@
+// Codepackr Astro - Predictions & Phalan Rules
 import { SIGNS_EN, SIGNS_TA, planetName } from "./constants";
 import type { Lang } from "./i18n";
 import type { Analysis, BhavaReport, Dignity, GrahaReport } from "./analysis";

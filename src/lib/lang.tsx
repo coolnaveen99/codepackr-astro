@@ -1,3 +1,4 @@
+// Codepackr Astro - Language Switcher Context
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { Lang } from "@/lib/astro/i18n";
 

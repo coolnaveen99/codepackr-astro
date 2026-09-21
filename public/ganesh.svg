@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <g fill="#000000" stroke="none">
+    <!-- ========================================== -->
+    <!-- 1. CROWN / JATA WISPS (TOP-RIGHT FLICKS)   -->
+    <!-- ========================================== -->
+    <!-- Top wisp -->
+    <path d="M 238,20 C 250,10 268,8 280,14 C 286,17 286,21 280,24 C 268,28 252,26 238,20 Z" />
+    <!-- Middle wisp -->
+    <path d="M 208,42 C 238,24 274,18 300,24 C 308,26 304,32 294,36 C 266,41 234,44 208,42 Z" />
+    <!-- Main top head wisp / upper arch -->
+    <path d="M 172,78 C 200,54 252,42 308,54 C 334,60 348,72 352,82 C 342,70 318,58 290,52 C 246,42 198,54 172,78 Z" />
+
+    <!-- ========================================== -->
+    <!-- 2. FOREHEAD TRISHUL, VIBHUTI & DOTS        -->
+    <!-- ========================================== -->
+    <!-- Center vertical spike of Trishul -->
+    <path d="M 248,64 C 248,58 250,52 250,52 C 250,52 252,58 252,64 L 252,86 L 248,86 Z" />
+    <!-- Outer prongs of Trishul -->
+    <path d="M 232,74 C 236,70 242,74 243,80 C 244,84 247,87 250,87 C 253,87 256,84 257,80 C 258,74 264,70 268,74 C 270,78 266,86 260,90 C 255,93 245,93 240,90 C 234,86 230,78 232,74 Z" />
+    <!-- Central loop / bindu inside Trishul base -->
+    <circle cx="250" cy="78" r="3.2" />
+
+    <!-- Three horizontal curved Vibhuti stripes (Tripundra) -->
+    <path d="M 222,98 C 240,94 260,94 278,98 C 260,95 240,95 222,98 Z" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+    <path d="M 224,104 C 240,100 260,100 276,104 C 260,101 240,101 224,104 Z" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+    <path d="M 227,110 C 242,106 258,106 273,110 C 258,107 242,107 227,110 Z" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none" />
+
+    <!-- Three vertical dots on forehead -->
+    <circle cx="250" cy="119" r="3.6" />
+    <circle cx="250" cy="130" r="4.8" />
+    <circle cx="250" cy="144" r="6.2" />
+
+    <!-- ========================================== -->
+    <!-- 3. EYES & EYEBROWS                         -->
+    <!-- ========================================== -->
+    <!-- Left Eyebrow -->
+    <path d="M 182,130 C 196,120 216,122 228,129 C 218,125 200,123 182,130 Z" />
+    <!-- Left Eye Outlines -->
+    <path d="M 184,142 C 196,132 212,134 225,143" stroke="#000000" stroke-width="2.6" stroke-linecap="round" fill="none" />
+    <path d="M 184,142 C 196,149 214,149 225,143" stroke="#000000" stroke-width="2.2" stroke-linecap="round" fill="none" />
+    <!-- Left Pupil & Highlight -->
+    <ellipse cx="206" cy="140" rx="4.8" ry="5.4" />
+    <circle cx="207.5" cy="138.5" r="1.4" fill="#ffffff" />
+
+    <!-- Right Eyebrow -->
+    <path d="M 318,130 C 304,120 284,122 272,129 C 282,125 300,123 318,130 Z" />
+    <!-- Right Eye Outlines -->
+    <path d="M 316,142 C 304,132 288,134 275,143" stroke="#000000" stroke-width="2.6" stroke-linecap="round" fill="none" />
+    <path d="M 316,142 C 304,149 286,149 275,143" stroke="#000000" stroke-width="2.2" stroke-linecap="round" fill="none" />
+    <!-- Right Pupil & Highlight -->
+    <ellipse cx="294" cy="140" rx="4.8" ry="5.4" />
+    <circle cx="292.5" cy="138.5" r="1.4" fill="#ffffff" />
+
+    <!-- ========================================== -->
+    <!-- 4. EARS & SIDES OF HEAD                    -->
+    <!-- ========================================== -->
+    <!-- Left Ear (outer sweeping curve with inward hook) -->
+    <path d="M 172,78 C 130,86 74,126 70,174 C 66,220 94,248 132,254 C 114,248 86,228 86,186 C 86,140 130,96 172,78 Z" />
+    <!-- Left Ear Inner Fold Accent -->
+    <path d="M 98,168 C 88,188 94,215 116,236 C 104,216 100,194 106,172 C 106,170 100,166 98,168 Z" />
+
+    <!-- Right Ear (outer sweeping curve with inward hook) -->
+    <path d="M 328,78 C 370,86 426,126 430,174 C 434,220 406,248 368,254 C 386,248 414,228 414,186 C 414,140 370,96 328,78 Z" />
+    <!-- Right Ear Inner Fold Accent -->
+    <path d="M 402,168 C 412,188 406,215 384,236 C 396,216 400,194 394,172 C 394,170 400,166 402,168 Z" />
+
+    <!-- ========================================== -->
+    <!-- 5. CHEEKS, TRUNK & BELLY (CORE ARTWORK)    -->
+    <!-- ========================================== -->
+    <!-- Left cheek inner curve -->
+    <path d="M 186,156 C 170,180 166,214 176,248 C 170,218 174,184 190,160 Z" />
+    
+    <!-- Lord Ganesha's flowing calligraphic trunk & belly ribbon -->
+    <!-- Sweeps from forehead down, curves to the right, loops under belly and spirals in -->
+    <path d="M 242,164 C 248,198 274,232 296,260 C 322,294 326,328 312,358 C 292,398 238,406 195,375 C 160,348 152,306 172,268 C 192,232 244,228 270,250 C 292,268 296,298 282,320 C 268,340 240,345 220,336 C 204,328 198,312 206,298 C 212,288 226,286 234,295 C 238,300 238,308 232,314 C 224,320 214,316 216,306 C 218,296 235,294 246,304 C 258,316 256,336 236,346 C 212,358 178,344 172,312 C 164,268 202,234 246,236 C 286,238 316,268 310,314 C 304,358 266,386 218,378 C 182,372 152,342 156,300 C 160,258 192,224 228,198 C 250,182 258,168 258,154 C 252,154 246,158 242,164 Z" />
+
+    <!-- Center dot inside trunk belly -->
+    <circle cx="245" cy="316" r="4.4" />
+
+    <!-- ========================================== -->
+    <!-- 6. BLESSING HAND / MODAK FLANKS            -->
+    <!-- ========================================== -->
+    <!-- Left hand / blessing mudra -->
+    <path d="M 85,224 C 68,236 62,260 76,286 C 88,304 112,308 126,295 C 108,298 86,290 82,270 C 78,252 86,238 96,230 Z" />
+    <path d="M 108,236 C 100,248 102,264 116,274 C 110,262 110,250 118,240 Z" />
+
+    <!-- Right hand / holding Modak -->
+    <path d="M 415,224 C 432,236 438,260 424,286 C 412,304 388,308 374,295 C 392,298 414,290 418,270 C 422,252 414,238 404,230 Z" />
+    <path d="M 392,236 C 400,248 398,264 384,274 C 390,262 390,250 382,240 Z" />
+
+    <!-- ========================================== -->
+    <!-- 7. SEATED PADMASANA BASE (CROSSED LEGS)    -->
+    <!-- ========================================== -->
+    <!-- Upper broad sweeping curve (Lap / Knees) -->
+    <path d="M 86,306 C 96,358 152,416 250,422 C 348,416 404,358 414,306 C 402,364 340,410 250,410 C 160,410 98,364 86,306 Z" />
+
+    <!-- Lower broad sweeping curve (Base / Floor line) -->
+    <path d="M 112,358 C 126,420 178,472 250,476 C 322,472 374,420 388,358 C 374,422 316,464 250,464 C 184,464 126,422 112,358 Z" />
+
+    <!-- Central bottom flourish / dhoti tie knot -->
+    <path d="M 235,468 C 242,480 248,492 250,496 C 248,490 242,478 235,468 Z" />
+    <path d="M 265,468 C 258,480 252,492 250,496 C 252,490 258,478 265,468 Z" />
+  </g>
+</svg>

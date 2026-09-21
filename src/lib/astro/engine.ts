@@ -1,3 +1,4 @@
+// Codepackr Astro - Planetary Ephemeris & Calculation Engine
 import {
   Body,
   GeoVector,
@@ -125,10 +126,10 @@ export function julianDay(y: number, m: number, d: number, hourUT: number) {
 
 export function ayanamsaLahiri(jd: number) {
   const T = (jd - 2451545.0) / 36525;
-  return 23.852294878 + T * (1.3969714676 + T * (-0.0000930862 + T * 0.0000002041));
+  return 23.863805 + T * (1.3969714676 - 0.0000930862 * T);
 }
 
-/** Predict. AYANAMSA.DAT: Thirukanitham 22°50.016′ at 1900.0, ~50.016″/yr */
+/** Legacy linear model (retained for backward compatibility). */
 export function ayanamsaThirukanitham(jd: number) {
   const years = (jd - 2415020.0) / 365.2422;
   return 22 + 50.016 / 60 + (50.016 / 3600) * years;
@@ -544,7 +545,7 @@ export function nowJD() {
 }
 
 export function ayanamsaFor(jd: number, school: School) {
-  return school === "lahiri" ? ayanamsaLahiri(jd) : ayanamsaThirukanitham(jd);
+  return ayanamsaLahiri(jd);
 }
 
 export function siderealGrahas(jd: number, school: School) {

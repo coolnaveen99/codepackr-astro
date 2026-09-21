@@ -1,3 +1,4 @@
+// Codepackr Astro - Main Application Component
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { BiodataMaker } from "@/components/biodata-maker";

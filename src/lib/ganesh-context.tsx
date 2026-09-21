@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+// Codepackr Astro - Ganesh Deity Branding Context
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
 interface GaneshContextType {
   ganeshSrc: string;

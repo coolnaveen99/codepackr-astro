@@ -1,3 +1,4 @@
+// Codepackr Astro - Astrological Analysis & Computations
 import {
   DASA_ORDER,
   PLANETS,
@@ -624,22 +625,33 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Dina",
     max: 1,
     ...grade(dinaG),
-    noteTa: `பெண்ணிலிருந்து ${countNak}-ஆம் நட்சத்திரம் (தாரா ${tara}).`,
-    noteEn: `Count from bride ${countNak} (tara ${tara}).`,
+    noteTa: `பெண் / மணமகளிலிருந்து ${countNak}-ஆம் நட்சத்திரம் (தாரா ${tara}).`,
+    noteEn: `Count from Female / Bride ${countNak} (tara ${tara}).`,
   });
 
   const bg = GANA_NAK[bNak];
   const gg = GANA_NAK[gNak];
-  const ganaG: PoruthamItem["grade"] =
-    bg === gg ? "uthamam" : (bg === 2) !== (gg === 2) && (bg === 0 || gg === 0) ? "madhyamam" : bg === 2 || gg === 2 ? "adhamam" : "madhyamam";
+  // 0: Deva, 1: Manushya, 2: Rakshasa
+  let ganaG: PoruthamItem["grade"] = "adhamam";
+  if (bg === gg) {
+    ganaG = "uthamam";
+  } else if (gg === 0 && bg === 1) {
+    ganaG = "madhyamam"; // Bride Deva, Groom Manushya
+  } else if (gg === 1 && bg === 0) {
+    ganaG = "uthamam"; // Bride Manushya, Groom Deva
+  } else if (gg === 2 && bg === 0) {
+    ganaG = "madhyamam"; // Bride Rakshasa, Groom Deva
+  } else {
+    ganaG = "adhamam"; // Rakshasa with Manushya, etc.
+  }
   items.push({
     id: "gana",
     ta: "கணப் பொருத்தம்",
     en: "Gana",
     max: 1,
     ...grade(ganaG),
-    noteTa: `${GANA_NAK[bNak] === 0 ? "தேவ" : GANA_NAK[bNak] === 1 ? "மனுஷ்ய" : "ராட்சச"} · ${GANA_NAK[gNak] === 0 ? "தேவ" : GANA_NAK[gNak] === 1 ? "மனுஷ்ய" : "ராட்சச"}`,
-    noteEn: `Groom ${["Deva", "Manushya", "Rakshasa"][bg]} · bride ${["Deva", "Manushya", "Rakshasa"][gg]}.`,
+    noteTa: `ஆண் / மணமகன்: ${GANA_NAK[bNak] === 0 ? "தேவ" : GANA_NAK[bNak] === 1 ? "மனுஷ்ய" : "ராட்சச"} · பெண் / மணமகள்: ${GANA_NAK[gNak] === 0 ? "தேவ" : GANA_NAK[gNak] === 1 ? "மனுஷ்ய" : "ராட்சச"}`,
+    noteEn: `Male / Groom: ${["Deva", "Manushya", "Rakshasa"][bg]} · Female / Bride: ${["Deva", "Manushya", "Rakshasa"][gg]}.`,
   });
 
   const mahG: PoruthamItem["grade"] = [4, 7, 10, 13, 16, 19, 22, 25].includes(countNak) ? "uthamam" : "adhamam";
@@ -660,8 +672,8 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Stree Deergha",
     max: 1,
     ...grade(sdG),
-    noteTa: `பெண்ணிலிருந்து ஆண் நட்சத்திரம் ${countNak} இடம்.`,
-    noteEn: `Boy’s star is ${countNak} from the girl.`,
+    noteTa: `பெண் / மணமகளிலிருந்து ஆண் / மணமகன் நட்சத்திரம் ${countNak} இடம்.`,
+    noteEn: `Male / Groom’s star is ${countNak} places from Female / Bride.`,
   });
 
   const by = YONI_NAK[bNak];
@@ -678,19 +690,22 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     noteEn: `${YONI_EN[by]} · ${YONI_EN[gy]}`,
   });
 
+  const isSashtashtaka = countRasi === 6 || countRasi === 8;
   const rasiG: PoruthamItem["grade"] = [7, 3, 4, 10, 11].includes(countRasi)
     ? "uthamam"
-    : countRasi === 8
+    : isSashtashtaka
       ? "adhamam"
-      : "madhyamam";
+      : countRasi === 2 || countRasi === 12
+        ? "madhyamam"
+        : "madhyamam";
   items.push({
     id: "rasi",
     ta: "ராசிப் பொருத்தம்",
     en: "Rasi",
     max: 1,
     ...grade(rasiG),
-    noteTa: `பெண் ராசியிலிருந்து ஆண் ${countRasi}-ஆம் இடம்${countRasi === 8 ? " (அஷ்டமம்)" : ""}.`,
-    noteEn: `Boy is ${countRasi} from the girl’s rasi${countRasi === 8 ? " (ashtama)" : ""}.`,
+    noteTa: `பெண் / மணமகள் ராசியிலிருந்து ஆண் / மணமகன் ${countRasi}-ஆம் இடம்${isSashtashtaka ? " (சஷ்டாஷ்டகம்)" : ""}.`,
+    noteEn: `Male / Groom is ${countRasi} from Female / Bride’s rasi${isSashtashtaka ? " (Sashtashtaka)" : ""}.`,
   });
 
   const bl = SIGN_LORD[bRasi];

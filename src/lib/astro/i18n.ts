@@ -1,3 +1,4 @@
+// Codepackr Astro - Bilingual i18n Dictionary (Tamil & English)
 export type Lang = "ta" | "en";
 
 const COPY = {
@@ -138,10 +139,10 @@ const COPY = {
   navChart: { ta: "ஜாதகம்", en: "Jathagam" },
   navPorutham: { ta: "பொருத்தம்", en: "Porutham" },
   navBiodata: { ta: "திருமண விவரம்", en: "Biodata" },
-  girlBirth: { ta: "பெண்ணின் பிறப்பு", en: "Bride" },
-  boyBirth: { ta: "பையனின் பிறப்பு", en: "Groom" },
-  girlName: { ta: "பெண் பெயர்", en: "Bride name" },
-  boyName: { ta: "பையன் பெயர்", en: "Groom name" },
+  girlBirth: { ta: "பெண் / மணமகள் (Female / Bride)", en: "Female / Bride" },
+  boyBirth: { ta: "ஆண் / மணமகன் (Male / Groom)", en: "Male / Groom" },
+  girlName: { ta: "பெண் / மணமகள் பெயர் (Bride Name)", en: "Female / Bride Name" },
+  boyName: { ta: "ஆண் / மணமகன் பெயர் (Groom Name)", en: "Male / Groom Name" },
   checkPorutham: { ta: "பொருத்தம் சரிபார்க்க", en: "Check porutham" },
   poruthamTitle: { ta: "திருமணப் பொருத்தம்", en: "Tamil marriage matching" },
   poruthamLead: {
@@ -217,7 +218,7 @@ const COPY = {
   wheatish: { ta: "கோதுமை", en: "Wheatish" },
   dusky: { ta: "கருமை", en: "Dusky" },
   hindu: { ta: "இந்து", en: "Hindu" },
-  invocation: { ta: "ஓம் கணபதியே நம:", en: "ॐ श्री गणेशाय नमः" },
+  invocation: { ta: "", en: "" },
 } as const;
 
 export type CopyKey = keyof typeof COPY;

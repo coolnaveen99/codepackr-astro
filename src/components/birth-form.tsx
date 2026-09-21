@@ -1,3 +1,4 @@
+// Codepackr Astro - Birth Details Form Input
 import { SCHOOLS, type School } from "@/lib/astro/constants";
 import type { BirthInput } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
@@ -50,7 +51,7 @@ export function BirthForm({
               onClick={() => set("sex", s)}
               className={cn(
                 "h-11 rounded-md text-sm font-medium shadow-card transition-transform duration-150 active:scale-[0.96]",
-                value.sex === s ? "bg-ink text-accent-fg" : "bg-surface text-fg",
+                value.sex === s ? "bg-accent text-accent-fg font-semibold" : "bg-surface text-fg border border-border/70",
               )}
             >
               {s === "M" ? t(lang, "male") : t(lang, "female")}
@@ -72,11 +73,11 @@ export function BirthForm({
               onClick={() => set("school", s.id as School)}
               className={cn(
                 "rounded-md px-3 py-2.5 text-left shadow-card transition-[box-shadow,transform] duration-150 active:scale-[0.96]",
-                value.school === s.id ? "bg-ink text-accent-fg" : "bg-surface text-fg",
+                value.school === s.id ? "bg-accent text-accent-fg font-semibold" : "bg-surface text-fg border border-border/70",
               )}
             >
               <span className="block text-sm font-medium">{lang === "ta" ? s.ta : s.en}</span>
-              <span className={cn("block text-xs", value.school === s.id ? "text-accent-fg/70" : "text-muted")}>
+              <span className={cn("block text-xs", value.school === s.id ? "text-accent-fg/80" : "text-muted")}>
                 {lang === "ta" ? s.hintTa : s.hintEn}
               </span>
             </button>

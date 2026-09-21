@@ -1,3 +1,4 @@
+// Codepackr Astro - Chart & Horoscope Views
 import { Printer } from "lucide-react";
 import { useMemo, useState, type ReactNode } from "react";
 import {
@@ -16,6 +17,7 @@ import {
   YOGA_EN,
   YOGA_TA,
   planetName,
+  type PlanetId,
 } from "@/lib/astro/constants";
 import { analyse } from "@/lib/astro/analysis";
 import {
@@ -30,7 +32,11 @@ import {
 } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
+import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
+import { PrintDialog } from "@/components/print-dialog";
+import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
+import { useGanesh } from "@/lib/ganesh-context";
 import {
   BavGrid,
   BhavaStrip,
@@ -58,6 +64,7 @@ function find(list: BodyPos[], id: string) {
 
 export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }) {
   const [tab, setTab] = useState<Tab>("chart");
+  const [showPrintModal, setShowPrintModal] = useState(false);
   const { go } = useNav();
   const analysis = useMemo(() => analyse(result), [result]);
   const moon = find(result.list, "moon");
@@ -86,8 +93,9 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="rounded-xl bg-ink px-5 py-6 text-accent-fg shadow-card sm:px-8">
-        <p className="text-xs tracking-widest text-accent-fg/60 uppercase">
+      {/* Auspicious Overview Card - No Black Background */}
+      <div className="rounded-xl bg-surface border-2 border-accent/25 px-5 py-6 text-fg shadow-card sm:px-8">
+        <p className="text-xs font-bold tracking-widest text-accent uppercase">
           {result.input.name || t(lang, "brand")}
         </p>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
@@ -98,7 +106,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
           />
           <Stat k={t(lang, "lagna")} v={`${signName(lang, lagna.sign)} ${lagna.dms}`} />
         </div>
-        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-xs text-accent-fg/70">
+        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted">
           <span>
             {t(lang, "weekday")}: {lang === "ta" ? WEEK_TA[result.weekday] : WEEK_EN[result.weekday]}
           </span>
@@ -139,7 +147,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
               onClick={() => setTab(tb.id)}
               className={cn(
                 "h-9 rounded-md px-3 text-sm font-medium transition-[background-color,color] duration-150",
-                tab === tb.id ? "bg-surface text-fg shadow-card" : "text-muted hover:text-fg",
+                tab === tb.id ? "bg-surface text-fg shadow-card font-semibold" : "text-muted hover:text-fg",
               )}
             >
               {t(lang, tb.key)}
@@ -150,23 +158,40 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
           <Button variant="outline" size="sm" className="no-print" onClick={() => go("porutham")}>
             {t(lang, "openPorutham")}
           </Button>
-          <Button variant="outline" size="sm" className="no-print" onClick={() => window.print()}>
-            <Printer className="size-4" />
+          <Button
+            variant="outline"
+            size="sm"
+            className="no-print border-accent text-accent hover:bg-accent hover:text-accent-fg font-medium"
+            onClick={() => {
+              try {
+                window.print();
+              } catch {
+                // ignore
+              }
+              setShowPrintModal(true);
+            }}
+          >
+            <Printer className="size-4 mr-1" />
             {t(lang, "print")}
           </Button>
         </div>
       </div>
 
       <div className="print:hidden">{body}</div>
-      <div className="hidden print:flex print:flex-col print:gap-8">
-        <ChartsPane result={result} analysis={analysis} lang={lang} />
-        <PhalanPane result={result} analysis={analysis} lang={lang} />
-        <YogaPane analysis={analysis} lang={lang} />
-        <PanchangPane result={result} lang={lang} />
-        <DasaPane result={result} lang={lang} />
-        <GocharaPane analysis={analysis} lang={lang} />
-        <VargaPane result={result} lang={lang} />
+      <div className="hidden print:block">
+        <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
       </div>
+
+      {/* Interactive Print / Save as PDF Dialog */}
+      <PrintDialog
+        open={showPrintModal}
+        onClose={() => setShowPrintModal(false)}
+        title={lang === "ta" ? "தமிழ் ஜாதக அச்சுப் பிரதி (A4)" : "Tamil Horoscope Report (A4 Print)"}
+        lang={lang}
+        newTabUrl="/?page=jathagam&print=auto"
+      >
+        <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
+      </PrintDialog>
     </div>
   );
 }
@@ -175,8 +200,12 @@ function Chip({ children, tone }: { children: ReactNode; tone?: "ok" | "warn" })
   return (
     <span
       className={cn(
-        "rounded-full px-3 py-1 text-xs",
-        tone === "warn" ? "bg-accent/30 text-accent-fg" : "bg-elevated/15 text-accent-fg/85",
+        "rounded-full px-3 py-1 text-xs font-medium border shadow-2xs",
+        tone === "warn"
+          ? "bg-amber-50 text-amber-900 border-amber-300"
+          : tone === "ok"
+            ? "bg-emerald-50 text-emerald-900 border-emerald-300"
+            : "bg-surface text-fg border-border/80",
       )}
     >
       {children}
@@ -187,9 +216,9 @@ function Chip({ children, tone }: { children: ReactNode; tone?: "ok" | "warn" })
 function Stat({ k, v, note }: { k: string; v: string; note?: string }) {
   return (
     <div>
-      <p className="text-xs tracking-wide text-accent-fg/55 uppercase">{k}</p>
-      <p className="font-display mt-1 text-2xl leading-tight text-accent-fg">{v}</p>
-      {note ? <p className="mt-1 text-xs text-accent-fg/50">{note}</p> : null}
+      <p className="text-xs font-semibold tracking-wide text-muted uppercase">{k}</p>
+      <p className="font-display mt-1 text-2xl font-bold leading-tight text-accent sm:text-3xl">{v}</p>
+      {note ? <p className="mt-1 text-xs text-muted">{note}</p> : null}
     </div>
   );
 }
@@ -317,7 +346,7 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
           const shown = open === id || current;
           const antars = shown ? bhuktis(p) : [];
           return (
-            <li key={id} className={cn("rounded-md px-3 py-3", current ? "bg-ink text-accent-fg" : "bg-elevated")}>
+            <li key={id} className={cn("rounded-md px-3 py-3", current ? "bg-accent text-accent-fg font-semibold shadow-xs" : "bg-elevated")}>
               <button
                 type="button"
                 className="flex w-full items-baseline justify-between gap-3 text-left"

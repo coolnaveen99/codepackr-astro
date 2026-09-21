@@ -1,3 +1,4 @@
+// Codepackr Astro - Safe Window Print Invoker
 /**
  * Safe print helper that works both in standalone browsers and inside sandboxed iframes.
  */

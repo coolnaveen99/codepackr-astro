@@ -1,3 +1,4 @@
+// Codepackr Astro - Contact Us Form
 import { useState, type FormEvent } from "react";
 
 const SCRIPT_URL =
@@ -58,7 +59,7 @@ export function ContactForm() {
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm" />
           <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm" />
           <textarea required rows={5} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Message" className="w-full rounded-md border border-border bg-surface px-3 py-2 text-sm" />
-          <button disabled={busy} type="submit" className="h-9 rounded-md bg-ink px-4 text-sm text-accent-fg disabled:opacity-50">
+          <button disabled={busy} type="submit" className="h-9 rounded-md bg-accent px-4 text-sm font-medium text-accent-fg hover:bg-accent/90 transition-colors disabled:opacity-50">
             {busy ? "Sending…" : "Send"}
           </button>
         </form>

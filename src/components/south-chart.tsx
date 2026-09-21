@@ -1,3 +1,4 @@
+// Codepackr Astro - South Indian Rasi & Navamsa Chart Grid
 import { PLANETS, SIGNS_SHORT_EN, SIGNS_SHORT_TA, type PlanetId } from "@/lib/astro/constants";
 import type { BodyPos } from "@/lib/astro/engine";
 import type { Lang } from "@/lib/astro/i18n";
@@ -12,11 +13,13 @@ export function SouthChart({
   lang,
   mode = "sign",
   caption,
+  theme = "light",
 }: {
   positions: BodyPos[];
   lang: Lang;
   mode?: "sign" | "navamsa";
   caption?: string;
+  theme?: "dark" | "light";
 }) {
   const bySign: BodyPos[][] = Array.from({ length: 12 }, () => []);
   for (const p of positions) {
@@ -30,10 +33,19 @@ export function SouthChart({
   const shorts = lang === "ta" ? SIGNS_SHORT_TA : SIGNS_SHORT_EN;
 
   return (
-    <div className="south-chart relative overflow-hidden rounded-md">
+    <div
+      className={cn(
+        "south-chart relative overflow-hidden rounded-md border-2 border-accent/30 bg-surface text-fg shadow-xs print:border-ink print:bg-white print:text-ink",
+      )}
+    >
       {SOUTH.map((sign, i) => {
         if (sign === null) {
-          return <div key={i} className="bg-ink/90" />;
+          return (
+            <div
+              key={i}
+              className="bg-[#faf6ee] print:bg-white"
+            />
+          );
         }
         const isLagna = sign === lagnaSign;
         const isMoon = sign === moonSign;
@@ -41,20 +53,24 @@ export function SouthChart({
           <div
             key={i}
             className={cn(
-              "relative min-h-0 overflow-hidden border-r border-b border-elevated/20 p-1",
-              isMoon && "bg-accent/20",
-              isLagna && "ring-accent ring-inset ring-2",
+              "relative min-h-0 overflow-hidden border-r border-b border-accent/25 p-1 print:border-ink",
+              isMoon && "bg-amber-50/80 print:bg-gray-100",
+              isLagna && "bg-accent/5 ring-2 ring-accent/60 ring-inset print:ring-ink",
             )}
           >
-            <span className="absolute top-1 right-1 font-display text-xs tracking-wide text-accent-fg/70">
+            <span
+              className="absolute top-0.5 right-1 font-display text-[10px] font-semibold text-muted tracking-wide sm:text-xs print:text-ink"
+            >
               {shorts[sign]}
             </span>
             {lagnaSign >= 0 ? (
-              <span className="absolute bottom-1 left-1 text-xs tabular-nums text-accent-fg/45">
+              <span
+                className="absolute bottom-0.5 left-1 text-[10px] font-semibold text-accent/70 tabular-nums sm:text-xs print:text-ink/60"
+              >
                 {((sign - lagnaSign + 12) % 12) + 1}
               </span>
             ) : null}
-            <div className="mt-4 flex flex-wrap gap-0.5">
+            <div className="mt-3.5 sm:mt-4 flex flex-wrap gap-0.5">
               {bySign[sign].map((p) => {
                 const meta = PLANET_MAP[p.id];
                 const label = lang === "ta" ? meta.shortTa : meta.glyph;
@@ -65,12 +81,12 @@ export function SouthChart({
                     key={p.id}
                     title={lang === "ta" ? meta.ta : meta.en}
                     className={cn(
-                      "rounded-xs px-1 py-px text-xs leading-4 font-medium",
-                      isMoonP
-                        ? "bg-accent-fg text-accent"
-                        : isLagnaP
-                          ? "bg-accent text-accent-fg"
-                          : "bg-elevated/15 text-accent-fg",
+                      "rounded px-1 py-px text-[11px] leading-3.5 font-medium sm:text-xs sm:leading-4",
+                      isLagnaP
+                        ? "bg-accent text-accent-fg font-bold shadow-xs print:border print:border-ink print:bg-transparent print:text-ink"
+                        : isMoonP
+                          ? "bg-amber-100 text-amber-900 border border-amber-300 font-bold print:border print:border-ink print:bg-transparent print:text-ink"
+                          : "bg-elevated/90 text-fg border border-border/80 print:border print:border-ink/40 print:bg-transparent print:text-ink",
                     )}
                   >
                     {label}
@@ -83,8 +99,12 @@ export function SouthChart({
         );
       })}
       {caption ? (
-        <div className="pointer-events-none absolute inset-[25%] flex items-center justify-center p-2 text-center">
-          <span className="font-display text-xs leading-snug text-accent-fg/80">{caption}</span>
+        <div className="pointer-events-none absolute inset-[25%] flex items-center justify-center p-1 sm:p-2 text-center">
+          <span
+            className="font-display text-[11px] leading-snug font-bold text-accent sm:text-xs print:text-ink"
+          >
+            {caption}
+          </span>
         </div>
       ) : null}
     </div>

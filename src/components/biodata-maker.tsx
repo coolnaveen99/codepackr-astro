@@ -1,3 +1,4 @@
+// Codepackr Astro - Marriage Biodata Generator
 import { Download, Printer, Upload } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode, type Ref } from "react";
 import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA } from "@/lib/astro/constants";
@@ -5,7 +6,12 @@ import { analyse } from "@/lib/astro/analysis";
 import { BLOODS, DEFAULT_BIODATA, HEIGHTS, type Biodata } from "@/lib/astro/biodata";
 import { compute } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
+import { triggerPrint } from "@/lib/print-helper";
+import { SouthChart } from "@/components/south-chart";
 import { DateTimeFields, FieldSelect, PlaceSearch } from "@/components/birth-fields";
+import { PrintDialog } from "@/components/print-dialog";
+import { Watermark } from "@/components/watermark";
+import { useGanesh } from "@/lib/ganesh-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +27,9 @@ function nakName(lang: Lang, i: number) {
 export function BiodataMaker({ lang }: { lang: Lang }) {
   const [bio, setBio] = useState<Biodata>(DEFAULT_BIODATA);
   const [busy, setBusy] = useState(false);
+  const [showPrintModal, setShowPrintModal] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
+  const { ganeshSrc, setGaneshSrc, resetGaneshSrc } = useGanesh();
 
   function patch(p: Partial<Biodata>) {
     setBio((b) => ({ ...b, ...p }));
@@ -90,12 +98,23 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
           <p className="mt-1 max-w-xl text-sm text-muted">{t(lang, "bioLead")}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => window.print()}>
-            <Printer className="size-4" />
+          <Button
+            variant="outline"
+            className="border-accent text-accent hover:bg-accent hover:text-accent-fg font-medium"
+            onClick={() => {
+              try {
+                window.print();
+              } catch {
+                // ignore
+              }
+              setShowPrintModal(true);
+            }}
+          >
+            <Printer className="size-4 mr-1" />
             {t(lang, "print")}
           </Button>
           <Button onClick={downloadPdf} disabled={busy}>
-            <Download className="size-4" />
+            <Download className="size-4 mr-1" />
             {t(lang, "downloadPdf")}
           </Button>
         </div>
@@ -103,6 +122,48 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr]">
         <form className="no-print flex flex-col gap-4 rounded-xl bg-surface p-4 shadow-card sm:p-5">
+          <Section title={lang === "ta" ? "விநாயகர் படம் / Emblem" : "Lord Ganesha Image / Emblem"}>
+            <div className="flex items-center gap-3 rounded-lg border border-border/70 p-2.5 bg-elevated/40">
+              <img
+                src={ganeshSrc}
+                alt="Lord Ganesha"
+                className="size-12 shrink-0 object-contain rounded-md bg-white p-1 border border-border/60 shadow-xs"
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-fg truncate">
+                  {lang === "ta" ? "உங்கள் விநாயகர் படம்" : "Lord Ganesha Artwork"}
+                </p>
+                <div className="mt-1.5 flex gap-2">
+                  <label className="inline-flex cursor-pointer items-center gap-1 rounded bg-accent px-2 py-1 text-[11px] font-semibold text-accent-fg hover:opacity-90">
+                    <Upload className="size-3" />
+                    {lang === "ta" ? "பதிவேற்றுக" : "Upload File"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          if (reader.result) setGaneshSrc(String(reader.result));
+                        };
+                        reader.readAsDataURL(file);
+                      }}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={resetGaneshSrc}
+                    className="inline-flex items-center rounded border border-border/70 bg-surface px-2 py-1 text-[11px] text-muted hover:text-fg"
+                  >
+                    {lang === "ta" ? "இயல்புநிலை" : "Reset Default"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Section>
+
           <Section title={t(lang, "photo")}>
             <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md bg-elevated text-sm font-medium">
               <Upload className="size-4" />
@@ -133,7 +194,7 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
                     onClick={() => patch({ birth: { ...bio.birth, sex: s } })}
                     className={cn(
                       "h-11 rounded-md text-sm font-medium shadow-card",
-                      bio.birth.sex === s ? "bg-ink text-accent-fg" : "bg-surface text-fg",
+                      bio.birth.sex === s ? "bg-accent text-accent-fg font-semibold" : "bg-surface text-fg border border-border/70",
                     )}
                   >
                     {s === "M" ? t(lang, "male") : t(lang, "female")}
@@ -273,6 +334,17 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
           <BiodataSheet sheetRef={sheetRef} lang={lang} bio={bio} chart={chart} analysis={analysis} />
         </div>
       </div>
+
+      {/* Interactive Print / Save as PDF Dialog */}
+      <PrintDialog
+        open={showPrintModal}
+        onClose={() => setShowPrintModal(false)}
+        title={lang === "ta" ? "திருமண சுயவிவர அச்சுப் பிரதி (A4)" : "Marriage Biodata (A4 Print)"}
+        lang={lang}
+        newTabUrl="/?page=biodata&print=auto"
+      >
+        <BiodataSheet sheetRef={null} lang={lang} bio={bio} chart={chart} analysis={analysis} />
+      </PrintDialog>
     </div>
   );
 }
@@ -306,8 +378,9 @@ function BiodataSheet({
   bio: Biodata;
   chart: ReturnType<typeof compute> | null;
   analysis: ReturnType<typeof analyse> | null;
-  sheetRef: Ref<HTMLDivElement>;
+  sheetRef?: Ref<HTMLDivElement> | null;
 }) {
+  const { ganeshSrc } = useGanesh();
   const moon = chart?.list.find((p) => p.id === "moon");
   const lagna = chart?.list.find((p) => p.id === "lagna");
   const dob = `${String(bio.birth.day).padStart(2, "0")}-${String(bio.birth.month).padStart(2, "0")}-${bio.birth.year}`;
@@ -365,16 +438,25 @@ function BiodataSheet({
 
   return (
     <div
-      ref={sheetRef}
+      ref={sheetRef ?? undefined}
       id="biodata-sheet"
-      className="biodata-sheet relative mx-auto w-full max-w-[210mm] overflow-hidden bg-surface px-6 py-8 shadow-card sm:px-10 sm:py-10"
+      className="biodata-sheet relative mx-auto w-full max-w-[210mm] overflow-hidden bg-surface px-6 py-6 shadow-card sm:px-8 sm:py-8"
     >
       <div className="biodata-ornament pointer-events-none absolute inset-3 rounded-sm border-2 border-accent/50" />
-      <div className="relative">
-        <p className="font-display text-center text-sm tracking-widest text-accent">{t(lang, "invocation")}</p>
-        <h2 className="font-display mt-2 text-center text-2xl text-accent sm:text-3xl">{t(lang, "bioTitle")}</h2>
+      <Watermark />
+      <div className="relative z-1">
+        <div className="flex flex-col items-center justify-center">
+          <img
+            src={ganeshSrc}
+            alt="Lord Ganesha"
+            className="h-16 w-auto object-contain print:h-14"
+          />
+          <h2 className="font-display mt-1 text-center text-xl font-bold text-accent sm:text-2xl">
+            {t(lang, "bioTitle")}
+          </h2>
+        </div>
 
-        <div className="mt-6 flex gap-5">
+        <div className="mt-4 flex gap-4">
           <div className="min-w-0 flex-1">
             <SheetBlock title={t(lang, "personalSec")} rows={personal} />
           </div>
@@ -393,9 +475,68 @@ function BiodataSheet({
           </div>
         </div>
 
-        <SheetBlock title={t(lang, "workSec")} rows={work} />
-        <SheetBlock title={t(lang, "familySec")} rows={family} />
+        <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-x-4">
+          <SheetBlock title={t(lang, "workSec")} rows={work} />
+          <SheetBlock title={t(lang, "familySec")} rows={family} />
+        </div>
         <SheetBlock title={t(lang, "contactSec")} rows={contact} />
+
+        {chart ? (
+          <section className="mt-4 break-inside-avoid print:mt-3">
+            <h3 className="font-display border-b border-accent/40 pb-0.5 text-xs sm:text-sm tracking-wide text-accent uppercase">
+              {lang === "ta" ? "ஜாதகக் கட்டங்கள்" : "Horoscope Charts"}
+            </h3>
+            <div className="mt-2 grid grid-cols-2 gap-3 sm:gap-4">
+              <div>
+                <p className="font-display mb-1 text-center text-xs font-semibold text-accent">
+                  {t(lang, "d1")}
+                </p>
+                <SouthChart
+                  positions={chart.list}
+                  lang={lang}
+                  mode="sign"
+                  caption={t(lang, "d1")}
+                  theme="light"
+                />
+              </div>
+              <div>
+                <p className="font-display mb-1 text-center text-xs font-semibold text-accent">
+                  {t(lang, "d9")}
+                </p>
+                <SouthChart
+                  positions={chart.list}
+                  lang={lang}
+                  mode="navamsa"
+                  caption={t(lang, "d9")}
+                  theme="light"
+                />
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <footer className="mt-4 border-t border-accent/30 pt-2 flex items-center justify-between text-xs text-muted print:mt-3">
+          <div className="flex items-center gap-2">
+            <img src={ganeshSrc} alt="" className="h-5 w-auto object-contain" />
+            <a
+              href="https://astro.codepackr.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-accent hover:underline"
+            >
+              astro.codepackr.com
+            </a>
+            <span className="text-border">&bull;</span>
+            <a href="mailto:codepackr@gmail.com" className="hover:underline text-[11px] text-accent font-medium">
+              codepackr@gmail.com
+            </a>
+          </div>
+          <span className="text-[10px] sm:text-[11px] text-muted">
+            {lang === "ta"
+              ? "தமிழ் ஜாதகம் & திருமண விவரம் · தொடர்பு: codepackr@gmail.com"
+              : "Tamil Horoscope & Marriage Biodata · Contact: codepackr@gmail.com"}
+          </span>
+        </footer>
       </div>
     </div>
   );
@@ -403,16 +544,16 @@ function BiodataSheet({
 
 function SheetBlock({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
-    <section className="mt-5">
-      <h3 className="font-display border-b border-accent/40 pb-1 text-sm tracking-wide text-accent uppercase">
+    <section className="mt-3">
+      <h3 className="font-display border-b border-accent/40 pb-0.5 text-xs sm:text-sm tracking-wide text-accent uppercase">
         {title}
       </h3>
-      <table className="mt-2 w-full text-sm">
+      <table className="mt-1 w-full text-xs sm:text-sm">
         <tbody>
           {rows.map(([k, v]) => (
             <tr key={k}>
-              <td className="w-[38%] py-1 pr-2 align-top text-muted">{k}</td>
-              <td className="py-1 font-medium">{v}</td>
+              <td className="w-[38%] py-0.5 pr-2 align-top text-muted">{k}</td>
+              <td className="py-0.5 font-medium">{v}</td>
             </tr>
           ))}
         </tbody>

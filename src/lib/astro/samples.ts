@@ -1,3 +1,4 @@
+// Codepackr Astro - Default Input & Sample Cities
 import type { BirthInput } from "./engine";
 
 export const DEFAULT_INPUT: BirthInput = {

@@ -1,3 +1,4 @@
+// Codepackr Astro - Astronomical Constants & Signs
 export const SIGNS_EN = [
   "Aries",
   "Taurus",

@@ -1,3 +1,4 @@
+// Codepackr Astro - Astrological Tables & Dignities
 import type { PlanetId } from "./constants";
 
 export const SIGN_LORD: PlanetId[] = [
@@ -233,6 +234,7 @@ export const VEDHA_PAIRS: [number, number][] = [
   [1, 16],
   [2, 15],
   [3, 14],
+  [4, 13],
   [4, 22],
   [5, 21],
   [6, 20],

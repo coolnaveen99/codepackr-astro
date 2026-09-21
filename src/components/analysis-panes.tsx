@@ -1,3 +1,4 @@
+// Codepackr Astro - Detailed Astrological Analysis Panes
 import { type ReactNode } from "react";
 import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
 import { kaalSarpaName, type Analysis } from "@/lib/astro/analysis";
@@ -155,10 +156,10 @@ function YogaList({ items, lang }: { items: Analysis["yogas"]; lang: Lang }) {
 
 function Flag({ title, on, body, lang }: { title: string; on: boolean; body: string; lang: Lang }) {
   return (
-    <section className={cn("rounded-lg p-4 shadow-card", on ? "bg-ink text-accent-fg" : "bg-surface")}>
-      <p className={cn("text-xs tracking-wide uppercase", on ? "text-accent-fg/60" : "text-muted")}>{title}</p>
-      <p className="font-display mt-1 text-xl">{on ? t(lang, "present") : t(lang, "absent")}</p>
-      <p className={cn("mt-2 text-sm leading-relaxed", on ? "text-accent-fg/80" : "text-muted")}>{body}</p>
+    <section className={cn("rounded-lg p-4 shadow-card", on ? "bg-amber-50 border border-amber-300 text-amber-950" : "bg-surface border border-border/50 text-fg")}>
+      <p className={cn("text-xs tracking-wide uppercase", on ? "text-amber-800 font-medium" : "text-muted")}>{title}</p>
+      <p className={cn("font-display mt-1 text-xl font-semibold", on ? "text-accent" : "text-fg")}>{on ? t(lang, "present") : t(lang, "absent")}</p>
+      <p className={cn("mt-2 text-sm leading-relaxed", on ? "text-amber-900" : "text-muted")}>{body}</p>
     </section>
   );
 }
