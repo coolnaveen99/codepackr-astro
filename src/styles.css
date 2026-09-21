@@ -109,19 +109,27 @@
     margin: 0 !important;
     padding: 0 !important;
   }
+  @page {
+    size: A4 portrait;
+    margin: 0 !important;
+  }
   .biodata-sheet {
+    box-sizing: border-box !important;
     box-shadow: none !important;
-    max-width: 100% !important;
-    width: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
     padding: 10mm 12mm !important;
     margin: 0 auto !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
   .print-page {
+    box-sizing: border-box !important;
     box-shadow: none !important;
-    max-width: 100% !important;
-    width: 100% !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 8mm 10mm !important;
     margin: 0 auto !important;
   }
   .print-section {
@@ -137,9 +145,5 @@
   .print-page-break {
     page-break-after: always !important;
     break-after: page !important;
-  }
-  @page {
-    size: A4 portrait;
-    margin: 8mm 10mm;
   }
 }

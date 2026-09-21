@@ -2,20 +2,19 @@ import type { ReactNode } from "react";
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
 import { useNav, type Page } from "@/lib/nav";
-import { useGanesh } from "@/lib/ganesh-context";
 import { cn } from "@/lib/utils";
 
 const NAV: { id: Page; label: string }[] = [
   { id: "jathagam", label: "navChart" },
   { id: "porutham", label: "navPorutham" },
   { id: "biodata", label: "navBiodata" },
+  { id: "disclaimer", label: "navDisclaimer" },
   { id: "contact", label: "Contact" },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { lang, setLang } = useLang();
   const { page, go } = useNav();
-  const { ganeshSrc } = useGanesh();
   return (
     <div className="min-h-screen bg-bg text-fg">
       <header className="no-print border-b border-border/80 bg-surface">
@@ -38,7 +37,9 @@ export function AppShell({ children }: { children: ReactNode }) {
                   page === n.id ? "bg-accent text-accent-fg font-semibold shadow-xs" : "text-muted hover:text-fg hover:bg-elevated",
                 )}
               >
-                {n.id === "contact" ? "Contact" : t(lang, n.label as "navChart" | "navPorutham" | "navBiodata")}
+                {n.id === "contact"
+                  ? "Contact"
+                  : t(lang, n.label as "navChart" | "navPorutham" | "navBiodata" | "navDisclaimer")}
               </button>
             ))}
             <div className="ml-2 flex rounded-full bg-elevated p-1">
@@ -63,27 +64,20 @@ export function AppShell({ children }: { children: ReactNode }) {
       <footer className="no-print border-t border-border/80 bg-surface/60 mt-12">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-3 items-center border-b border-border/60 pb-6">
-            <div className="flex items-center gap-3">
-              <img
-                src={ganeshSrc}
-                alt="Lord Ganesha"
-                className="h-16 w-auto object-contain shrink-0 rounded-sm bg-white p-1 border border-border/60"
-              />
-              <div>
-                <a
-                  href="https://astro.codepackr.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-display text-lg font-bold text-accent hover:underline"
-                >
-                  astro.codepackr.com
-                </a>
-                <p className="text-xs text-muted mt-0.5">
-                  {lang === "ta"
-                    ? "உயர்தர தமிழ் ஜாதகம் & திருமணப் பொருத்தம்"
-                    : "High Precision Tamil Jathagam & Porutham"}
-                </p>
-              </div>
+            <div>
+              <a
+                href="https://astro.codepackr.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-display text-lg font-bold text-accent hover:underline"
+              >
+                astro.codepackr.com
+              </a>
+              <p className="text-xs text-muted mt-0.5">
+                {lang === "ta"
+                  ? "உயர்தர தமிழ் ஜாதகம் & திருமணப் பொருத்தம்"
+                  : "High Precision Tamil Jathagam & Porutham"}
+              </p>
             </div>
             <div className="text-xs text-muted leading-relaxed">
               <p className="font-medium text-fg mb-1">
@@ -121,11 +115,32 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <button type="button" onClick={() => go("biodata")} className="hover:text-accent transition-colors">
                   {t(lang, "navBiodata")}
                 </button>
+                &bull;
+                <button type="button" onClick={() => go("disclaimer")} className="hover:text-accent transition-colors">
+                  {t(lang, "navDisclaimer")}
+                </button>
               </div>
             </div>
           </div>
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-muted">
-            <p>{t(lang, "disclaimer")}</p>
+          {/* Legal Disclaimer Link */}
+          <div className="pt-4 border-t border-border/70 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
+            <p className="flex items-center gap-1.5">
+              <span className="inline-block size-1.5 rounded-full bg-accent" />
+              <span>{t(lang, "computerGeneratedNotice")}</span>
+              <span className="text-border">&bull;</span>
+              <a
+                href="https://astro.codepackr.com/?page=disclaimer"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  go("disclaimer");
+                }}
+                className="text-accent underline font-medium hover:text-accent/80"
+              >
+                https://astro.codepackr.com/?page=disclaimer
+              </a>
+            </p>
             <p>&copy; {new Date().getFullYear()} astro.codepackr.com. All rights reserved.</p>
           </div>
         </div>

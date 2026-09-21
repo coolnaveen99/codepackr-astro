@@ -5,6 +5,7 @@ import { BiodataMaker } from "@/components/biodata-maker";
 import { BirthForm } from "@/components/birth-form";
 import { ChartViews } from "@/components/chart-views";
 import { ContactForm } from "@/components/contact-form";
+import { DisclaimerPage } from "@/components/disclaimer-page";
 import { PoruthamView } from "@/components/porutham-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t } from "@/lib/astro/i18n";
@@ -40,6 +41,8 @@ function Shell() {
         <BiodataMaker lang={lang} />
       ) : page === "contact" ? (
         <ContactForm />
+      ) : page === "disclaimer" ? (
+        <DisclaimerPage />
       ) : (
         <main className="mx-auto grid max-w-6xl gap-8 px-4 py-6 sm:px-6 lg:grid-cols-3 lg:py-10">
           <aside className="no-print min-w-0 lg:sticky lg:top-6 lg:col-span-1 lg:self-start">

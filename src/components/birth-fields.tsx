@@ -242,7 +242,7 @@ export function DateTimeFields({
         <Label>{t(lang, "date")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "day")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
             <FieldSelect value={safe.day} onChange={(v) => setDate({ day: Number(v) })}>
               {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => (
                 <option key={d} value={d}>
@@ -252,7 +252,7 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "calMonth")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
             <FieldSelect value={safe.month} onChange={(v) => setDate({ month: Number(v) })}>
               {months.slice(0, monthLimit).map((m, i) => (
                 <option key={m} value={i + 1}>
@@ -262,7 +262,7 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "year")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
             <YearInput
               year={safe.year}
               min={MIN_BIRTH_YEAR}
@@ -277,7 +277,7 @@ export function DateTimeFields({
         <Label>{t(lang, "time")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "hour")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "hour")}</span>
             <FieldSelect
               value={clock.h}
               onChange={(v) => onChange({ ...value, hour: to24(Number(v), clock.ampm) })}
@@ -290,7 +290,7 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">{t(lang, "minute")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "minute")}</span>
             <FieldSelect
               value={value.minute}
               onChange={(v) => onChange({ ...value, minute: Number(v) })}
@@ -303,7 +303,12 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted">AM / PM</span>
+            <span
+              className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate"
+              title={lang === "ta" ? "முற்பகல் / பிற்பகல் (AM / PM)" : "AM / PM"}
+            >
+              AM / PM
+            </span>
             <FieldSelect
               value={clock.ampm}
               onChange={(v) => onChange({ ...value, hour: to24(clock.h, v as "AM" | "PM") })}

@@ -1,12 +1,20 @@
 // Codepackr Astro - Marriage Biodata Generator
-import { Download, Printer, Upload } from "lucide-react";
+import { ArrowLeftRight, Download, Printer, Upload } from "lucide-react";
 import { useMemo, useRef, useState, type ReactNode, type Ref } from "react";
 import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA } from "@/lib/astro/constants";
 import { analyse } from "@/lib/astro/analysis";
-import { BLOODS, DEFAULT_BIODATA, HEIGHTS, type Biodata } from "@/lib/astro/biodata";
+import {
+  BLOODS,
+  COMPLEXIONS,
+  DEFAULT_BIODATA,
+  HEIGHT_OPTIONS,
+  formatCm,
+  formatFtInch,
+  parseHeightToInches,
+  type Biodata,
+} from "@/lib/astro/biodata";
 import { compute } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
-import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
 import { DateTimeFields, FieldSelect, PlaceSearch } from "@/components/birth-fields";
 import { PrintDialog } from "@/components/print-dialog";
@@ -28,11 +36,22 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
   const [bio, setBio] = useState<Biodata>(DEFAULT_BIODATA);
   const [busy, setBusy] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
+  const [heightUnit, setHeightUnit] = useState<"ft" | "cm">(() =>
+    bio.height.toLowerCase().includes("cm") ? "cm" : "ft"
+  );
   const sheetRef = useRef<HTMLDivElement>(null);
-  const { ganeshSrc, setGaneshSrc, resetGaneshSrc } = useGanesh();
 
   function patch(p: Partial<Biodata>) {
     setBio((b) => ({ ...b, ...p }));
+  }
+
+  function handleToggleHeightUnit() {
+    const nextUnit = heightUnit === "ft" ? "cm" : "ft";
+    setHeightUnit(nextUnit);
+    const totalInches = parseHeightToInches(bio.height);
+    if (totalInches) {
+      patch({ height: nextUnit === "cm" ? formatCm(totalInches) : formatFtInch(totalInches) });
+    }
   }
 
   const chart = useMemo(() => {
@@ -49,7 +68,7 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
     if (!el) return;
     setBusy(true);
     try {
-      const { default: html2canvas } = await import("html2canvas");
+      const { default: html2canvas } = await import("html2canvas-pro");
       const { jsPDF } = await import("jspdf");
       const canvas = await html2canvas(el, {
         scale: 2,
@@ -76,8 +95,13 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
           }
         }
       }
-      const file = (bio.birth.name || "marriage-biodata").replace(/\s+/g, "-");
+      const role = bio.birth.sex === "M" ? "Groom" : "Bride";
+      const file = (bio.birth.name ? `${bio.birth.name}-${role}` : `${role}-marriage-biodata`).replace(/\s+/g, "-");
       pdf.save(`${file}.pdf`);
+    } catch (err) {
+      console.error("PDF generation error, falling back to print dialog:", err);
+      // If canvas generation encounters any unexpected issue, fallback to system print dialog
+      window.print();
     } finally {
       setBusy(false);
     }
@@ -90,12 +114,29 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
     reader.readAsDataURL(file);
   }
 
+  const isGroom = bio.birth.sex === "M";
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-10">
       <div className="no-print mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="font-display text-2xl sm:text-3xl">{t(lang, "bioTitle")}</h2>
-          <p className="mt-1 max-w-xl text-sm text-muted">{t(lang, "bioLead")}</p>
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent/10 text-accent border border-accent/20">
+              {isGroom
+                ? (lang === "ta" ? "மணமகன்" : "Groom")
+                : (lang === "ta" ? "மணமகள்" : "Bride")}
+            </span>
+          </div>
+          <h2 className="font-display text-2xl sm:text-3xl">
+            {isGroom
+              ? (lang === "ta" ? "மணமகன் திருமண விவரப் படிவம்" : "Groom's Marriage Biodata")
+              : (lang === "ta" ? "மணமகள் திருமண விவரப் படிவம்" : "Bride's Marriage Biodata")}
+          </h2>
+          <p className="mt-1 max-w-xl text-sm text-muted">
+            {isGroom
+              ? (lang === "ta" ? "மணமகன் திருமண விவரம் — சுயவிவரம், ஜாதகம், குடும்பம் மற்றும் எதிர்பார்ப்பு." : "Groom biodata with photo, horoscope and expectations.")
+              : (lang === "ta" ? "மணமகள் திருமண விவரம் — சுயவிவரம், ஜாதகம், குடும்பம் மற்றும் எதிர்பார்ப்பு." : "Bride biodata with photo, horoscope and expectations.")}
+          </p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -122,52 +163,62 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
 
       <div className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr]">
         <form className="no-print flex flex-col gap-4 rounded-xl bg-surface p-4 shadow-card sm:p-5">
-          <Section title={lang === "ta" ? "விநாயகர் படம் / Emblem" : "Lord Ganesha Image / Emblem"}>
-            <div className="flex items-center gap-3 rounded-lg border border-border/70 p-2.5 bg-elevated/40">
-              <img
-                src={ganeshSrc}
-                alt="Lord Ganesha"
-                className="size-12 shrink-0 object-contain rounded-md bg-white p-1 border border-border/60 shadow-xs"
-              />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-fg truncate">
-                  {lang === "ta" ? "உங்கள் விநாயகர் படம்" : "Lord Ganesha Artwork"}
-                </p>
-                <div className="mt-1.5 flex gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-1 rounded bg-accent px-2 py-1 text-[11px] font-semibold text-accent-fg hover:opacity-90">
-                    <Upload className="size-3" />
-                    {lang === "ta" ? "பதிவேற்றுக" : "Upload File"}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="sr-only"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                          if (reader.result) setGaneshSrc(String(reader.result));
-                        };
-                        reader.readAsDataURL(file);
-                      }}
-                    />
-                  </label>
-                  <button
-                    type="button"
-                    onClick={resetGaneshSrc}
-                    className="inline-flex items-center rounded border border-border/70 bg-surface px-2 py-1 text-[11px] text-muted hover:text-fg"
-                  >
-                    {lang === "ta" ? "இயல்புநிலை" : "Reset Default"}
-                  </button>
-                </div>
-              </div>
+          {/* Matrimonial Profile: Groom vs Bride Selector */}
+          <Section title={lang === "ta" ? "வரன் தேர்வு" : "Profile Selection"}>
+            <div className="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => patch({ birth: { ...bio.birth, sex: "M" } })}
+                className={cn(
+                  "flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-medium transition-all text-center",
+                  isGroom
+                    ? "bg-accent text-accent-fg border-accent font-semibold shadow-md ring-2 ring-accent/30"
+                    : "bg-surface text-fg border-border/80 hover:bg-elevated/60",
+                )}
+              >
+                <span className="font-semibold text-sm">
+                  {lang === "ta" ? "மணமகன்" : "Groom"}
+                </span>
+                <span className={cn("text-[11px] mt-0.5", isGroom ? "text-accent-fg/90" : "text-muted")}>
+                  {lang === "ta" ? "Groom" : "Male"}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => patch({ birth: { ...bio.birth, sex: "F" } })}
+                className={cn(
+                  "flex flex-col items-center justify-center p-3 rounded-lg border text-sm font-medium transition-all text-center",
+                  !isGroom
+                    ? "bg-accent text-accent-fg border-accent font-semibold shadow-md ring-2 ring-accent/30"
+                    : "bg-surface text-fg border-border/80 hover:bg-elevated/60",
+                )}
+              >
+                <span className="font-semibold text-sm">
+                  {lang === "ta" ? "மணமகள்" : "Bride"}
+                </span>
+                <span className={cn("text-[11px] mt-0.5", !isGroom ? "text-accent-fg/90" : "text-muted")}>
+                  {lang === "ta" ? "Bride" : "Female"}
+                </span>
+              </button>
             </div>
           </Section>
 
-          <Section title={t(lang, "photo")}>
-            <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md bg-elevated text-sm font-medium">
+          {/* Photo Section (God image upload section removed) */}
+          <Section
+            title={
+              isGroom
+                ? (lang === "ta" ? "மணமகன் புகைப்படம்" : "Groom's Photo")
+                : (lang === "ta" ? "மணமகள் புகைப்படம்" : "Bride's Photo")
+            }
+          >
+            <label className="flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md bg-elevated text-sm font-medium hover:bg-elevated/80 transition-colors">
               <Upload className="size-4" />
-              {t(lang, "addPhoto")}
+              {bio.photo
+                ? (lang === "ta" ? "புகைப்படத்தை மாற்றுக" : "Change Photo")
+                : isGroom
+                  ? (lang === "ta" ? "மணமகன் புகைப்படம் சேர்க்க" : "Upload Groom Photo")
+                  : (lang === "ta" ? "மணமகள் புகைப்படம் சேர்க்க" : "Upload Bride Photo")}
               <input
                 type="file"
                 accept="image/*"
@@ -175,33 +226,35 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
                 onChange={(e) => onPhoto(e.target.files?.[0])}
               />
             </label>
+            {bio.photo && (
+              <button
+                type="button"
+                onClick={() => patch({ photo: undefined })}
+                className="text-xs text-red-600 hover:underline self-end"
+              >
+                {lang === "ta" ? "புகைப்படத்தை நீக்குக" : "Remove Photo"}
+              </button>
+            )}
           </Section>
 
           <Section title={t(lang, "personalSec")}>
-            <Field label={t(lang, "name")}>
+            <Field
+              label={
+                isGroom
+                  ? (lang === "ta" ? "மணமகன் பெயர்" : "Groom's Name")
+                  : (lang === "ta" ? "மணமகள் பெயர்" : "Bride's Name")
+              }
+            >
               <Input
                 value={bio.birth.name}
+                placeholder={
+                  isGroom
+                    ? (lang === "ta" ? "மணமகன் பெயர் உள்ளிடவும்" : "Enter groom's name")
+                    : (lang === "ta" ? "மணமகள் பெயர் உள்ளிடவும்" : "Enter bride's name")
+                }
                 onChange={(e) => patch({ birth: { ...bio.birth, name: e.target.value } })}
               />
             </Field>
-            <div>
-              <Label>{t(lang, "sex")}</Label>
-              <div className="grid grid-cols-2 gap-2">
-                {(["M", "F"] as const).map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => patch({ birth: { ...bio.birth, sex: s } })}
-                    className={cn(
-                      "h-11 rounded-md text-sm font-medium shadow-card",
-                      bio.birth.sex === s ? "bg-accent text-accent-fg font-semibold" : "bg-surface text-fg border border-border/70",
-                    )}
-                  >
-                    {s === "M" ? t(lang, "male") : t(lang, "female")}
-                  </button>
-                ))}
-              </div>
-            </div>
             <DateTimeFields
               lang={lang}
               value={bio.birth}
@@ -209,10 +262,31 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
             />
             <PlaceSearch lang={lang} value={bio.birth} onChange={(birth) => patch({ birth })} id="bio-place" />
             <div className="grid grid-cols-2 gap-2">
-              <Field label={t(lang, "height")}>
+              <Field
+                label={t(lang, "height")}
+                action={
+                  <button
+                    type="button"
+                    onClick={handleToggleHeightUnit}
+                    className="inline-flex items-center gap-1 text-[11px] font-medium text-accent hover:text-accent-hover px-1.5 py-0.5 rounded border border-accent/40 bg-accent/5 hover:bg-accent/15 transition-colors"
+                    title={lang === "ta" ? "அளவை மாற்று (அடி ⇄ செ.மீ)" : "Swap unit (ft/in ⇄ cm)"}
+                  >
+                    <ArrowLeftRight className="h-3 w-3" />
+                    <span>{heightUnit === "ft" ? (lang === "ta" ? "செ.மீ (cm)" : "cm") : (lang === "ta" ? "அடி (ft/in)" : "ft/in")}</span>
+                  </button>
+                }
+              >
                 <FieldSelect value={bio.height} onChange={(v) => patch({ height: v })}>
-                  {HEIGHTS.map((h) => (
-                    <option key={h}>{h}</option>
+                  {!HEIGHT_OPTIONS.some((o) => (heightUnit === "ft" ? o.ft === bio.height : o.cm === bio.height)) && (
+                    <option value={bio.height}>{bio.height}</option>
+                  )}
+                  {HEIGHT_OPTIONS.map((opt) => (
+                    <option
+                      key={opt.ft}
+                      value={heightUnit === "ft" ? opt.ft : opt.cm}
+                    >
+                      {heightUnit === "ft" ? opt.ftLabel : opt.cmLabel}
+                    </option>
                   ))}
                 </FieldSelect>
               </Field>
@@ -221,9 +295,11 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
                   value={bio.complexion}
                   onChange={(v) => patch({ complexion: v as Biodata["complexion"] })}
                 >
-                  <option value="fair">{t(lang, "fair")}</option>
-                  <option value="wheatish">{t(lang, "wheatish")}</option>
-                  <option value="dusky">{t(lang, "dusky")}</option>
+                  {COMPLEXIONS.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {lang === "ta" ? c.ta : c.en}
+                    </option>
+                  ))}
                 </FieldSelect>
               </Field>
             </div>
@@ -313,24 +389,46 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
 
           <Section title={t(lang, "contactSec")}>
             <Field label={t(lang, "contactPerson")}>
-              <Input value={bio.contactPerson} onChange={(e) => patch({ contactPerson: e.target.value })} />
+              <Input
+                value={bio.contactPerson}
+                placeholder={
+                  isGroom
+                    ? (lang === "ta" ? "மணமகன் / தந்தை / பெற்றோர் பெயர்" : "Groom / Father / Parents Name")
+                    : (lang === "ta" ? "மணமகள் பெற்றோர் / தந்தை பெயர்" : "Bride's Parents / Father Name")
+                }
+                onChange={(e) => patch({ contactPerson: e.target.value })}
+              />
             </Field>
             <Field label={t(lang, "phone")}>
-              <Input value={bio.phone} onChange={(e) => patch({ phone: e.target.value })} />
+              <Input value={bio.phone} placeholder="98765 43210" onChange={(e) => patch({ phone: e.target.value })} />
             </Field>
             <Field label={t(lang, "email")}>
-              <Input value={bio.email} onChange={(e) => patch({ email: e.target.value })} />
+              <Input value={bio.email} placeholder="example@gmail.com" onChange={(e) => patch({ email: e.target.value })} />
             </Field>
             <Field label={t(lang, "address")}>
               <Input value={bio.address} onChange={(e) => patch({ address: e.target.value })} />
             </Field>
-            <Field label={t(lang, "expect")}>
-              <Input value={bio.expect} onChange={(e) => patch({ expect: e.target.value })} />
+            <Field
+              label={
+                isGroom
+                  ? (lang === "ta" ? "மணமகள் எதிர்பார்ப்பு" : "Bride Expectations")
+                  : (lang === "ta" ? "மணமகன் எதிர்பார்ப்பு" : "Groom Expectations")
+              }
+            >
+              <Input
+                value={bio.expect}
+                placeholder={
+                  isGroom
+                    ? (lang === "ta" ? "எ.கா: நல்ல குணமுள்ள, குடும்பப் பாங்கான மணமகள்" : "e.g., Seeking an educated, cultured bride")
+                    : (lang === "ta" ? "எ.கா: நல்ல வேலையில் உள்ள, பண்பான மணமகன்" : "e.g., Seeking a well-settled, cultured groom")
+                }
+                onChange={(e) => patch({ expect: e.target.value })}
+              />
             </Field>
           </Section>
         </form>
 
-        <div className="min-w-0">
+        <div className="min-w-0 overflow-x-auto">
           <BiodataSheet sheetRef={sheetRef} lang={lang} bio={bio} chart={chart} analysis={analysis} />
         </div>
       </div>
@@ -339,11 +437,17 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
       <PrintDialog
         open={showPrintModal}
         onClose={() => setShowPrintModal(false)}
-        title={lang === "ta" ? "திருமண சுயவிவர அச்சுப் பிரதி (A4)" : "Marriage Biodata (A4 Print)"}
+        title={
+          isGroom
+            ? (lang === "ta" ? "மணமகன் திருமண விவர அச்சுப் பிரதி (A4)" : "Groom Marriage Biodata (A4 Print)")
+            : (lang === "ta" ? "மணமகள் திருமண விவர அச்சுப் பிரதி (A4)" : "Bride Marriage Biodata (A4 Print)")
+        }
         lang={lang}
-        newTabUrl="/?page=biodata&print=auto"
+        newTabUrl={`/?page=biodata&print=auto&sex=${bio.birth.sex}`}
       >
-        <BiodataSheet sheetRef={null} lang={lang} bio={bio} chart={chart} analysis={analysis} />
+        <div className="mx-auto w-full max-w-[210mm]">
+          <BiodataSheet sheetRef={null} lang={lang} bio={bio} chart={chart} analysis={analysis} />
+        </div>
       </PrintDialog>
     </div>
   );
@@ -358,10 +462,21 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({
+  label,
+  action,
+  children,
+}: {
+  label: string;
+  action?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <div>
-      <Label>{label}</Label>
+      <div className="flex items-center justify-between mb-1">
+        <Label>{label}</Label>
+        {action}
+      </div>
       {children}
     </div>
   );
@@ -388,19 +503,43 @@ function BiodataSheet({
   const ampm = bio.birth.hour < 12 ? t(lang, "am") : t(lang, "pm");
   const tob = `${clockH}:${String(bio.birth.minute).padStart(2, "0")} ${ampm}`;
   const complexion =
-    bio.complexion === "fair" ? t(lang, "fair") : bio.complexion === "dusky" ? t(lang, "dusky") : t(lang, "wheatish");
+    bio.complexion === "fair"
+      ? t(lang, "fair")
+      : bio.complexion === "wheatish"
+        ? t(lang, "wheatish")
+        : bio.complexion === "very_fair"
+          ? t(lang, "very_fair")
+          : bio.complexion === "golden"
+            ? t(lang, "golden")
+            : bio.complexion === "wheatish_brown"
+              ? t(lang, "wheatish_brown")
+              : bio.complexion === "dusky"
+                ? t(lang, "dusky")
+                : (COMPLEXIONS.find((c) => c.id === bio.complexion)?.[lang] || bio.complexion);
   const marital =
     bio.marital === "divorced" ? t(lang, "divorced") : bio.marital === "widowed" ? t(lang, "widowed") : t(lang, "unmarried");
 
+  const isGroom = bio.birth.sex === "M";
+
   const personal: [string, string][] = [
-    [t(lang, "name"), bio.birth.name || "—"],
+    [
+      isGroom
+        ? (lang === "ta" ? "மணமகன் பெயர்" : "Groom's Name")
+        : (lang === "ta" ? "மணமகள் பெயர்" : "Bride's Name"),
+      bio.birth.name || "—",
+    ],
+    [
+      lang === "ta" ? "வரன்" : "Profile",
+      isGroom
+        ? (lang === "ta" ? "மணமகன்" : "Groom")
+        : (lang === "ta" ? "மணமகள்" : "Bride"),
+    ],
     [t(lang, "date"), dob],
     [t(lang, "time"), tob],
     [t(lang, "place"), bio.birth.place || "—"],
     [t(lang, "rasi"), moon ? signName(lang, moon.sign) : "—"],
     [t(lang, "nakshatra"), moon ? `${nakName(lang, moon.nak)} · ${t(lang, "pada")} ${moon.pada}` : "—"],
     [t(lang, "lagna"), lagna ? signName(lang, lagna.sign) : "—"],
-    [t(lang, "chevvai"), analysis ? (analysis.chevvai.present ? t(lang, "present") : t(lang, "absent")) : "—"],
     [t(lang, "height"), bio.height],
     [t(lang, "complexion"), complexion],
     [t(lang, "blood"), bio.blood],
@@ -429,12 +568,20 @@ function BiodataSheet({
   ];
 
   const contact: [string, string][] = [
-    [t(lang, "contactPerson"), bio.contactPerson || "—"],
+    ...(bio.contactPerson ? [[t(lang, "contactPerson"), bio.contactPerson] as [string, string]] : []),
     [t(lang, "phone"), bio.phone || "—"],
     [t(lang, "email"), bio.email || "—"],
     [t(lang, "address"), bio.address || "—"],
   ];
-  if (bio.expect) contact.push([t(lang, "expect"), bio.expect]);
+  const defaultExpect = isGroom
+    ? (lang === "ta" ? "நல்ல குணமுள்ள, குடும்பப் பாங்கான மணமகள் எதிர்பார்க்கப்படுகிறது." : "Seeking an educated, cultured and compatible bride.")
+    : (lang === "ta" ? "நல்ல வேலையில் உள்ள, பண்பான மணமகன் எதிர்பார்க்கப்படுகிறது." : "Seeking a well-educated, cultured and professionally settled groom.");
+  contact.push([
+    isGroom
+      ? (lang === "ta" ? "மணமகள் எதிர்பார்ப்பு" : "Bride Expectations")
+      : (lang === "ta" ? "மணமகன் எதிர்பார்ப்பு" : "Groom Expectations"),
+    bio.expect || defaultExpect,
+  ]);
 
   return (
     <div
@@ -452,8 +599,15 @@ function BiodataSheet({
             className="h-16 w-auto object-contain print:h-14"
           />
           <h2 className="font-display mt-1 text-center text-xl font-bold text-accent sm:text-2xl">
-            {t(lang, "bioTitle")}
+            {isGroom
+              ? (lang === "ta" ? "மணமகன் திருமண விவரப் படிவம்" : "Groom's Marriage Biodata")
+              : (lang === "ta" ? "மணமகள் திருமண விவரப் படிவம்" : "Bride's Marriage Biodata")}
           </h2>
+          <div className="mt-1 inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-accent/10 text-accent border border-accent/20">
+            {isGroom
+              ? (lang === "ta" ? "மணமகன்" : "Groom")
+              : (lang === "ta" ? "மணமகள்" : "Bride")}
+          </div>
         </div>
 
         <div className="mt-4 flex gap-4">
@@ -464,12 +618,19 @@ function BiodataSheet({
             {bio.photo ? (
               <img
                 src={bio.photo}
-                alt=""
+                alt={bio.birth.name || (isGroom ? "Groom" : "Bride")}
                 className="biodata-photo w-full rounded-sm object-cover shadow-card"
               />
             ) : (
-              <div className="biodata-photo flex w-full items-center justify-center rounded-sm bg-elevated text-center text-xs text-muted">
-                {t(lang, "addPhoto")}
+              <div className="biodata-photo flex w-full flex-col items-center justify-center rounded-sm bg-elevated text-center p-2 text-xs text-muted">
+                <span className="font-semibold text-fg">
+                  {isGroom
+                    ? (lang === "ta" ? "மணமகன் படம்" : "Groom Photo")
+                    : (lang === "ta" ? "மணமகள் படம்" : "Bride Photo")}
+                </span>
+                <span className="text-[10px] text-muted mt-1">
+                  {isGroom ? (lang === "ta" ? "மணமகன்" : "Groom") : (lang === "ta" ? "மணமகள்" : "Bride")}
+                </span>
               </div>
             )}
           </div>
@@ -515,7 +676,13 @@ function BiodataSheet({
           </section>
         ) : null}
 
-        <footer className="mt-4 border-t border-accent/30 pt-2 flex items-center justify-between text-xs text-muted print:mt-3">
+        {/* Legal Disclaimer for Matrimonial Biodata */}
+        <div className="mt-3 rounded border border-border/70 bg-elevated/40 p-2 text-left text-[9.5px] leading-relaxed text-muted print:mt-2 print:p-1.5 print:text-[9px]">
+          <span className="font-semibold text-ink">{t(lang, "legalDisclaimerTitle")}: </span>
+          <span>{t(lang, "biodataDisclaimer")}</span>
+        </div>
+
+        <footer className="mt-3 border-t border-accent/30 pt-2 flex items-center justify-between text-xs text-muted print:mt-2">
           <div className="flex items-center gap-2">
             <img src={ganeshSrc} alt="" className="h-5 w-auto object-contain" />
             <a
@@ -533,8 +700,12 @@ function BiodataSheet({
           </div>
           <span className="text-[10px] sm:text-[11px] text-muted">
             {lang === "ta"
-              ? "தமிழ் ஜாதகம் & திருமண விவரம் · தொடர்பு: codepackr@gmail.com"
-              : "Tamil Horoscope & Marriage Biodata · Contact: codepackr@gmail.com"}
+              ? (isGroom
+                  ? "தமிழ் ஜாதகம் & மணமகன் விவரம் · கணினி கணிப்பு"
+                  : "தமிழ் ஜாதகம் & மணமகள் விவரம் · கணினி கணிப்பு")
+              : (isGroom
+                  ? "Tamil Horoscope & Groom Biodata · Computer Generated"
+                  : "Tamil Horoscope & Bride Biodata · Computer Generated")}
           </span>
         </footer>
       </div>
@@ -561,3 +732,4 @@ function SheetBlock({ title, rows }: { title: string; rows: [string, string][] }
     </section>
   );
 }
+

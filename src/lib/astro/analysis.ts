@@ -625,8 +625,8 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Dina",
     max: 1,
     ...grade(dinaG),
-    noteTa: `பெண் / மணமகளிலிருந்து ${countNak}-ஆம் நட்சத்திரம் (தாரா ${tara}).`,
-    noteEn: `Count from Female / Bride ${countNak} (tara ${tara}).`,
+    noteTa: `மணமகளிலிருந்து ${countNak}-ஆம் நட்சத்திரம் (தாரா ${tara}).`,
+    noteEn: `Count from Bride ${countNak} (tara ${tara}).`,
   });
 
   const bg = GANA_NAK[bNak];
@@ -650,8 +650,8 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Gana",
     max: 1,
     ...grade(ganaG),
-    noteTa: `ஆண் / மணமகன்: ${GANA_NAK[bNak] === 0 ? "தேவ" : GANA_NAK[bNak] === 1 ? "மனுஷ்ய" : "ராட்சச"} · பெண் / மணமகள்: ${GANA_NAK[gNak] === 0 ? "தேவ" : GANA_NAK[gNak] === 1 ? "மனுஷ்ய" : "ராட்சச"}`,
-    noteEn: `Male / Groom: ${["Deva", "Manushya", "Rakshasa"][bg]} · Female / Bride: ${["Deva", "Manushya", "Rakshasa"][gg]}.`,
+    noteTa: `மணமகன்: ${GANA_NAK[bNak] === 0 ? "தேவ" : GANA_NAK[bNak] === 1 ? "மனுஷ்ய" : "ராட்சச"} · மணமகள்: ${GANA_NAK[gNak] === 0 ? "தேவ" : GANA_NAK[gNak] === 1 ? "மனுஷ்ய" : "ராட்சச"}`,
+    noteEn: `Groom: ${["Deva", "Manushya", "Rakshasa"][bg]} · Bride: ${["Deva", "Manushya", "Rakshasa"][gg]}.`,
   });
 
   const mahG: PoruthamItem["grade"] = [4, 7, 10, 13, 16, 19, 22, 25].includes(countNak) ? "uthamam" : "adhamam";
@@ -672,8 +672,8 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Stree Deergha",
     max: 1,
     ...grade(sdG),
-    noteTa: `பெண் / மணமகளிலிருந்து ஆண் / மணமகன் நட்சத்திரம் ${countNak} இடம்.`,
-    noteEn: `Male / Groom’s star is ${countNak} places from Female / Bride.`,
+    noteTa: `மணமகளிலிருந்து மணமகன் நட்சத்திரம் ${countNak} இடம்.`,
+    noteEn: `Groom’s star is ${countNak} places from Bride.`,
   });
 
   const by = YONI_NAK[bNak];
@@ -704,8 +704,8 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Rasi",
     max: 1,
     ...grade(rasiG),
-    noteTa: `பெண் / மணமகள் ராசியிலிருந்து ஆண் / மணமகன் ${countRasi}-ஆம் இடம்${isSashtashtaka ? " (சஷ்டாஷ்டகம்)" : ""}.`,
-    noteEn: `Male / Groom is ${countRasi} from Female / Bride’s rasi${isSashtashtaka ? " (Sashtashtaka)" : ""}.`,
+    noteTa: `மணமகள் ராசியிலிருந்து மணமகன் ${countRasi}-ஆம் இடம்${isSashtashtaka ? " (சஷ்டாஷ்டகம்)" : ""}.`,
+    noteEn: `Groom is ${countRasi} from Bride’s rasi${isSashtashtaka ? " (Sashtashtaka)" : ""}.`,
   });
 
   const bl = SIGN_LORD[bRasi];

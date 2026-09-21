@@ -36,7 +36,6 @@ import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
 import { PrintDialog } from "@/components/print-dialog";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
-import { useGanesh } from "@/lib/ganesh-context";
 import {
   BavGrid,
   BhavaStrip,

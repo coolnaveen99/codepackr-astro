@@ -12,7 +12,6 @@ import { DateTimeFields, PlaceSearch } from "@/components/birth-fields";
 import { SouthChart } from "@/components/south-chart";
 import { PrintDialog } from "@/components/print-dialog";
 import { Watermark } from "@/components/watermark";
-import { useGanesh } from "@/lib/ganesh-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +29,6 @@ function nakName(lang: Lang, i: number) {
 }
 
 export function PoruthamView({ lang }: { lang: Lang }) {
-  const { ganeshSrc } = useGanesh();
   const [girl, setGirl] = useState<BirthInput>(() => blank("F"));
   const [boy, setBoy] = useState<BirthInput>(() => blank("M"));
   const [school, setSchool] = useState<School>("thirukanitham");
@@ -66,19 +64,19 @@ export function PoruthamView({ lang }: { lang: Lang }) {
         <div className="grid gap-6 lg:grid-cols-2">
           <PersonCard
             lang={lang}
-            title={t(lang, "girlBirth")}
-            nameLabel={t(lang, "girlName")}
-            value={girl}
-            onChange={setGirl}
-            prefix="girl"
-          />
-          <PersonCard
-            lang={lang}
             title={t(lang, "boyBirth")}
             nameLabel={t(lang, "boyName")}
             value={boy}
             onChange={setBoy}
             prefix="boy"
+          />
+          <PersonCard
+            lang={lang}
+            title={t(lang, "girlBirth")}
+            nameLabel={t(lang, "girlName")}
+            value={girl}
+            onChange={setGirl}
+            prefix="girl"
           />
         </div>
         <div className="mt-5">
@@ -110,15 +108,14 @@ export function PoruthamView({ lang }: { lang: Lang }) {
             <Watermark />
           </div>
 
-          {/* Printable Header with Ganesha Image */}
+          {/* Printable Header */}
           <div className="hidden print:flex flex-col items-center justify-center border-b border-border pb-3 text-center">
-            <img src={ganeshSrc} alt="Lord Ganesha" className="h-14 w-auto object-contain" />
             <h2 className="font-display mt-1 text-2xl font-bold text-ink">
               {t(lang, "poruthamTitle")}
             </h2>
             <p className="text-xs text-muted">
-              {girl.name ? `${t(lang, "girlBirth")}: ${girl.name}` : t(lang, "girlBirth")} &bull;{" "}
               {boy.name ? `${t(lang, "boyBirth")}: ${boy.name}` : t(lang, "boyBirth")} &bull;{" "}
+              {girl.name ? `${t(lang, "girlBirth")}: ${girl.name}` : t(lang, "girlBirth")} &bull;{" "}
               {lang === "ta" ? (school === "thirukanitham" ? "திருக்கணிதம்" : "வாக்கியம்") : school}
             </p>
           </div>
@@ -173,15 +170,15 @@ export function PoruthamView({ lang }: { lang: Lang }) {
           <div className="grid gap-4 md:grid-cols-2 print:grid-cols-2">
             <PersonSummary
               lang={lang}
-              title={girl.name ? `${girl.name} (${t(lang, "girlBirth")})` : t(lang, "girlBirth")}
-              chart={report.gChart}
-              chevvai={report.gA.chevvai.present}
-            />
-            <PersonSummary
-              lang={lang}
               title={boy.name ? `${boy.name} (${t(lang, "boyBirth")})` : t(lang, "boyBirth")}
               chart={report.bChart}
               chevvai={report.bA.chevvai.present}
+            />
+            <PersonSummary
+              lang={lang}
+              title={girl.name ? `${girl.name} (${t(lang, "girlBirth")})` : t(lang, "girlBirth")}
+              chart={report.gChart}
+              chevvai={report.gA.chevvai.present}
             />
           </div>
 
@@ -209,19 +206,24 @@ export function PoruthamView({ lang }: { lang: Lang }) {
             </ul>
           </section>
 
-          {/* Printable Footer with Ganesha branding and astro.codepackr.com advertisement */}
-          <footer className="mt-4 hidden border-t border-border pt-3 print:flex items-center justify-between text-xs text-muted">
-            <div className="flex items-center gap-2">
-              <img src={ganeshSrc} alt="Ganesha" className="h-6 w-auto object-contain" />
+          {/* Printable Footer */}
+          <footer className="mt-4 hidden border-t border-border pt-3 print:flex flex-col gap-2 text-xs text-muted">
+            <div className="rounded border border-border/80 bg-elevated/40 p-2 text-[10px] text-muted text-left leading-relaxed flex items-center justify-between">
               <div>
+                <span className="font-semibold text-ink">{t(lang, "legalDisclaimerTitle")}: </span>
+                <span>{t(lang, "pdfDisclaimerReferWeb")}</span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <span className="font-semibold text-accent">astro.codepackr.com</span>
                 <span className="mx-1.5 text-border">&bull;</span>
                 <span className="text-ink font-medium">Contact: codepackr@gmail.com</span>
               </div>
-            </div>
-            <div className="text-right text-[11px]">
-              <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Jathagam &amp; Porutham</p>
-              <p className="text-muted">High Precision Thirukanitham &amp; Vakya Calculations &bull; https://astro.codepackr.com</p>
+              <div className="text-right text-[11px]">
+                <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Porutham &bull; {t(lang, "computerGeneratedNotice")}</p>
+                <p className="text-muted">High Precision Thirukanitham &amp; Vakya Calculations &bull; https://astro.codepackr.com</p>
+              </div>
             </div>
           </footer>
 
@@ -237,13 +239,12 @@ export function PoruthamView({ lang }: { lang: Lang }) {
               <Watermark />
               <div className="relative z-1">
                 <div className="flex flex-col items-center justify-center border-b border-border pb-3 text-center">
-                  <img src={ganeshSrc} alt="Lord Ganesha" className="h-14 w-auto object-contain" />
                   <h2 className="font-display mt-1 text-2xl font-bold text-ink">
                     {t(lang, "poruthamTitle")}
                   </h2>
                   <p className="text-xs text-muted">
-                    {girl.name ? `${t(lang, "girlBirth")}: ${girl.name}` : t(lang, "girlBirth")} &bull;{" "}
                     {boy.name ? `${t(lang, "boyBirth")}: ${boy.name}` : t(lang, "boyBirth")} &bull;{" "}
+                    {girl.name ? `${t(lang, "girlBirth")}: ${girl.name}` : t(lang, "girlBirth")} &bull;{" "}
                     {lang === "ta" ? (school === "thirukanitham" ? "திருக்கணிதம்" : "வாக்கியம்") : school}
                   </p>
                 </div>
@@ -262,16 +263,16 @@ export function PoruthamView({ lang }: { lang: Lang }) {
                 <div className="mt-3 grid grid-cols-1 gap-4">
                   <PersonSummary
                     lang={lang}
-                    title={girl.name ? `${girl.name} (${t(lang, "girlBirth")})` : t(lang, "girlBirth")}
-                    chart={report.gChart}
-                    chevvai={report.gA.chevvai.present}
+                    title={boy.name ? `${boy.name} (${t(lang, "boyBirth")})` : t(lang, "boyBirth")}
+                    chart={report.bChart}
+                    chevvai={report.bA.chevvai.present}
                     printMode={true}
                   />
                   <PersonSummary
                     lang={lang}
-                    title={boy.name ? `${boy.name} (${t(lang, "boyBirth")})` : t(lang, "boyBirth")}
-                    chart={report.bChart}
-                    chevvai={report.bA.chevvai.present}
+                    title={girl.name ? `${girl.name} (${t(lang, "girlBirth")})` : t(lang, "girlBirth")}
+                    chart={report.gChart}
+                    chevvai={report.gA.chevvai.present}
                     printMode={true}
                   />
                 </div>
@@ -291,9 +292,14 @@ export function PoruthamView({ lang }: { lang: Lang }) {
                   </ul>
                 </section>
 
-                <footer className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
+                {/* Legal Disclaimer Box */}
+                <div className="mt-3 rounded border border-border/80 bg-elevated/40 p-2 text-[10px] text-muted text-left leading-relaxed">
+                  <span className="font-semibold text-ink">{t(lang, "legalDisclaimerTitle")}: </span>
+                  <span>{t(lang, "pdfDisclaimerReferWeb")}</span>
+                </div>
+
+                <footer className="mt-2 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
                   <div className="flex items-center gap-2">
-                    <img src={ganeshSrc} alt="Ganesha" className="h-6 w-auto object-contain" />
                     <div>
                       <span className="font-semibold text-accent">astro.codepackr.com</span>
                       <span className="mx-1.5 text-border">&bull;</span>
@@ -301,7 +307,7 @@ export function PoruthamView({ lang }: { lang: Lang }) {
                     </div>
                   </div>
                   <div className="text-right text-[11px]">
-                    <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Jathagam &amp; Porutham</p>
+                    <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Porutham &bull; {t(lang, "computerGeneratedNotice")}</p>
                     <p className="text-muted">High Precision Calculations &bull; https://astro.codepackr.com</p>
                   </div>
                 </footer>

@@ -22,7 +22,6 @@ import { bhuktis, formatJD, vargaSign, type ChartResult } from "@/lib/astro/engi
 import { t, type Lang } from "@/lib/astro/i18n";
 import { chevvaiText, dasaReading, dignityLabel, houseReading, planetReading, sadeSatiText } from "@/lib/astro/phalan";
 import { BHAVA_EN, BHAVA_TA, SIGN_LORD } from "@/lib/astro/tables";
-import { useGanesh } from "@/lib/ganesh-context";
 import { SouthChart } from "@/components/south-chart";
 import { Watermark } from "@/components/watermark";
 import { cn } from "@/lib/utils";
@@ -48,7 +47,6 @@ export function PrintHoroscopeSheet({
   analysis: ReturnType<typeof analyse>;
   lang: Lang;
 }) {
-  const { ganeshSrc } = useGanesh();
   const moon = find(result.list, "moon");
   const lagna = find(result.list, "lagna");
   const sun = find(result.list, "sun");
@@ -78,7 +76,6 @@ export function PrintHoroscopeSheet({
         <div className="relative z-1">
         {/* Sacred Header */}
         <div className="flex flex-col items-center justify-center border-b border-border/80 pb-3 text-center">
-          <img src={ganeshSrc} alt="Lord Ganesha" className="h-16 w-auto object-contain" />
           <p className="text-[11px] tracking-widest text-accent font-semibold mt-1">
             {lang === "ta" ? "|| ஓம் ஸ்ரீ கணேசாய நமஹ ||" : "|| OM SRI GANESHAYA NAMAHA ||"}
           </p>
@@ -113,12 +110,12 @@ export function PrintHoroscopeSheet({
               <strong className="font-semibold text-ink">
                 {result.input.sex === "M"
                   ? lang === "ta"
-                    ? "ஆண் / மணமகன் (Male / Groom)"
-                    : "Male / Groom"
+                    ? "மணமகன்"
+                    : "Groom"
                   : result.input.sex === "F"
                     ? lang === "ta"
-                      ? "பெண் / மணமகள் (Female / Bride)"
-                      : "Female / Bride"
+                      ? "மணமகள்"
+                      : "Bride"
                     : "—"}
               </strong>
             </div>
@@ -294,16 +291,18 @@ export function PrintHoroscopeSheet({
         </div>
 
         {/* Page 1 Footer */}
-        <footer className="mt-3 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-5 w-auto object-contain" />
-            <div>
+        <footer className="mt-3 flex flex-col gap-1 border-t border-border pt-2 text-xs text-muted">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <span className="font-semibold text-accent">astro.codepackr.com</span>
-              <span className="mx-1.5 text-border">&bull;</span>
-              <span className="text-ink font-medium">Contact: codepackr@gmail.com</span>
+              <span className="mx-1 text-border">&bull;</span>
+              <span className="text-ink font-medium">codepackr@gmail.com</span>
             </div>
+            <p className="text-[11px] font-medium">{lang === "ta" ? "பக்கம் 1 / 4 • மூல ஜாதகக் கணிப்பு" : "Page 1 of 4 • Primary Horoscope"}</p>
           </div>
-          <p className="text-[11px]">{lang === "ta" ? "பக்கம் 1 / 4 • மூல ஜாதகக் கணிப்பு" : "Page 1 of 4 • Primary Horoscope"}</p>
+          <p className="text-[9.5px] text-muted italic">
+            * {t(lang, "pdfDisclaimerShort")}
+          </p>
         </footer>
         </div>
       </div>
@@ -316,14 +315,11 @@ export function PrintHoroscopeSheet({
         <div className="relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border pb-2">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-8 w-auto object-contain" />
-            <div>
-              <p className="font-display text-sm font-bold text-ink">
-                {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "பாவகம் & விம்சொத்தரி தசா-புக்தி" : "Bhavas & Dasa-Bhukti"}
-              </p>
-              <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
-            </div>
+          <div>
+            <p className="font-display text-sm font-bold text-ink">
+              {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "பாவகம் & விம்சொத்தரி தசா-புக்தி" : "Bhavas & Dasa-Bhukti"}
+            </p>
+            <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
           </div>
           <div className="text-right">
             <span className="text-xs font-semibold text-accent">astro.codepackr.com</span>
@@ -466,16 +462,18 @@ export function PrintHoroscopeSheet({
         </div>
 
         {/* Page 2 Footer */}
-        <footer className="mt-4 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-5 w-auto object-contain" />
-            <div>
+        <footer className="mt-4 flex flex-col gap-1 border-t border-border pt-2 text-xs text-muted">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <span className="font-semibold text-accent">astro.codepackr.com</span>
-              <span className="mx-1.5 text-border">&bull;</span>
-              <span className="text-ink font-medium">Contact: codepackr@gmail.com</span>
+              <span className="mx-1 text-border">&bull;</span>
+              <span className="text-ink font-medium">codepackr@gmail.com</span>
             </div>
+            <p className="text-[11px] font-medium">{lang === "ta" ? "பக்கம் 2 / 4 • பாவகம் & தசா-புக்தி" : "Page 2 of 4 • Bhavas & Dasa Timeline"}</p>
           </div>
-          <p className="text-[11px]">{lang === "ta" ? "பக்கம் 2 / 4 • பாவகம் & தசா-புக்தி" : "Page 2 of 4 • Bhavas & Dasa Timeline"}</p>
+          <p className="text-[9.5px] text-muted italic">
+            * {t(lang, "pdfDisclaimerShort")}
+          </p>
         </footer>
         </div>
       </div>
@@ -488,14 +486,11 @@ export function PrintHoroscopeSheet({
         <div className="relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border pb-2">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-8 w-auto object-contain" />
-            <div>
-              <p className="font-display text-sm font-bold text-ink">
-                {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "யோகங்கள், பலன்கள் & கோச்சாரம்" : "Yogas, Phalan & Transits"}
-              </p>
-              <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
-            </div>
+          <div>
+            <p className="font-display text-sm font-bold text-ink">
+              {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "யோகங்கள், பலன்கள் & கோச்சாரம்" : "Yogas, Phalan & Transits"}
+            </p>
+            <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
           </div>
           <div className="text-right">
             <span className="text-xs font-semibold text-accent">astro.codepackr.com</span>
@@ -638,16 +633,18 @@ export function PrintHoroscopeSheet({
         </div>
 
         {/* Page 3 Footer */}
-        <footer className="mt-4 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-5 w-auto object-contain" />
-            <div>
+        <footer className="mt-4 flex flex-col gap-1 border-t border-border pt-2 text-xs text-muted">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <span className="font-semibold text-accent">astro.codepackr.com</span>
-              <span className="mx-1.5 text-border">&bull;</span>
-              <span className="text-ink font-medium">Contact: codepackr@gmail.com</span>
+              <span className="mx-1 text-border">&bull;</span>
+              <span className="text-ink font-medium">codepackr@gmail.com</span>
             </div>
+            <p className="text-[11px] font-medium">{lang === "ta" ? "பக்கம் 3 / 4 • யோகங்கள் & கோச்சாரம்" : "Page 3 of 4 • Yogas & Transits"}</p>
           </div>
-          <p className="text-[11px]">{lang === "ta" ? "பக்கம் 3 / 4 • யோகங்கள் & கோச்சாரம்" : "Page 3 of 4 • Yogas & Transits"}</p>
+          <p className="text-[9.5px] text-muted italic">
+            * {t(lang, "pdfDisclaimerShort")}
+          </p>
         </footer>
         </div>
       </div>
@@ -660,14 +657,11 @@ export function PrintHoroscopeSheet({
         <div className="relative z-1">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border pb-2">
-          <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-8 w-auto object-contain" />
-            <div>
-              <p className="font-display text-sm font-bold text-ink">
-                {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "வர்க்க சக்கரங்கள் & அஷ்டகவர்க்கம்" : "Shodasavarga & Ashtakavarga"}
-              </p>
-              <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
-            </div>
+          <div>
+            <p className="font-display text-sm font-bold text-ink">
+              {result.input.name || "ஜாதகம்"} &bull; {lang === "ta" ? "வர்க்க சக்கரங்கள் & அஷ்டகவர்க்கம்" : "Shodasavarga & Ashtakavarga"}
+            </p>
+            <p className="text-[10px] text-muted">{dob} &bull; {result.input.place}</p>
           </div>
           <div className="text-right">
             <span className="text-xs font-semibold text-accent">astro.codepackr.com</span>
@@ -774,21 +768,37 @@ export function PrintHoroscopeSheet({
         </div>
 
         {/* Closing Auspicious Footer */}
-        <div className="mt-3 rounded-lg border border-border/80 bg-surface/70 p-2.5 text-center text-xs">
+        <div className="mt-2.5 rounded-lg border border-border/80 bg-surface/70 p-2 text-center text-xs">
           <p className="font-display font-bold text-accent text-sm">
             {lang === "ta" ? "|| சுபம் நலம் பெருகுக ||" : "|| Subham & Divine Blessings ||"}
           </p>
           <p className="text-[11px] text-muted mt-0.5">
             {lang === "ta"
-              ? "இவ்வறிக்கை திருக்கணிதம் / வாக்கிய ஜோதிட கணித விதிகளின்படி துல்லியமாகக் கணிக்கப்பட்டது."
-              : "Calculated with high precision according to Vedic astrological principles."}
+              ? "இவ்வறிக்கை திருக்கணிதம் / வாக்கிய ஜோதிட கணித விதிகளின்படி கணினி அல்காரிதம் மூலம் கணிக்கப்பட்டது."
+              : "Calculated with high precision according to Vedic astrological principles via computer algorithms."}
+          </p>
+        </div>
+
+        {/* Legal Disclaimer Box */}
+        <div className="mt-2 rounded-lg border border-border/90 bg-elevated/50 p-2 text-left text-[9.5px] sm:text-[10px] leading-relaxed text-muted">
+          <div className="flex items-center justify-between font-semibold text-fg">
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="text-ink font-bold text-[10.5px]">{t(lang, "legalDisclaimerTitle")}</span>
+              <span className="text-[9.5px] text-muted font-normal">({t(lang, "computerGeneratedNotice")})</span>
+            </div>
+            <span className="font-mono text-accent text-[10px]">https://astro.codepackr.com/?page=disclaimer</span>
+          </div>
+          <p className="mt-1">
+            {lang === "ta"
+              ? "இவ்வறிக்கை கணினி வழி தானாகக் கணிக்கப்பட்டதாகும். முழுமையான சட்டப்பூர்வ பொறுப்புத் துறப்பு மற்றும் விதிமுறைகளுக்கு எங்கள் இணையதளத்தைப் பார்க்கவும்: https://astro.codepackr.com/?page=disclaimer"
+              : "This report is computer-generated for guidance only. For our complete legal disclaimer & terms of use, please visit: https://astro.codepackr.com/?page=disclaimer"}
           </p>
         </div>
 
         {/* Final Page Footer */}
         <footer className="mt-2 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
           <div className="flex items-center gap-2">
-            <img src={ganeshSrc} alt="Ganesha" className="h-5 w-auto object-contain" />
             <div>
               <span className="font-semibold text-accent">astro.codepackr.com</span>
               <span className="mx-1.5 text-border">&bull;</span>
@@ -796,8 +806,8 @@ export function PrintHoroscopeSheet({
             </div>
           </div>
           <div className="text-right text-[10px]">
-            <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Jathagam &bull; High Precision Engine</p>
-            <p className="text-muted">https://astro.codepackr.com &bull; Contact: codepackr@gmail.com &bull; {lang === "ta" ? "பக்கம் 4 / 4" : "Page 4 of 4"}</p>
+            <p className="font-medium text-fg">Codepackr Astro &bull; Tamil Jathagam &bull; {t(lang, "computerGeneratedNotice")}</p>
+            <p className="text-muted">https://astro.codepackr.com &bull; Contact: codepackr@gmail.com &bull; {lang === "ta" ? "பக்கம் 4 / 4 • நிறைவு" : "Page 4 of 4 • Complete"}</p>
           </div>
         </footer>
         </div>
