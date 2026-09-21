@@ -2,5 +2,5 @@
   "name": "Codepackr Astro",
   "description": "Tamil jathagam with Thirukanitham and Vakya — rasi, nakshatra, dasakoota porutham, marriage biodata.",
   "requestFramePermissions": [],
-  "majorCapabilities": []
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

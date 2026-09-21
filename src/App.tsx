@@ -9,13 +9,16 @@ import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t } from "@/lib/astro/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
 import { NavProvider, useNav } from "@/lib/nav";
+import { GaneshProvider } from "@/lib/ganesh-context";
 import { DEFAULT_INPUT } from "@/lib/astro/samples";
 
 export default function App() {
   return (
     <LangProvider>
       <NavProvider>
-        <Shell />
+        <GaneshProvider>
+          <Shell />
+        </GaneshProvider>
       </NavProvider>
     </LangProvider>
   );
