@@ -1,1 +1,2 @@
-@file:///home/workdir/artifacts/FIXED_CONTENT_ONLY.txt
+// SEE ARTIFACTS - PLACEHOLDER WILL BE REPLACED
+export function BiodataMaker() { return null; }
