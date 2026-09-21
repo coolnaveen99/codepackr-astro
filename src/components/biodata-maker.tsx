@@ -1,6 +1,6 @@
 // Codepackr Astro - Marriage Biodata Generator
 import { Download, Printer, Upload } from "lucide-react";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode, type Ref } from "react";
 import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA } from "@/lib/astro/constants";
 import {
   BLOODS,
@@ -243,7 +243,7 @@ function BiodataSheet({
   ganeshSrc,
   isGroom,
 }: {
-  ref: React.Ref<HTMLDivElement>;
+  ref: Ref<HTMLDivElement>;
   lang: Lang;
   bio: Biodata;
   chart: ReturnType<typeof compute> | null;
@@ -278,10 +278,13 @@ function BiodataSheet({
           <div className="space-y-1 text-sm">
             <Row k={t(lang, "name")} v={bio.birth.name || "—"} />
             <Row k={t(lang, "date")} v={`${bio.birth.day}/${bio.birth.month}/${bio.birth.year}`} />
-            <Row k={t(lang, "time")} v={`${bio.birth.hour}:${String(bio.birth.minute).padStart(2, "0")} ${bio.birth.ampm}`} />
+            <Row k={t(lang, "time")} v={`${bio.birth.hour}:${String(bio.birth.minute).padStart(2, "0")}`} />
             <Row k={t(lang, "place")} v={bio.birth.place || "—"} />
             <Row k={t(lang, "height")} v={bio.height} />
-            <Row k={t(lang, "complexion")} v={COMPLEXIONS.find((c) => c.id === bio.complexion)?.[lang === "ta" ? "ta" : "en"] || bio.complexion} />
+            <Row k={t(lang, "complexion")} v={( () => {
+              const cx = COMPLEXIONS.find((c) => c.id === bio.complexion);
+              return cx ? (lang === "ta" ? cx.ta : cx.en) : bio.complexion;
+            })()} />
             <Row k={t(lang, "blood")} v={bio.blood} />
             <Row k={t(lang, "religion")} v={bio.religion} />
             <Row k={t(lang, "caste")} v={bio.caste} />
