@@ -7,6 +7,7 @@ import { ChartViews } from "@/components/chart-views";
 import { ContactForm } from "@/components/contact-form";
 import { DisclaimerPage } from "@/components/disclaimer-page";
 import { PoruthamView } from "@/components/porutham-view";
+import { PanchangamView } from "@/components/panchangam-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t } from "@/lib/astro/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
@@ -37,6 +38,8 @@ function Shell() {
     <AppShell>
       {page === "porutham" ? (
         <PoruthamView lang={lang} />
+      ) : page === "panchangam" ? (
+        <PanchangamView lang={lang} />
       ) : page === "biodata" ? (
         <BiodataMaker lang={lang} />
       ) : page === "contact" ? (

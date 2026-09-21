@@ -1,7 +1,7 @@
 // Codepackr Astro - Top Navigation Context
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type Page = "jathagam" | "porutham" | "biodata" | "contact" | "disclaimer";
+export type Page = "jathagam" | "porutham" | "biodata" | "panchangam" | "contact" | "disclaimer";
 
 const NavCtx = createContext<{ page: Page; go: (p: Page) => void } | null>(null);
 
@@ -9,7 +9,7 @@ export function NavProvider({ children }: { children: ReactNode }) {
   const [page, setPage] = useState<Page>(() => {
     if (typeof window !== "undefined") {
       const p = new URLSearchParams(window.location.search).get("page");
-      if (p === "porutham" || p === "biodata" || p === "contact" || p === "disclaimer") return p;
+      if (p === "porutham" || p === "biodata" || p === "panchangam" || p === "contact" || p === "disclaimer") return p;
     }
     return "jathagam";
   });
