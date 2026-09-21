@@ -18,13 +18,18 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-bg text-fg">
       <header className="no-print border-b border-border/80 bg-surface">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-          <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => go("jathagam")}
+            className="flex items-center gap-3 text-left rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+            aria-label="Home"
+          >
             <img src="/favicon.svg" alt="" className="size-10 rounded-sm" />
             <div>
               <h1 className="font-display text-xl leading-tight sm:text-2xl">{t(lang, "brand")}</h1>
               <p className="text-xs text-muted sm:text-sm">{t(lang, "tagline")}</p>
             </div>
-          </div>
+          </button>
           <nav className="flex flex-wrap items-center gap-1">
             {NAV.map((n) => (
               <button
@@ -104,7 +109,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               <span className="text-muted">Codepackr Technologies</span>
             </div>
           </div>
-          {/* Legal Disclaimer Link */}
           <div className="pt-4 border-t border-border/70 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-muted">
             <p className="flex items-center gap-1.5">
               <span className="inline-block size-1.5 rounded-full bg-accent" />
