@@ -8,7 +8,6 @@ const NAV: { id: Page; label: string }[] = [
   { id: "jathagam", label: "navChart" },
   { id: "porutham", label: "navPorutham" },
   { id: "biodata", label: "navBiodata" },
-  { id: "disclaimer", label: "navDisclaimer" },
   { id: "contact", label: "Contact" },
 ];
 
@@ -39,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               >
                 {n.id === "contact"
                   ? "Contact"
-                  : t(lang, n.label as "navChart" | "navPorutham" | "navBiodata" | "navDisclaimer")}
+                  : t(lang, n.label as "navChart" | "navPorutham" | "navBiodata")}
               </button>
             ))}
             <div className="ml-2 flex rounded-full bg-elevated p-1">
@@ -103,23 +102,6 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </a>
               </span>
               <span className="text-muted">Codepackr Technologies</span>
-              <div className="flex gap-3 text-muted mt-1">
-                <button type="button" onClick={() => go("jathagam")} className="hover:text-accent transition-colors">
-                  {t(lang, "navChart")}
-                </button>
-                &bull;
-                <button type="button" onClick={() => go("porutham")} className="hover:text-accent transition-colors">
-                  {t(lang, "navPorutham")}
-                </button>
-                &bull;
-                <button type="button" onClick={() => go("biodata")} className="hover:text-accent transition-colors">
-                  {t(lang, "navBiodata")}
-                </button>
-                &bull;
-                <button type="button" onClick={() => go("disclaimer")} className="hover:text-accent transition-colors">
-                  {t(lang, "navDisclaimer")}
-                </button>
-              </div>
             </div>
           </div>
           {/* Legal Disclaimer Link */}
@@ -138,7 +120,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 }}
                 className="text-accent underline font-medium hover:text-accent/80"
               >
-                https://astro.codepackr.com/?page=disclaimer
+                {t(lang, "navDisclaimer")}
               </a>
             </p>
             <p>&copy; {new Date().getFullYear()} astro.codepackr.com. All rights reserved.</p>
