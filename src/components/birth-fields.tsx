@@ -61,16 +61,23 @@ export function daysInMonth(year: number, month: number) {
   return DIM[m - 1]!;
 }
 
-export function clampBirthDate(year: number, month: number, day: number, now = new Date()) {
+export function clampBirthDate(
+  year: number,
+  month: number,
+  day: number,
+  now = new Date(),
+  allowFuture = false,
+) {
   const today = todayParts(now);
+  const maxYear = allowFuture ? today.year + 2 : today.year;
   const yRaw = Math.trunc(Number(year));
   const y = Number.isFinite(yRaw)
-    ? Math.min(Math.max(yRaw, MIN_BIRTH_YEAR), today.year)
-    : Math.min(1990, today.year);
+    ? Math.min(Math.max(yRaw, MIN_BIRTH_YEAR), maxYear)
+    : Math.min(1990, maxYear);
   let m = Math.min(Math.max(Math.trunc(Number(month)) || 1, 1), 12);
-  if (y === today.year) m = Math.min(m, today.month);
+  if (!allowFuture && y === today.year) m = Math.min(m, today.month);
   let maxD = daysInMonth(y, m);
-  if (y === today.year && m === today.month) maxD = Math.min(maxD, today.day);
+  if (!allowFuture && y === today.year && m === today.month) maxD = Math.min(maxD, today.day);
   const d = Math.min(Math.max(Math.trunc(Number(day)) || 1, 1), maxD);
   return { year: y, month: m, day: d };
 }
@@ -192,10 +199,12 @@ export function DateTimeFields({
   lang,
   value,
   onChange,
+  allowFuture = false,
 }: {
   lang: Lang;
   value: BirthInput;
   onChange: (next: BirthInput) => void;
+  allowFuture?: boolean;
 }) {
   const clock = to12(value.hour);
   const [now, setNow] = useState<Date | null>(null);
@@ -203,27 +212,48 @@ export function DateTimeFields({
     setNow(new Date());
   }, []);
   const today = now ? todayParts(now) : { year: 2099, month: 12, day: 31 };
+  const maxYear = allowFuture ? today.year + 2 : today.year;
   const safe = now
-    ? clampBirthDate(value.year, value.month, value.day, now)
+    ? allowFuture
+      ? {
+          year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), maxYear),
+          month: Math.min(Math.max(value.month || 1, 1), 12),
+          day: Math.min(
+            Math.max(value.day || 1, 1),
+            daysInMonth(value.year || 1990, value.month || 1),
+          ),
+        }
+      : clampBirthDate(value.year, value.month, value.day, now)
     : {
-        year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), 2099),
+        year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), maxYear),
         month: Math.min(Math.max(value.month || 1, 1), 12),
-        day: Math.min(Math.max(value.day || 1, 1), daysInMonth(value.year || 1990, value.month || 1)),
+        day: Math.min(
+          Math.max(value.day || 1, 1),
+          daysInMonth(value.year || 1990, value.month || 1),
+        ),
       };
   const months = lang === "ta" ? MONTHS_TA : MONTHS_EN;
-  const monthLimit = safe.year === today.year ? today.month : 12;
+  const monthLimit = !allowFuture && safe.year === today.year ? today.month : 12;
   const dayLimit =
-    safe.year === today.year && safe.month === today.month
+    !allowFuture && safe.year === today.year && safe.month === today.month
       ? Math.min(daysInMonth(safe.year, safe.month), today.day)
       : daysInMonth(safe.year, safe.month);
   const wantedDay = useRef(value.day);
 
   useEffect(() => {
     if (!now) return;
+    if (allowFuture) {
+      // only clamp day to month length when allowing future
+      const maxD = daysInMonth(safe.year, safe.month);
+      if (safe.day > maxD) {
+        onChange({ ...value, year: safe.year, month: safe.month, day: maxD });
+      }
+      return;
+    }
     if (safe.year !== value.year || safe.month !== value.month || safe.day !== value.day) {
       onChange({ ...value, year: safe.year, month: safe.month, day: safe.day });
     }
-  }, [now, safe.year, safe.month, safe.day, value, onChange]);
+  }, [now, safe.year, safe.month, safe.day, value, onChange, allowFuture]);
 
   function setDate(patch: Partial<Pick<BirthInput, "year" | "month" | "day">>) {
     if (patch.day != null) wantedDay.current = patch.day;
@@ -231,6 +261,8 @@ export function DateTimeFields({
       patch.year ?? value.year,
       patch.month ?? value.month,
       patch.day ?? wantedDay.current,
+      now ?? new Date(),
+      allowFuture,
     );
     if (next.year === value.year && next.month === value.month && next.day === value.day) return;
     onChange({ ...value, ...next });
@@ -242,7 +274,9 @@ export function DateTimeFields({
         <Label>{t(lang, "date")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
+              {t(lang, "day")}
+            </span>
             <FieldSelect value={safe.day} onChange={(v) => setDate({ day: Number(v) })}>
               {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => (
                 <option key={d} value={d}>
@@ -252,7 +286,9 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
+              {t(lang, "calMonth")}
+            </span>
             <FieldSelect value={safe.month} onChange={(v) => setDate({ month: Number(v) })}>
               {months.slice(0, monthLimit).map((m, i) => (
                 <option key={m} value={i + 1}>
@@ -262,11 +298,13 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
+              {t(lang, "year")}
+            </span>
             <YearInput
               year={safe.year}
               min={MIN_BIRTH_YEAR}
-              max={today.year}
+              max={maxYear}
               onCommit={(year) => setDate({ year })}
             />
           </div>
@@ -277,7 +315,9 @@ export function DateTimeFields({
         <Label>{t(lang, "time")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "hour")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
+              {t(lang, "hour")}
+            </span>
             <FieldSelect
               value={clock.h}
               onChange={(v) => onChange({ ...value, hour: to24(Number(v), clock.ampm) })}
@@ -290,7 +330,9 @@ export function DateTimeFields({
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "minute")}</span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
+              {t(lang, "minute")}
+            </span>
             <FieldSelect
               value={value.minute}
               onChange={(v) => onChange({ ...value, minute: Number(v) })}
