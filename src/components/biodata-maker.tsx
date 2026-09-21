@@ -1,6 +1,6 @@
 // Codepackr Astro - Marriage Biodata Generator
 import { ArrowLeftRight, Download, Printer, Upload } from "lucide-react";
-import { useMemo, useRef, useState, type ReactNode, type Ref } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { analyse } from "@/lib/astro/analysis";
 import {
   BLOODS,
@@ -16,7 +16,6 @@ import { compute } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
 import { DateTimeFields, FieldSelect, PlaceSearch } from "@/components/birth-fields";
 import { PrintDialog } from "@/components/print-dialog";
-import { Watermark } from "@/components/watermark";
 import { BiodataSheet } from "@/components/biodata-sheet";
 import { useGanesh } from "@/lib/ganesh-context";
 import { Button } from "@/components/ui/button";
@@ -178,9 +177,12 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
               <Field label={t(lang, "height")}>
                 <div className="flex gap-1">
                   <FieldSelect value={bio.height} onChange={(v) => patch({ height: v })} className="flex-1">
-                    {HEIGHT_OPTIONS.map((o) => (
-                      <option key={o.ft} value={heightUnit === "cm" ? o.cmLabel : o.ftLabel}>
-                        {heightUnit === "cm" ? o.cmLabel : o.ftLabel}
+                    {HEIGHT_OPTIONS.map((opt) => (
+                      <option
+                        key={opt.ft}
+                        value={heightUnit === "ft" ? opt.ft : opt.cm}
+                      >
+                        {heightUnit === "ft" ? opt.ftLabel : opt.cmLabel}
                       </option>
                     ))}
                   </FieldSelect>
@@ -266,7 +268,12 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
       </div>
 
       {showPrintModal && (
-        <PrintDialog open={showPrintModal} onClose={() => setShowPrintModal(false)} lang={lang}>
+        <PrintDialog
+          open={showPrintModal}
+          onClose={() => setShowPrintModal(false)}
+          lang={lang}
+          title={isGroom ? (lang === "ta" ? "மணமகன் விவரம்" : "Groom Biodata") : (lang === "ta" ? "மணமகள் விவரம்" : "Bride Biodata")}
+        >
           <BiodataSheet sheetRef={null} lang={lang} bio={bio} chart={chart} analysis={analysis} />
         </PrintDialog>
       )}
