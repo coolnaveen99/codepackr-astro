@@ -590,102 +590,99 @@ export function ayanamsaFor(jd: number, school: School) {
   if (school === "vakya") {
     return ayanamsaThirukanitham(jd);
   }
-  // Both "lahiri" and "thirukanitham" (modern Drik) use the improved Lahiri polynomial
+  if (school === "raman") return ayanamsaRaman(jd);
+  if (school === "kp") return ayanamsaKP(jd);
   return ayanamsaLahiri(jd);
 }
 
 export function siderealGrahas(jd: number, school: School) {
   const aya = ayanamsaFor(jd, school);
-  const retro: Partial<Record<PlanetId, boolean>> = {};
   if (school === "vakya") {
-    const v = vakyaMean(jd);
+    const m = vakyaMean(jd);
     return {
       aya,
       bodies: {
-        sun: v.sun,
-        moon: v.moon,
-        mercury: v.mercury,
-        venus: v.venus,
-        mars: v.mars,
-        jupiter: v.jupiter,
-        saturn: v.saturn,
-        rahu: v.rahu,
-        ketu: norm360(v.rahu + 180),
-      } as Record<Exclude<PlanetId, "lagna" | "gulika">, number>,
-      retro,
+        sun: norm360(m.sun - aya),
+        moon: norm360(m.moon - aya),
+        mercury: norm360(m.mercury - aya),
+        venus: norm360(m.venus - aya),
+        mars: norm360(m.mars - aya),
+        jupiter: norm360(m.jupiter - aya),
+        saturn: norm360(m.saturn - aya),
+        rahu: norm360(m.rahu - aya),
+        ketu: norm360(m.rahu + 180 - aya),
+      } as Record<PlanetId, number>,
+      retro: {
+        mercury: false,
+        venus: false,
+        mars: false,
+        jupiter: false,
+        saturn: false,
+      },
     };
   }
   const trop = tropicalBodies(jd);
-  const sid = (x: number) => norm360(x - aya);
-  Object.assign(retro, trop.retro);
-  return {
-    aya,
-    bodies: {
-      sun: sid(trop.sun),
-      moon: sid(trop.moon),
-      mercury: sid(trop.mercury),
-      venus: sid(trop.venus),
-      mars: sid(trop.mars),
-      jupiter: sid(trop.jupiter),
-      saturn: sid(trop.saturn),
-      rahu: sid(trop.rahu),
-      ketu: sid(trop.ketu),
-    } as Record<Exclude<PlanetId, "lagna" | "gulika">, number>,
-    retro,
+  const bodies: Record<PlanetId, number> = {
+    sun: norm360(trop.sun - aya),
+    moon: norm360(trop.moon - aya),
+    mercury: norm360(trop.mercury - aya),
+    venus: norm360(trop.venus - aya),
+    mars: norm360(trop.mars - aya),
+    jupiter: norm360(trop.jupiter - aya),
+    saturn: norm360(trop.saturn - aya),
+    rahu: norm360(trop.rahu - aya),
+    ketu: norm360(trop.ketu - aya),
   };
+  return { aya, bodies, retro: trop.retro };
 }
 
 export function compute(input: BirthInput): ChartResult {
-  const localHours = input.hour + input.minute / 60;
-  const jd = julianDay(input.year, input.month, input.day, localHours - input.tz);
+  const hourUT = input.hour + input.minute / 60 - input.tz;
+  const jd = julianDay(input.year, input.month, input.day, hourUT);
   const school = input.school;
   const grahas = siderealGrahas(jd, school);
-  const aya = grahas.aya;
-  const tropAsc = tropicalAscendant(jd, input.lat, input.lon);
+  const lagnaTrop = tropicalAscendant(jd, input.lat, input.lon);
+  const lagna = norm360(lagnaTrop - grahas.aya);
   const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
+  const wd = weekdayFromJD(ss.sunriseJD + input.tz / 24);
   const isDay = jd >= ss.sunriseJD && jd < ss.sunsetJD;
-  const wd = weekdayFromJD(jd + input.tz / 24);
-
-  const dayLen = ss.sunsetJD - ss.sunriseJD;
-  const nightLen = ss.nextSunriseJD - ss.sunsetJD;
-  const baseLord = isDay ? wd : (wd + 4) % 7;
-  const lords = Array.from({ length: 8 }, (_, i) => (baseLord + i) % 8);
-  const satIdx = Math.max(lords.indexOf(6), 0);
-  const gulikaJD =
-    (isDay ? ss.sunriseJD : ss.sunsetJD) + (satIdx / 8) * (isDay ? dayLen : nightLen);
-  const tropGulika = tropicalAscendant(gulikaJD, input.lat, input.lon);
-
-  const bodies: Record<PlanetId, number> = {
-    ...grahas.bodies,
-    lagna: norm360(tropAsc - aya),
-    gulika: norm360(tropGulika - aya),
-  };
-  const retro = grahas.retro;
-  const lagnaSign = signIndex(bodies.lagna);
-
-  const list: BodyPos[] = PLANETS.map((p) => {
-    const lon = norm360(bodies[p.id]);
-    const sd = signDms(lon);
-    const nak = nakshatra(lon);
-    return {
+  const list: BodyPos[] = [];
+  const bodies = grahas.bodies;
+  for (const p of PLANETS) {
+    const lon = bodies[p.id];
+    const n = nakshatra(lon);
+    list.push({
       id: p.id,
       lon,
-      sign: sd.sign,
-      dms: sd.text,
-      nak: nak.idx,
-      pada: nak.pada,
+      sign: signIndex(lon),
+      dms: dmsText(lon),
+      nak: n.idx,
+      pada: n.pada,
       navamsa: navamsa(lon),
-      house: houseFrom(sd.sign, lagnaSign),
-      retrograde: !!retro[p.id] || p.id === "rahu" || p.id === "ketu",
-    };
+      house: houseFrom(signIndex(lon), signIndex(lagna)),
+      retrograde: !!(grahas.retro as any)[p.id],
+    });
+  }
+  // Lagna as virtual body for charts
+  list.unshift({
+    id: "lagna" as PlanetId,
+    lon: lagna,
+    sign: signIndex(lagna),
+    dms: dmsText(lagna),
+    nak: nakshatra(lagna).idx,
+    pada: nakshatra(lagna).pada,
+    navamsa: navamsa(lagna),
+    house: 1,
+    retrograde: false,
   });
-
+  const pan = panchanga(bodies.sun, bodies.moon, wd);
+  const muh = muhurta(ss.sunriseJD, ss.sunsetJD, wd);
+  const dasa = vimshottari(bodies.moon, jd);
   const { sav, bav } = ashtakavarga(bodies);
-
   return {
     input,
     jd,
-    aya,
+    aya: grahas.aya,
     school,
     weekday: wd,
     isDay,
@@ -693,12 +690,118 @@ export function compute(input: BirthInput): ChartResult {
     sunsetJD: ss.sunsetJD,
     list,
     bodies,
-    pan: panchanga(bodies.sun, bodies.moon, wd),
-    muh: muhurta(ss.sunriseJD, ss.sunsetJD, wd),
-    dasa: vimshottari(bodies.moon, jd),
+    pan,
+    muh,
+    dasa,
     sav,
     bav,
   };
 }
 
-export { KARANA_EN };
+const HORA_LORDS = ["sun", "venus", "mercury", "moon", "saturn", "jupiter", "mars"] as const;
+const WEEKDAY_HORA_START = ["sun", "moon", "mars", "mercury", "jupiter", "venus", "saturn"] as const;
+
+export type HoraSlot = {
+  lord: (typeof HORA_LORDS)[number];
+  startJD: number;
+  endJD: number;
+  dayPart: "day" | "night";
+};
+
+export type DailyPanchang = {
+  year: number;
+  month: number;
+  day: number;
+  tz: number;
+  lat: number;
+  lon: number;
+  place: string;
+  school: School;
+  jdNoon: number;
+  weekday: number;
+  aya: number;
+  sunriseJD: number;
+  sunsetJD: number;
+  nextSunriseJD: number;
+  pan: ChartResult["pan"];
+  muh: ChartResult["muh"];
+  /** 24 planetary horas (oorai) from sunrise to next sunrise */
+  horas: HoraSlot[];
+  /** Moon nakshatra at local noon */
+  moonNak: { idx: number; pada: number; lon: number };
+  sunLon: number;
+  moonLon: number;
+};
+
+/**
+ * Classical planetary hora (Tamil: ஊரை / ஓரை).
+ * Day is divided into 24 equal parts from sunrise to next sunrise.
+ * First hora of the civil day is ruled by the weekday lord.
+ */
+export function planetaryHoras(sunriseJD: number, nextSunriseJD: number, weekday: number): HoraSlot[] {
+  const span = Math.max(0.5, nextSunriseJD - sunriseJD);
+  const slot = span / 24;
+  const startLord = WEEKDAY_HORA_START[weekday] ?? "sun";
+  const startIdx = HORA_LORDS.indexOf(startLord as (typeof HORA_LORDS)[number]);
+  const mid = sunriseJD + span / 2;
+  const out: HoraSlot[] = [];
+  for (let i = 0; i < 24; i++) {
+    const lord = HORA_LORDS[(startIdx + i) % 7]!;
+    const start = sunriseJD + i * slot;
+    const end = sunriseJD + (i + 1) * slot;
+    out.push({
+      lord,
+      startJD: start,
+      endJD: end,
+      dayPart: start < mid ? "day" : "night",
+    });
+  }
+  return out;
+}
+
+/**
+ * Standalone daily Panchangam + Oorai for a calendar date and place.
+ * Uses local noon for tithi/nakshatra snapshot; muhurta from true sunrise/sunset.
+ */
+export function computeDailyPanchang(input: {
+  year: number;
+  month: number;
+  day: number;
+  tz: number;
+  lat: number;
+  lon: number;
+  place: string;
+  school?: School;
+}): DailyPanchang {
+  const school = input.school ?? "thirukanitham";
+  const jdNoon = julianDay(input.year, input.month, input.day, 12 - input.tz);
+  const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
+  const wd = weekdayFromJD(ss.sunriseJD + input.tz / 24);
+  const grahas = siderealGrahas(jdNoon, school);
+  const pan = panchanga(grahas.bodies.sun, grahas.bodies.moon, wd);
+  const muh = muhurta(ss.sunriseJD, ss.sunsetJD, wd);
+  const horas = planetaryHoras(ss.sunriseJD, ss.nextSunriseJD, wd);
+  const moonNak = nakshatra(grahas.bodies.moon);
+  return {
+    year: input.year,
+    month: input.month,
+    day: input.day,
+    tz: input.tz,
+    lat: input.lat,
+    lon: input.lon,
+    place: input.place,
+    school,
+    jdNoon,
+    weekday: wd,
+    aya: grahas.aya,
+    sunriseJD: ss.sunriseJD,
+    sunsetJD: ss.sunsetJD,
+    nextSunriseJD: ss.nextSunriseJD,
+    pan,
+    muh,
+    horas,
+    moonNak: { idx: moonNak.idx, pada: moonNak.pada, lon: grahas.bodies.moon },
+    sunLon: grahas.bodies.sun,
+    moonLon: grahas.bodies.moon,
+  };
+}
