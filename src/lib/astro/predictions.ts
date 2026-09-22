@@ -47,7 +47,7 @@ function lordStrength(a: Analysis, house: number): "strong" | "mixed" | "weak" {
 
 function savNote(b: BhavaReport, lang: Lang): string {
   if (lang === "ta") {
-    if (b.sav >= 30) return `Sarvashtakavarga ${b.sav} — strong (ta).`.replace("strong (ta).", `சர்வாஷ்டவர்க்கம் ${b.sav} — வலுவான பாவம்.`);
+    if (b.sav >= 30) return `சர்வாஷ்டவர்க்கம் ${b.sav} — வலுவான பாவம்.`;
     if (b.sav >= 25) return `சர்வாஷ்டவர்க்கம் ${b.sav} — நடுத்தரம்.`;
     return `சர்வாஷ்டவர்க்கம் ${b.sav} — முயற்சி தேவை.`;
   }
