@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileText, Info, Moon, Palette , ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
+import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileDown, FileText, Info, Moon, Palette, Printer, ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
@@ -9,8 +9,39 @@ import { useNav } from "@/lib/nav";
 import { BirthForm } from "@/components/birth-form";
 import { SouthChart } from "@/components/south-chart";
 import { cn } from "@/lib/utils";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 type ReportMode = "traditional" | "biodata" | "full";
+
+async function exportTraditionalPdf(name?: string) {
+  const element = document.getElementById("traditional-jathagam-report");
+  if (!element) return;
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff",
+    windowWidth: element.scrollWidth,
+  });
+  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+  const margin = 8;
+  const pageWidth = 210 - margin * 2;
+  const pageHeight = 297 - margin * 2;
+  const imageHeight = (canvas.height * pageWidth) / canvas.width;
+  let remaining = imageHeight;
+  let position = margin;
+  const image = canvas.toDataURL("image/png");
+  pdf.addImage(image, "PNG", margin, position, pageWidth, imageHeight, undefined, "FAST");
+  remaining -= pageHeight;
+  while (remaining > 0) {
+    position -= pageHeight;
+    pdf.addPage();
+    pdf.addImage(image, "PNG", margin, position, pageWidth, imageHeight, undefined, "FAST");
+    remaining -= pageHeight;
+  }
+  const safeName = (name || "jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g, "-").replace(/^-+|-+$/g, "") || "jathagam";
+  pdf.save(`${safeName}-traditional-jathagam.pdf`);
+}
 
 export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:Lang;draft:BirthInput;onChange:(v:BirthInput)=>void;onSubmit:()=>void;result:ChartResult|null}) {
   const [mode,setMode]=useState<ReportMode>("traditional");
@@ -46,7 +77,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
         </div>
 
         <PreviewPanel lang={lang} mode={mode} result={result} onGenerate={generate}/>
-        {result&&mode!=="biodata"?<div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        {result&&mode!=="biodata"?<div id="traditional-jathagam-report" className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action astro-action-primary"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Open detailed analysis"}</button></div>
           <TraditionalPreview result={result} lang={lang}/>
         </div>:null}
@@ -64,7 +95,10 @@ function PreviewPanel({lang,mode,result,onGenerate}:{lang:Lang;mode:ReportMode;r
     <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5"><div className="flex items-center gap-2.5"><span className="flex size-8 items-center justify-center rounded-lg bg-accent/10 text-accent"><Moon className="size-4"/></span><h2 className="font-display text-base font-extrabold text-slate-900">{lang==="ta"?"முன்னோட்டம் (Sample)":"Preview (Sample)"}</h2></div><span className="hidden text-[11px] font-semibold text-slate-400 sm:block">{lang==="ta"?"கணக்கீட்டுக்குப் பிறகு முன்னோட்டம் புதுப்பிக்கப்படும்":"Preview updates after calculation"}</span></div>
     <div className="grid gap-3 p-4 sm:grid-cols-3 sm:p-5"><PreviewTile tone="blue" title={lang==="ta"?"பாரம்பரிய ஜாதகம்":"Traditional Jathagam"} pages="1–2" active={mode==="traditional"}/><PreviewTile tone="green" title={lang==="ta"?"ஜாதகம் + பயோடேட்டா":"Jathagam + Biodata"} pages="2–4" active={mode==="biodata"}/><PreviewTile tone="violet" title={lang==="ta"?"முழு ஜாதகம்":"Full Jathagam"} pages="25–30+" active={mode==="full"}/></div>
     <div className="grid gap-3 border-t border-slate-100 bg-slate-50/70 p-4 sm:grid-cols-4 sm:p-5"><Setting icon={<Palette/>} label={lang==="ta"?"வண்ணமைப்பு":"Theme"} value="CodePackr"/><Setting icon={<FileText/>} label={lang==="ta"?"பக்க அளவு":"Page size"} value="A4"/><Setting icon={<CalendarDays/>} label={lang==="ta"?"மொழி":"Language"} value={lang==="ta"?"தமிழ்":"English"}/><Setting icon={<BarChart3/>} label={lang==="ta"?"வெளியீடு":"Output"} value="PDF / Print"/></div>
-    <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4 sm:p-5"><button type="button" onClick={onGenerate} className="astro-action astro-action-primary flex-1 justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Horoscope"}<ArrowRight className="size-4"/></button>{result?<button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Detailed analysis"}</button>:null}</div>
+    <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4 sm:p-5">
+      <button type="button" onClick={onGenerate} className="astro-action astro-action-primary flex-1 justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Horoscope"}<ArrowRight className="size-4"/></button>
+      {result?<><button type="button" onClick={()=>window.print()} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button><button type="button" onClick={()=>void exportTraditionalPdf(result.input.name)} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button><button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Detailed analysis"}</button></>:null}
+    </div>
   </div>;
 }
 
