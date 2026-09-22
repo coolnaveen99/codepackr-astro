@@ -39,6 +39,10 @@ You are extending **Codepackr Astro** — a 100% client-side Tamil Jathagam, Das
 | Print / PDF helpers | ✅ | `print-helper.ts`, `print-horoscope-sheet.tsx`, `jspdf` + `html2canvas` |
 | Tamil / English i18n | ✅ | `src/lib/astro/i18n.ts`, `lang.tsx` |
 | Privacy (no server, no storage of charts) | ✅ | Entire architecture |
+| Numerology | ✅ | `numerology.ts`, `numerology-view.tsx` |
+| Glossary | ✅ | `glossary.ts`, `glossary-view.tsx` |
+| Prasna (now chart) | ✅ | `prasna-view.tsx` |
+| Sample charts | ✅ | `samples.ts` + birth sidebar |
 
 ### Gaps vs. typical “premium / full prediction” Tamil sites
 
@@ -52,7 +56,7 @@ These are the items competitors charge for. We will deliver them free.
 6. **Focused Transit / Gochara forecasts** — next 12–24 months for Saturn, Jupiter, Rahu/Ketu relative to natal Rasi / Lagna.
 7. **Daily / Weekly / Monthly Rasi Palan** — high-engagement free page (no birth data required).
 8. **Premium-feeling free PDF report** — multi-section “Full Jathagam Report” (charts + phalan + dasa + remedies + summary).
-9. **Supporting tools** — Numerology, improved Muhurta finder, optional simple Prasna, educational glossary tooltips.
+9. **Supporting tools** — Numerology, improved Muhurta finder, optional simple Prasna, educational glossary tooltips. **(Phase 3 shipped)**
 10. **Tone & education** — classical, balanced language; short explanations of terms so beginners trust the free depth.
 
 ---
@@ -75,6 +79,8 @@ These are the items competitors charge for. We will deliver them free.
      strength.ts        # NEW (optional) — basic relative strength
      rasi-palan.ts      # NEW — daily / weekly text generators
      report.ts          # NEW — assemble full printable report sections
+     numerology.ts      # Phase 3
+     glossary.ts        # Phase 3
      constants.ts
      tables.ts
      i18n.ts
@@ -85,10 +91,13 @@ These are the items competitors charge for. We will deliver them free.
 
    ```
    src/components/
-     analysis-panes.tsx     # extend existing panes / tabs
-     full-report.tsx        # NEW multi-section free report view
-     daily-rasi.tsx         # NEW
-     remedies-panel.tsx     # NEW
+     analysis-panes.tsx
+     full-report.tsx
+     daily-rasi.tsx
+     remedies-panel.tsx
+     numerology-view.tsx
+     glossary-view.tsx
+     prasna-view.tsx
      ...
    ```
 
@@ -236,14 +245,15 @@ These are the items competitors charge for. We will deliver them free.
 2. Focus on Saturn, Jupiter, Rahu, Ketu for next 12–24 months relative to natal Moon / Lagna.
 3. Short monthly or quarterly narrative.
 
-### Phase 3 — Supporting tools & polish
+### Phase 3 — Supporting tools & polish ✅ (shipped 2026-09-22)
 
-- Numerology (name / birth number) — pure client-side.
-- Improved Muhurta finder (already partial in panchangam).
-- Optional simple Prasna (question chart for “now”).
-- Glossary / tooltips for terms (Thirukanitham, Rajju, Vedha, Vargottama, etc.).
-- More sample charts for testing.
-- SEO: expand meta descriptions, Open Graph, structured data; keep `public/sitemap.xml` accurate.
+- ✅ Numerology (name / birth number) — pure client-side (`numerology.ts`, `numerology-view.tsx`).
+- ✅ Muhurta finder via panchangam (Rahu kalam, Gowri, Abhijit, oorai/horas).
+- ✅ Simple Prasna (question chart for “now”) — `prasna-view.tsx`.
+- ✅ Glossary for classical terms — `glossary.ts`, `glossary-view.tsx` (20+ entries).
+- ✅ Sample charts panel (5 named charts, multiple schools/locations).
+- ✅ SEO: expanded meta, Open Graph, Twitter cards, JSON-LD; `public/sitemap.xml` includes new pages.
+- ✅ Nav + i18n wiring for numerology / glossary / prasna (Tamil + English).
 
 ---
 
@@ -336,6 +346,7 @@ Our differentiator: **same or better depth, completely free, zero data collectio
 | Date       | Change                                      |
 |------------|---------------------------------------------|
 | 2026-09-22 | Initial detailed roadmap created            |
+| 2026-09-22 | Phase 3 marked complete (numerology, glossary, prasna, samples, SEO) |
 
 ---
 
