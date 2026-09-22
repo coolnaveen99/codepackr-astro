@@ -273,6 +273,9 @@ const COPY = {
   errorGeneric: { ta: "பிழை — மீண்டும் முயற்சிக்கவும்.", en: "Error — please try again." },
   downloadPdf: { ta: "PDF பதிவிறக்க", en: "Download PDF" },
   photo: { ta: "புகைப்படம்", en: "Photo" },
+  very_fair: { ta: "நல்ல சிகப்பு", en: "Very Fair" },
+  openPorutham: { ta: "பொருத்தம் பார்க்க", en: "Open Porutham" },
+  chevvaiNone: { ta: "இருவருக்கும் செவ்வாய் தோஷம் இல்லை.", en: "Neither has Chevvai dosham." },
   privacyNote: {
     ta: "அனைத்து கணக்குகளும் உங்கள் சாதனத்திலேயே. பிறப்பு விவரம் சேவையகத்திற்கு அனுப்பப்படாது.",
     en: "All calculations run on your device. Birth details never leave your browser.",
