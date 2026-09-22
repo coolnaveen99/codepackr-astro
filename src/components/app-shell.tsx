@@ -9,6 +9,9 @@ const NAV: { id: Page; label: string }[] = [
   { id: "porutham", label: "navPorutham" },
   { id: "panchangam", label: "navPanchang" },
   { id: "rasipalan", label: "navRasiPalan" },
+  { id: "numerology", label: "navNumerology" },
+  { id: "prasna", label: "navPrasna" },
+  { id: "glossary", label: "navGlossary" },
   { id: "biodata", label: "navBiodata" },
   { id: "contact", label: "Contact" },
 ];
@@ -45,7 +48,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               >
                 {n.id === "contact"
                   ? "Contact"
-                  : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navBiodata")}
+                  : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata")}
               </button>
             ))}
             <div className="ml-2 flex rounded-full bg-elevated p-1">
@@ -115,6 +118,19 @@ export function AppShell({ children }: { children: ReactNode }) {
             <p className="flex items-center gap-1.5">
               <span className="inline-block size-1.5 rounded-full bg-accent" />
               <span>{t(lang, "computerGeneratedNotice")}</span>
+              <span className="text-border">&bull;</span>
+              <a
+                href="https://astro.codepackr.com/?page=glossary"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  go("glossary");
+                }}
+                className="text-accent underline font-medium hover:text-accent/80"
+              >
+                {t(lang, "navGlossary")}
+              </a>
               <span className="text-border">&bull;</span>
               <a
                 href="https://astro.codepackr.com/?page=disclaimer"
