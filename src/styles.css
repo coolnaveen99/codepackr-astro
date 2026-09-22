@@ -112,9 +112,11 @@
     visibility: visible !important;
   }
   #jathagam-export-root {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    width: 210mm !important;
+    margin: 0 auto !important;
   }
 
   html,
@@ -192,6 +194,7 @@
   }
   #jathagam-export-root .astro-export-one-page {
     box-sizing: border-box !important;
+    text-align: center !important;
     width: 210mm !important;
     min-height: 286mm !important;
     padding: 8mm !important;
@@ -204,6 +207,10 @@
     border: 0 !important;
     padding: 0 !important;
   }
+  #jathagam-export-root .print-page { text-align: center !important; }
+  #jathagam-export-root .print-page table,
+  #jathagam-export-root .print-page ul,
+  #jathagam-export-root .print-page ol { text-align: left !important; }
   .print-page-break {
     page-break-after: always !important;
     break-after: page !important;
