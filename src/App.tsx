@@ -70,7 +70,7 @@ function Shell() {
             result={result}
           />
           {result ? (
-            <section className="astro-analysis-shell mx-auto w-full max-w-[1440px] px-4 pb-10 sm:px-6 lg:px-8">
+            <section id="astro-analysis" className="astro-analysis-shell mx-auto w-full max-w-[1440px] px-4 pb-10 sm:px-6 lg:px-8">
               <div className="mb-4 flex items-center gap-3">
                 <div className="h-px flex-1 bg-slate-200" />
                 <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
