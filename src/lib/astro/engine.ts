@@ -21,7 +21,7 @@ import {
   type PlanetId,
   type School,
 } from "./constants";
-import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, NAT_FRIEND, NAT_ENEMY, type BavPlanet } from "./tables";
+import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, YONI_ENEMY, NAT_FRIEND, NAT_ENEMY, type BavPlanet } from "./tables";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -413,7 +413,8 @@ function sunTimes(year: number, month: number, day: number, lat: number, lon: nu
   };
   const sunriseJD = toJd(rise, 6);
   const sunsetJD = toJd(set, 18);
-  // Calculate the actual following sunrise; sunrise-to-sunrise is not exactly 24 hours.\n  const nextStart = timeFromJD(sunsetJD + 1 / 1440);\n  const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextStart, 1.5);\n  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;\n  return { sunriseJD, sunsetJD, nextSunriseJD };
+  // Calculate the actual following sunrise; sunrise-to-sunrise is not exactly 24 hours.
+  const nextStart = timeFromJD(sunsetJD + 1 / 1440);\n  const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextStart, 1.5);\n  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;\n  return { sunriseJD, sunsetJD, nextSunriseJD };
 }
 
 function weekdayFromJD(jd: number) {
@@ -599,20 +600,8 @@ const VASHYA_POINTS = [
   [0, 0, 0, 2, 0],
   [1, 1, 1, 0, 2],
 ] as const;
-const GANA_NAK = [0, 1, 2, 1, 2, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 1, 2, 0, 0, 1, 1, 0, 2, 2, 1, 1, 2];
 const NADI_NAK = [0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2];
-const YONI_NAK = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 4, 13, 2, 8, 14, 15, 1, 16, 13, 7, 5, 14, 16, 3];
 const SIGN_LORD = [4, 3, 2, 1, 0, 2, 3, 4, 5, 6, 6, 5];
-const FRIEND: Record<number, number[]> = {
-  0: [0, 4, 3],
-  1: [1, 3, 6],
-  2: [2, 5, 0],
-  3: [3, 1, 5],
-  4: [4, 0, 2],
-  5: [5, 1, 3],
-  6: [6, 2, 5],
-};
-
 export function ashtakoot(boyMoon: number, girlMoon: number) {
   const bs = signIndex(boyMoon);
   const gs = signIndex(girlMoon);
