@@ -12,6 +12,9 @@ import {
   planetReading,
   sadeSatiText,
 } from "@/lib/astro/phalan";
+import { allLifeAreas } from "@/lib/astro/predictions";
+import { getRemediesFor, remedyDisclaimer } from "@/lib/astro/remedies";
+import { strengthText, withStrength } from "@/lib/astro/strength";
 import { BHAVA_EN, BHAVA_TA } from "@/lib/astro/tables";
 import { cn } from "@/lib/utils";
 
@@ -21,6 +24,14 @@ function signName(lang: Lang, i: number) {
 
 export function PhalanPane({ result, analysis, lang }: { result: ChartResult; analysis: Analysis; lang: Lang }) {
   const moon = result.list.find((p) => p.id === "moon")!;
+  const areas = allLifeAreas(analysis, lang);
+  const toneClass = (tone: string) =>
+    tone === "strong"
+      ? "border-emerald-300/80 bg-emerald-50/50"
+      : tone === "needs_effort"
+        ? "border-amber-300/80 bg-amber-50/40"
+        : "border-border bg-elevated/40";
+
   return (
     <div className="flex flex-col gap-5">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -54,41 +65,83 @@ export function PhalanPane({ result, analysis, lang }: { result: ChartResult; an
         </Panel>
       ) : null}
 
+      <Panel title={t(lang, "lifeAreas")}>
+        <p className="mb-4 text-xs text-muted">{t(lang, "lifeAreasHint")}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {areas.map((area) => (
+            <div key={area.id} className={cn("rounded-lg border px-3 py-3", toneClass(area.tone))}>
+              <h4 className="font-display text-base font-semibold">{area.title}</h4>
+              <div className="mt-2 space-y-2 text-sm leading-relaxed">
+                {area.paragraphs.map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
       <Panel title={t(lang, "bhava")}>
         <ol className="flex flex-col gap-4">
           {analysis.bhavas.map((b) => {
             const r = houseReading(b, lang);
             return (
               <li key={b.house} className="border-b border-border pb-4 last:border-0 last:pb-0">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h4 className="font-medium">{r.title}</h4>
-                  <span className="text-xs text-muted">
-                    {r.sign} · SAV {b.sav}
-                  </span>
-                </div>
-                <p className="mt-1.5 text-sm leading-relaxed text-muted">{r.body}</p>
+                <p className="font-medium">
+                  {r.title} · {r.sign}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-fg/90">{r.body}</p>
               </li>
             );
           })}
         </ol>
       </Panel>
 
-      <Panel title={t(lang, "grahaPhalan")}>
-        <ul className="flex flex-col gap-4">
+      <Panel title={t(lang, "planets")}>
+        <ul className="flex flex-col gap-3">
           {analysis.grahas
             .filter((g) => g.id !== "gulika")
             .map((g) => {
               const r = planetReading(g, lang);
               return (
-                <li key={g.id} className="border-b border-border pb-4 last:border-0 last:pb-0">
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <h4 className="font-medium">{r.title}</h4>
-                    <span className="text-xs text-muted">{r.dignity}</span>
-                  </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-muted">{r.body}</p>
+                <li key={g.id} className="border-b border-border pb-3 last:border-0 last:pb-0">
+                  <p className="font-medium">
+                    {r.title} · {r.dignity}
+                  </p>
+                  <p className="mt-1 text-sm leading-relaxed">{r.body}</p>
                 </li>
               );
             })}
+        </ul>
+      </Panel>
+
+      <Panel title={t(lang, "chevvai")}>
+        <p className="text-sm leading-relaxed">{chevvaiText(analysis, lang)}</p>
+        <p className="mt-3 text-sm leading-relaxed">{sadeSatiText(analysis, lang)}</p>
+      </Panel>
+    </div>
+  );
+}
+
+export function RemediesPane({ analysis, lang }: { analysis: Analysis; lang: Lang }) {
+  const items = getRemediesFor(analysis, lang);
+  return (
+    <div className="flex flex-col gap-5">
+      <Panel title={t(lang, "tabRemedies")}>
+        <p className="mb-4 text-sm text-muted">{remedyDisclaimer(lang)}</p>
+        <ul className="flex flex-col gap-4">
+          {items.map((r) => (
+            <li key={r.id} className="rounded-lg border border-border bg-elevated/30 px-4 py-3">
+              <h4 className="font-display text-base font-semibold">{r.title}</h4>
+              <p className="mt-2 text-sm leading-relaxed">{r.body}</p>
+              {r.days?.length ? (
+                <p className="mt-2 text-xs text-muted">
+                  {lang === "ta" ? "நாள்: " : "Day: "}
+                  {r.days.join(", ")}
+                </p>
+              ) : null}
+            </li>
+          ))}
         </ul>
       </Panel>
     </div>
@@ -165,43 +218,75 @@ function Flag({ title, on, body, lang }: { title: string; on: boolean; body: str
 }
 
 export function GocharaPane({ analysis, lang }: { analysis: Analysis; lang: Lang }) {
+  const focus = analysis.gochara.filter((g) => ["saturn", "jupiter", "rahu", "ketu", "sun", "mars"].includes(g.id));
   return (
-    <Panel title={t(lang, "gocharaNow")}>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs tracking-wide text-muted uppercase">
-            <tr>
-              <th className="px-3 py-3">{t(lang, "planet")}</th>
-              <th className="px-3 py-3">{t(lang, "sign")}</th>
-              <th className="px-3 py-3">{t(lang, "fromRasi")}</th>
-              <th className="hidden px-3 py-3 sm:table-cell">{t(lang, "fromLagna")}</th>
-              <th className="px-3 py-3">{t(lang, "favourable")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {analysis.gochara.map((g) => (
-              <tr key={g.id} className="border-t border-border">
-                <td className="px-3 py-2.5 font-medium">{planetName(g.id, lang)}</td>
-                <td className="px-3 py-2.5">{signName(lang, g.sign)}</td>
-                <td className="px-3 py-2.5 tabular-nums">{g.fromRasi}</td>
-                <td className="hidden px-3 py-2.5 tabular-nums sm:table-cell">{g.fromLagna}</td>
-                <td className="px-3 py-2.5">
-                  <span className={cn("text-xs", g.favourable ? "text-accent" : "text-muted")}>
-                    {g.favourable ? t(lang, "favourable") : t(lang, "unfavourable")}
-                  </span>
-                </td>
+    <div className="flex flex-col gap-5">
+      <Panel title={t(lang, "gocharaNow")}>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="text-xs tracking-wide text-muted uppercase">
+              <tr>
+                <th className="px-3 py-3">{t(lang, "planet")}</th>
+                <th className="px-3 py-3">{t(lang, "sign")}</th>
+                <th className="px-3 py-3">{t(lang, "fromRasi")}</th>
+                <th className="hidden px-3 py-3 sm:table-cell">{t(lang, "fromLagna")}</th>
+                <th className="px-3 py-3">{t(lang, "favourable")}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="mt-3 text-xs text-muted">{sadeSatiText(analysis, lang)}</p>
-    </Panel>
+            </thead>
+            <tbody>
+              {analysis.gochara.map((g) => (
+                <tr key={g.id} className="border-t border-border">
+                  <td className="px-3 py-2.5 font-medium">{planetName(g.id, lang)}</td>
+                  <td className="px-3 py-2.5">{signName(lang, g.sign)}</td>
+                  <td className="px-3 py-2.5 tabular-nums">{g.fromRasi}</td>
+                  <td className="hidden px-3 py-2.5 tabular-nums sm:table-cell">{g.fromLagna}</td>
+                  <td className="px-3 py-2.5">
+                    <span className={cn("text-xs", g.favourable ? "text-accent" : "text-muted")}>
+                      {g.favourable ? t(lang, "favourable") : t(lang, "unfavourable")}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-muted">{sadeSatiText(analysis, lang)}</p>
+      </Panel>
+
+      <Panel title={t(lang, "transitForecast")}>
+        <p className="mb-3 text-xs text-muted">
+          {lang === "ta"
+            ? "சனி, குரு, ராகு, கேது முதலியவற்றின் இன்றைய கோசாரம் — ராசி / லக்னம் அடிப்படையில்."
+            : "Today’s key slow transits relative to natal Moon (rasi) and lagna."}
+        </p>
+        <ul className="flex flex-col gap-3">
+          {focus.map((g) => {
+            const note =
+              lang === "ta"
+                ? g.favourable
+                  ? `${planetName(g.id, "ta")} ராசியிலிருந்து ${g.fromRasi}-ஆம் இடத்தில் — ஆதரவுள்ள கோசாரம். முக்கிய முடிவுகளுக்கு இந்த காலத்தைப் பயன்படுத்தலாம்.`
+                  : `${planetName(g.id, "ta")} ராசியிலிருந்து ${g.fromRasi}-ஆம் இடத்தில் — கவனம் தேவை. பொறுமையும் பரிகார நியமமும் உதவும்.`
+                : g.favourable
+                  ? `${planetName(g.id, "en")} is ${g.fromRasi} from rasi — supportive transit. Use the period for key steps.`
+                  : `${planetName(g.id, "en")} is ${g.fromRasi} from rasi — caution. Patience and simple remedies help.`;
+            return (
+              <li key={g.id} className="rounded-lg border border-border bg-elevated/30 px-3 py-2">
+                <p className="font-medium">
+                  {planetName(g.id, lang)} · {signName(lang, g.sign)}
+                </p>
+                <p className="mt-1 text-sm leading-relaxed">{note}</p>
+              </li>
+            );
+          })}
+        </ul>
+      </Panel>
+    </div>
   );
 }
 
 export function GrahaTable({ result, analysis, lang }: { result: ChartResult; analysis: Analysis; lang: Lang }) {
-  const byId = Object.fromEntries(analysis.grahas.map((g) => [g.id, g]));
+  const strengthened = withStrength(analysis);
+  const byId = Object.fromEntries(strengthened.map((g) => [g.id, g]));
   return (
     <div className="overflow-x-auto rounded-lg bg-surface shadow-card">
       <table className="w-full text-left text-sm">
@@ -211,13 +296,14 @@ export function GrahaTable({ result, analysis, lang }: { result: ChartResult; an
             <th className="px-3 py-3 sm:px-4">{t(lang, "sign")}</th>
             <th className="px-3 py-3">{t(lang, "house")}</th>
             <th className="hidden px-4 py-3 sm:table-cell">{t(lang, "dignity")}</th>
+            <th className="hidden px-4 py-3 md:table-cell">{t(lang, "strength")}</th>
             <th className="px-3 py-3 sm:px-4">{t(lang, "nakshatra")}</th>
             <th className="hidden px-4 py-3 md:table-cell">{t(lang, "navamsa")}</th>
           </tr>
         </thead>
         <tbody>
           {result.list.map((p) => {
-            const g = byId[p.id];
+            const g = byId[p.id as keyof typeof byId];
             return (
               <tr key={p.id} className="border-t border-border">
                 <td className="px-3 py-2.5 font-medium sm:px-4">
@@ -234,6 +320,9 @@ export function GrahaTable({ result, analysis, lang }: { result: ChartResult; an
                 <td className="px-3 py-2.5 tabular-nums">{p.house}</td>
                 <td className="hidden px-4 py-2.5 sm:table-cell">
                   {g && p.id !== "lagna" ? dignityLabel(g.dignity, lang) : "—"}
+                </td>
+                <td className="hidden px-4 py-2.5 md:table-cell">
+                  {g && p.id !== "lagna" && p.id !== "gulika" ? strengthText(g.strength, lang) : "—"}
                 </td>
                 <td className="px-3 py-2.5 sm:px-4">
                   {lang === "ta" ? NAK_TA[p.nak] : NAK_EN[p.nak]} {p.pada}
