@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileText, Info, Moon, Palette, Printer, ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
@@ -47,7 +47,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
 
         <PreviewPanel lang={lang} mode={mode} result={result} onGenerate={generate}/>
         {result&&mode!=="biodata"?<div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>window.print()} className="astro-action astro-action-primary"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு / PDF":"Print / PDF"}</button></div>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>window.print()} className="astro-action astro-action-primary" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})}><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Open detailed analysis"}</button></div>
           <TraditionalPreview result={result} lang={lang}/>
         </div>:null}
       </section>
@@ -55,7 +55,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
   </main>;
 }
 
-function ReportCard({mode,selected,onSelect,lang,icon,titleTa,titleEn,descTa,descEn}:{mode:ReportMode;selected:boolean;onSelect:(m:ReportMode)=>void;lang:Lang;icon:React.ReactNode;titleTa:string;titleEn:string;descTa:string;descEn:string}) {
+function ReportCard({mode,selected,onSelect,lang,icon,titleTa,titleEn,descTa,descEn}:{mode:ReportMode;selected:boolean;onSelect:(m:ReportMode)=>void;lang:Lang;icon:ReactNode;titleTa:string;titleEn:string;descTa:string;descEn:string}) {
   return <button type="button" onClick={()=>onSelect(mode)} className={cn("astro-report-card group relative text-left",selected&&"is-selected")}>{selected?<span className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full bg-blue-600 text-white"><Check className="size-4"/></span>:null}<span className={cn("mb-3 flex size-12 items-center justify-center rounded-2xl",selected?"bg-blue-600 text-white":"bg-blue-50 text-blue-600 group-hover:bg-blue-100")}>{icon}</span><span className="block pr-7 font-display text-base font-extrabold text-slate-900">{lang==="ta"?titleTa:titleEn}</span><span className="mt-2 block whitespace-pre-line text-xs leading-5 text-slate-500">{lang==="ta"?descTa:descEn}</span></button>;
 }
 
@@ -64,7 +64,7 @@ function PreviewPanel({lang,mode,result,onGenerate}:{lang:Lang;mode:ReportMode;r
     <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5"><div className="flex items-center gap-2.5"><span className="flex size-8 items-center justify-center rounded-lg bg-blue-50 text-blue-600"><Moon className="size-4"/></span><h2 className="font-display text-base font-extrabold text-slate-900">{lang==="ta"?"முன்னோட்டம் (Sample)":"Preview (Sample)"}</h2></div><span className="hidden text-[11px] font-semibold text-slate-400 sm:block">{lang==="ta"?"கணக்கீட்டுக்குப் பிறகு முன்னோட்டம் புதுப்பிக்கப்படும்":"Preview updates after calculation"}</span></div>
     <div className="grid gap-3 p-4 sm:grid-cols-3 sm:p-5"><PreviewTile tone="blue" title={lang==="ta"?"பாரம்பரிய ஜாதகம்":"Traditional Jathagam"} pages="1–2" active={mode==="traditional"}/><PreviewTile tone="green" title={lang==="ta"?"ஜாதகம் + பயோடேட்டா":"Jathagam + Biodata"} pages="2–4" active={mode==="biodata"}/><PreviewTile tone="violet" title={lang==="ta"?"முழு ஜாதகம்":"Full Jathagam"} pages="25–30+" active={mode==="full"}/></div>
     <div className="grid gap-3 border-t border-slate-100 bg-slate-50/70 p-4 sm:grid-cols-4 sm:p-5"><Setting icon={<Palette/>} label={lang==="ta"?"வண்ணமைப்பு":"Theme"} value="CodePackr"/><Setting icon={<FileText/>} label={lang==="ta"?"பக்க அளவு":"Page size"} value="A4"/><Setting icon={<CalendarDays/>} label={lang==="ta"?"மொழி":"Language"} value={lang==="ta"?"தமிழ்":"English"}/><Setting icon={<BarChart3/>} label={lang==="ta"?"வெளியீடு":"Output"} value="PDF / Print"/></div>
-    <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4 sm:p-5"><button type="button" onClick={onGenerate} className="astro-action astro-action-primary flex-1 justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Horoscope"}<ArrowRight className="size-4"/></button>{result?<button type="button" onClick={()=>window.print()} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button>:null}</div>
+    <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4 sm:p-5"><button type="button" onClick={onGenerate} className="astro-action astro-action-primary flex-1 justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Horoscope"}<ArrowRight className="size-4"/></button>{result?<button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Detailed analysis"}</button>:null}</div>
   </div>;
 }
 
