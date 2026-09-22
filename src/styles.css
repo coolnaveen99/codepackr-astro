@@ -104,6 +104,19 @@
   [data-print-hide] {
     display: none !important;
   }
+  body * {
+    visibility: hidden !important;
+  }
+  #traditional-jathagam-report,
+  #traditional-jathagam-report * {
+    visibility: visible !important;
+  }
+  #traditional-jathagam-report {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+  }
+
   html,
   body {
     background: white !important;
@@ -167,6 +180,21 @@
     opacity: 0.06 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+  #traditional-jathagam-report {
+    display: block !important;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    margin: 0 !important;
+    padding: 8mm !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+  #traditional-jathagam-report .astro-traditional-preview {
+    border: 0 !important;
+    padding: 0 !important;
   }
   .print-page-break {
     page-break-after: always !important;
