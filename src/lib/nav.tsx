@@ -1,7 +1,29 @@
 // Codepackr Astro - Top Navigation Context
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-export type Page = "jathagam" | "porutham" | "biodata" | "panchangam" | "rasipalan" | "contact" | "disclaimer";
+export type Page =
+  | "jathagam"
+  | "porutham"
+  | "biodata"
+  | "panchangam"
+  | "rasipalan"
+  | "numerology"
+  | "glossary"
+  | "prasna"
+  | "contact"
+  | "disclaimer";
+
+const PAGE_SET = new Set<string>([
+  "porutham",
+  "biodata",
+  "panchangam",
+  "rasipalan",
+  "numerology",
+  "glossary",
+  "prasna",
+  "contact",
+  "disclaimer",
+]);
 
 const NavCtx = createContext<{ page: Page; go: (p: Page) => void } | null>(null);
 
@@ -9,7 +31,7 @@ export function NavProvider({ children }: { children: ReactNode }) {
   const [page, setPage] = useState<Page>(() => {
     if (typeof window !== "undefined") {
       const p = new URLSearchParams(window.location.search).get("page");
-      if (p === "porutham" || p === "biodata" || p === "panchangam" || p === "rasipalan" || p === "contact" || p === "disclaimer") return p;
+      if (p && PAGE_SET.has(p)) return p as Page;
     }
     return "jathagam";
   });
