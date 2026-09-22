@@ -21,7 +21,7 @@ import {
   type PlanetId,
   type School,
 } from "./constants";
-import { BAV, BAV_FROM, BAV_PLANETS, type BavPlanet } from "./tables";
+import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, type BavPlanet } from "./tables";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -413,7 +413,7 @@ function sunTimes(year: number, month: number, day: number, lat: number, lon: nu
   };
   const sunriseJD = toJd(rise, 6);
   const sunsetJD = toJd(set, 18);
-  return { sunriseJD, sunsetJD, nextSunriseJD: sunriseJD + 1 };
+  // Calculate the actual following sunrise; sunrise-to-sunrise is not exactly 24 hours.\n  const nextStart = timeFromJD(sunsetJD + 1 / 1440);\n  const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextStart, 1.5);\n  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;\n  return { sunriseJD, sunsetJD, nextSunriseJD };
 }
 
 function weekdayFromJD(jd: number) {
