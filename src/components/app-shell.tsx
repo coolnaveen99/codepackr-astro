@@ -19,6 +19,7 @@ import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
 import { useNav, type Page } from "@/lib/nav";
 import { cn } from "@/lib/utils";
+import { CodepackrFamilyBar } from "@/components/CodepackrFamilyBar";
 
 // Primary Navigation (Core Vedic Astrological Services)
 const PRIMARY_NAV: { id: Page; labelKey: string; shortTa: string; shortEn: string; icon: typeof Compass }[] = [
@@ -96,6 +97,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-bg text-fg flex flex-col justify-between">
+      <CodepackrFamilyBar language={lang} className="no-print" />
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           {/* Logo & Brand */}
