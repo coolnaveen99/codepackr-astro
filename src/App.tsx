@@ -8,6 +8,7 @@ import { ContactForm } from "@/components/contact-form";
 import { DisclaimerPage } from "@/components/disclaimer-page";
 import { PoruthamView } from "@/components/porutham-view";
 import { PanchangamView } from "@/components/panchangam-view";
+import { DailyRasiView } from "@/components/daily-rasi";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t } from "@/lib/astro/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
@@ -40,6 +41,8 @@ function Shell() {
         <PoruthamView lang={lang} />
       ) : page === "panchangam" ? (
         <PanchangamView lang={lang} />
+      ) : page === "rasipalan" ? (
+        <DailyRasiView lang={lang} />
       ) : page === "biodata" ? (
         <BiodataMaker lang={lang} />
       ) : page === "contact" ? (
