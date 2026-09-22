@@ -100,6 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <CodepackrFamilyBar language={lang} className="no-print" />
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
+          <button type="button" id="sidebar-toggle-btn" onClick={() => setMobileMenuOpen((o) => !o)} className="lg:hidden flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-muted hover:text-fg cursor-pointer shrink-0" aria-label="Toggle menu" aria-expanded={mobileMenuOpen}>{mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
           {/* Logo & Brand */}
           <a
             href={getUrl("jathagam")}
@@ -222,7 +223,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </nav>
 
-          {/* Language Switch & Mobile Hamburger */}
+          {/* Language Switch */}
           <div className="flex items-center gap-2">
             <div className="flex rounded-full bg-elevated p-0.5 border border-border/60">
               {(["ta", "en"] as const).map((l) => (
@@ -241,21 +242,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </button>
               ))}
             </div>
-
-            <button
-              type="button"
-              onClick={() => setMobileMenuOpen((o) => !o)}
-              className="lg:hidden flex size-8.5 items-center justify-center rounded-lg border border-border bg-surface text-muted hover:text-fg cursor-pointer"
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="size-4.5" /> : <Menu className="size-4.5" />}
-            </button>
           </div>
         </div>
 
-        {/* Organized Mobile & Tablet Drawer Menu */}
+        {/* Left slide-out drawer (Tools/Finance pattern) */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden border-t border-border/80 bg-surface px-4 py-3.5 shadow-xl max-h-[85vh] overflow-y-auto" aria-label="Mobile Navigation">
+          <>
+          <div className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} aria-hidden />
+          <nav className="lg:hidden fixed left-0 top-16 bottom-0 z-50 w-72 max-w-[85vw] border-r border-border/80 bg-surface px-4 py-3.5 shadow-xl overflow-y-auto" aria-label="Mobile Navigation">
             {/* Core Services Section */}
             <div>
               <p className="text-[10.5px] font-bold uppercase tracking-wider text-accent mb-2 px-1">
@@ -334,6 +328,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
           </nav>
+          </>
         )}
       </header>
 
