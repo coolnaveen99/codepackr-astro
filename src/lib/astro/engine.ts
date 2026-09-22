@@ -21,7 +21,7 @@ import {
   type PlanetId,
   type School,
 } from "./constants";
-import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, type BavPlanet } from "./tables";
+import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, NAT_FRIEND, NAT_ENEMY, type BavPlanet } from "./tables";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -639,11 +639,22 @@ export function ashtakoot(boyMoon: number, girlMoon: number) {
   const yoni = sameYoni ? 4 : yoniEnemy ? 0 : 2;
   const bl = SIGN_LORD[bs];
   const gl = SIGN_LORD[gs];
-  let gm = 0.5;
-  if (bl === gl) gm = 5;
-  else if ((FRIEND[bl] || []).includes(gl)) gm = 4;
-  else gm = 1;
-  const gana = GANA_NAK[bn] === GANA_NAK[gn] ? 6 : GANA_NAK[bn] + GANA_NAK[gn] === 1 ? 3 : 1;
+  const relation = (a: string, b: string) =>
+    a === b ? "same" : (NAT_FRIEND as Record<string, string[]>)[a]?.includes(b) ? "friend"
+      : (NAT_ENEMY as Record<string, string[]>)[a]?.includes(b) ? "enemy" : "neutral";
+  const r1 = relation(bl, gl);
+  const r2 = relation(gl, bl);
+  let gm = 0;
+  if (r1 === "same" || r2 === "same") gm = 5;
+  else if (r1 === "friend" && r2 === "friend") gm = 5;
+  else if ((r1 === "friend" && r2 === "neutral") || (r1 === "neutral" && r2 === "friend")) gm = 4;
+  else if (r1 === "neutral" && r2 === "neutral") gm = 3;
+  else if ((r1 === "friend" && r2 === "enemy") || (r1 === "enemy" && r2 === "friend")) gm = 1;
+  else if ((r1 === "neutral" && r2 === "enemy") || (r1 === "enemy" && r2 === "neutral")) gm = 0.5;
+  else gm = 0;
+  const g1 = GANA_NAK[bn];
+  const g2 = GANA_NAK[gn];
+  const gana = g1 === g2 ? 6 : (g1 === 0 && g2 === 1) || (g1 === 1 && g2 === 0) ? 5 : (g1 === 2 && g2 === 0) || (g1 === 0 && g2 === 2) ? 1 : 0;
   const houses = ((gs - bs + 12) % 12) + 1;
   const bhakoot = [2, 12, 5, 9, 6, 8].includes(houses) ? 0 : 7;
   const nadi = NADI_NAK[bn] === NADI_NAK[gn] ? 0 : 8;
