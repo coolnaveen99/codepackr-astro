@@ -9,7 +9,6 @@ dist/
 *.local
 .vscode/
 .idea/
-*.zip
 bun.lock
 bun.lockb
 
