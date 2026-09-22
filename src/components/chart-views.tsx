@@ -43,12 +43,14 @@ import {
   GrahaTable,
   Panel,
   PhalanPane,
+  RemediesPane,
   YogaPane,
 } from "@/components/analysis-panes";
+import { dasaNarrative } from "@/lib/astro/remedies";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type Tab = "chart" | "phalan" | "yoga" | "pan" | "dasa" | "gochara" | "varga";
+type Tab = "chart" | "phalan" | "yoga" | "pan" | "dasa" | "gochara" | "varga" | "remedies";
 
 function signName(lang: Lang, i: number) {
   return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
@@ -68,7 +70,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
   const analysis = useMemo(() => analyse(result), [result]);
   const moon = find(result.list, "moon");
   const lagna = find(result.list, "lagna");
-  const tabs: { id: Tab; key: "tabChart" | "tabPhalan" | "tabYoga" | "tabPan" | "tabDasa" | "tabGochara" | "tabVarga" }[] = [
+  const tabs: { id: Tab; key: "tabChart" | "tabPhalan" | "tabYoga" | "tabPan" | "tabDasa" | "tabGochara" | "tabVarga" | "tabRemedies" }[] = [
     { id: "chart", key: "tabChart" },
     { id: "phalan", key: "tabPhalan" },
     { id: "yoga", key: "tabYoga" },
@@ -76,6 +78,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
     { id: "dasa", key: "tabDasa" },
     { id: "gochara", key: "tabGochara" },
     { id: "varga", key: "tabVarga" },
+    { id: "remedies", key: "tabRemedies" },
   ];
 
   const body = (
@@ -84,6 +87,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
       {tab === "phalan" && <PhalanPane result={result} analysis={analysis} lang={lang} />}
       {tab === "yoga" && <YogaPane analysis={analysis} lang={lang} />}
       {tab === "pan" && <PanchangPane result={result} lang={lang} />}
+      {tab === "remedies" && <RemediesPane analysis={analysis} lang={lang} />}
       {tab === "dasa" && <DasaPane result={result} lang={lang} />}
       {tab === "gochara" && <GocharaPane analysis={analysis} lang={lang} />}
       {tab === "varga" && <VargaPane result={result} lang={lang} />}
@@ -361,7 +365,9 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
                 </span>
               </button>
               {shown ? (
-                <ul className="mt-2 space-y-1 text-xs">
+                <div className="mt-2 space-y-2">
+                <p className="text-sm leading-relaxed text-fg/90">{dasaNarrative(p.lord, lang)}</p>
+                <ul className="space-y-1 text-xs">
                   {antars.map((b) => {
                     const on = at >= b.startJD && at < b.endJD;
                     const thirds = on ? antardasas(b) : [];
@@ -394,6 +400,7 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
                     );
                   })}
                 </ul>
+                </div>
               ) : null}
             </li>
           );
