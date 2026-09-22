@@ -5,7 +5,8 @@ Tamil jathagam in the [Codepackr](https://www.codepackr.com) family.
 **திருக்கணிதம் (Thirukanitham / Drik)** and **வாக்கியம் (Vakya Karana)** calculation. In Tamil usage, **ராசி is the Moon sign**, not lagna.
 
 
-Live: [github.com/coolnaveen99/codepackr-astro](https://github.com/coolnaveen99/codepackr-astro)
+Live: [github.com/coolnaveen99/codepackr-astro](https://github.com/coolnaveen99/codepackr-astro)  
+Wiki: [CodePackr Astro Wiki](https://github.com/coolnaveen99/codepackr-astro/wiki)
 
 ## Features
 
@@ -32,7 +33,7 @@ npm run preview
 
 ## Calculation notes
 
-- **Thirukanitham** — geocentric ecliptic-of-date longitudes minus the Predict. Thirukanitham ayanamsa (`22°50.016′` at 1900.0, ~50.016″/year).
+- **Thirukanitham** — geocentric ecliptic-of-date longitudes minus the Predict. Thirukanitham ayanamsa (22°50.016′ at 1900.0, ~50.016″/year).
 - **Vakya** — Kali-epoch mean motions with a simple manda equation. Temple vakya panchangams can still differ near nakshatra edges.
 - **Lahiri** — same tropical positions with Lahiri / Chitrapaksha ayanamsa, for comparison.
 
@@ -45,6 +46,7 @@ Porutham follows Tamil Dasakoota (Dina, Gana, Mahendra, Stree Deergha, Yoni, Ras
 Detailed implementation roadmap for making the full prediction suite free:
 
 - **[docs/FULL_FREE_PREDICTION_ROADMAP.md](docs/FULL_FREE_PREDICTION_ROADMAP.md)** — granular feature gaps, architecture rules, phased plan, content guidelines, testing checklist, and branching process (aligned with Codepackr family repos).
+- **[Full Jathagam 30-page Guide](docs/FULL_JATHAGAM_30_PAGE_GUIDE.md)** — full-report gap list and professional A4 report presentation standard.
 
 `docs/` is documentation only. Vite and TypeScript build steps process only `src/` and the root entrypoints; files under `docs/` never enter the production bundle.
 
