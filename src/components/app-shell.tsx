@@ -100,7 +100,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <CodepackrFamilyBar language={lang} className="no-print" />
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-          <button type="button" id="sidebar-toggle-btn" onClick={() => setMobileMenuOpen((o) => !o)} className="lg:hidden flex size-9 items-center justify-center rounded-xl border border-border bg-surface text-muted hover:text-fg cursor-pointer shrink-0" aria-label="Toggle menu" aria-expanded={mobileMenuOpen}>{mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
+          <button type="button" id="sidebar-toggle-btn" onClick={() => setMobileMenuOpen((o) => !o)} className="lg:hidden flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-fg hover:bg-elevated cursor-pointer shrink-0 shadow-sm" aria-label="Toggle menu" aria-expanded={mobileMenuOpen}>{mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
           {/* Logo & Brand */}
           <a
             href={getUrl("jathagam")}
