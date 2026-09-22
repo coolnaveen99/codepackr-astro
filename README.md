@@ -40,6 +40,14 @@ Positions use [astronomy-engine](https://github.com/cosinekitty/astronomy).
 
 Porutham follows Tamil Dasakoota (Dina, Gana, Mahendra, Stree Deergha, Yoni, Rasi, Rasi Adhipathi, Vasya, Rajju, Vedha). Rajju, Vedha, and 6–8 rasi are flagged even when the match count is high.
 
+## Documentation
+
+Detailed implementation roadmap for making the full prediction suite free:
+
+- **[docs/FULL_FREE_PREDICTION_ROADMAP.md](docs/FULL_FREE_PREDICTION_ROADMAP.md)** — granular feature gaps, architecture rules, phased plan, content guidelines, testing checklist, and branching process (aligned with Codepackr family repos).
+
+`docs/` is documentation only. Vite and TypeScript build steps process only `src/` and the root entrypoints; files under `docs/` never enter the production bundle.
+
 ## License
 
 MIT

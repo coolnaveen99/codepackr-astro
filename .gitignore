@@ -1,8 +1,25 @@
-node_modules
-dist
+# Dependencies
+node_modules/
+
+# Production build outputs (Vite + tsc only process src/ + index.html)
+dist/
+
+# Local environment & editor
 .DS_Store
 *.local
-.vscode
-.idea
+.vscode/
+.idea/
 *.zip
 bun.lock
+bun.lockb
+
+# Vercel
+.vercel/
+
+# Note on docs/
+# docs/** is intentionally committed. It is documentation only.
+# Vite build and TypeScript (tsc --noEmit) never include docs/,
+# so adding or changing files under docs/ does not affect the
+# production bundle or build output. No extra ignore entry is
+# required for build skipping — the build pipeline already
+# excludes everything outside src/ and the project root entrypoints.
