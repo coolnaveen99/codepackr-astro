@@ -275,14 +275,95 @@ Scope:
 
 Then open a second PR for BAV + expanded yogas + transit forecast.
 
+
 ---
 
-## 11. Changelog
+## 12. Professional Astrologer Report Presentation Standard
 
-| Date       | Change |
-|------------|--------|
+The 30-page report should be treated as a book, not as thirty independent cards.
+
+### Page composition
+
+Each page should have a deliberate composition:
+
+1. Section title and short purpose statement
+2. Primary chart/table or 1–2 related content blocks
+3. Interpretation immediately beside or below the evidence
+4. A short “what this means” summary where useful
+5. Consistent footer and page number
+
+Do not force exactly two small cards onto every page. If a section needs only half a page, combine it with the next logically related section. If a chart needs a full page, give the chart the full page.
+
+### South Indian professional chart treatment
+
+For D1/D9 and other divisional charts:
+
+- Use a large traditional South Indian 12-box chart.
+- Keep sign positions fixed and place planets inside the appropriate sign boxes.
+- Put Lagna/Ascendant marking clearly on the chart.
+- Use a legend for planet abbreviations.
+- Keep chart labels readable at normal A4 print scale.
+- Follow the chart with a compact placement table instead of duplicating the same information in several tiny cards.
+
+### Planetary table treatment
+
+Use a professional table with:
+
+கிரகம் | ராசி | பாகை | நட்சத்திரம் | பாதம் | பாவம் | நிலை
+
+For Tamil output, translate state labels consistently instead of exposing raw implementation values such as enemy, friend, Direct, R or C.
+
+### House-phalan treatment
+
+The 12 houses should not be printed as twelve isolated micro-cards.
+
+Each house section should combine:
+
+- பாவம் and ராசி
+- பாவாதிபதி
+- அதிபதி இருக்கும் இடம்
+- அந்த பாவத்தில் உள்ள கிரகங்கள்
+- பார்வைகள் where supported
+- SAV/BAV evidence where supported
+- 1–3 paragraphs of interpretation
+- a short summary line
+
+Use approximately two well-composed houses per A4 page when the content supports it. Let the layout expand or contract rather than leaving half a page empty.
+
+### Timing chapters
+
+Dasa pages should read as a timeline:
+
+- Birth balance
+- Mahadasa start/end dates
+- Current Mahadasa and Bhukti
+- Next important periods
+- Interpretation linked to the relevant houses/planets
+
+Do not present a long list of dates without explanation.
+
+### Remedies and closing
+
+The remedies section should be clearly separated from prediction text and labelled as traditional guidance. The final pages should include methodology, calculation school, disclaimer and CodePackr Astro branding.
+
+### External presentation references
+
+Public report structures reviewed for this standard include:
+
+- Tamilcube — South Indian chart and report flow
+- Tamilsonline — Tamil Jathagam, Rasi/Navamsa and Dasa presentation
+- OlaMatch — sample multi-section horoscope reports
+- Rani Astro — long-form astrologer report chapter structure
+
+These references are for information architecture and presentation only. Do not copy their text, graphics, branding or proprietary content.
+
+---
+
+## 13. Changelog
+
+| Date | Change |
+|------|--------|
 | 2026-09-22 | Initial gap list + implementation guide for 30+ page full jathagam |
+| 2026-09-22 | Added professional astrologer-style A4 report presentation standard and external format references |
 
----
-
-*This document is the practical companion to `FULL_FREE_PREDICTION_ROADMAP.md`. Update checkboxes as features ship.*
+*This document is the practical companion to the Full Free Prediction Roadmap. Update checkboxes as features ship.*
