@@ -87,20 +87,33 @@ function reportTitle(mode:ReportMode,lang:Lang) {
 
 async function exportSelectedPdf(mode:ReportMode,name?:string) {
   const root=document.getElementById("jathagam-export-root");
-  if(!root) return;
+  if(!root) throw new Error("Jathagam export content is not ready.");
   await document.fonts?.ready;
+  const images=Array.from(root.querySelectorAll<HTMLImageElement>("img"));
+  await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise<void>(resolve=>{img.onload=()=>resolve();img.onerror=()=>resolve();})));
   await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
-  const pages=mode==="one" ? [root.querySelector(".astro-export-one-page") as HTMLElement] : Array.from(root.querySelectorAll<HTMLElement>(".print-page"));
-  if(!pages.length || pages.some(p=>!p)) return;
-  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+  const pages=(mode==="one"
+    ? [root.querySelector<HTMLElement>(".astro-export-one-page")]
+    : Array.from(root.querySelectorAll<HTMLElement>(".print-page"))).filter((p):p is HTMLElement=>Boolean(p));
+  if(!pages.length) throw new Error("No report pages found.");
+  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
+  const margin=5,maxWidth=200,maxHeight=287;
   for(let i=0;i<pages.length;i++){
     const page=pages[i];
-    const canvas=await html2canvas(page,{scale:2,useCORS:true,backgroundColor:"#ffffff",windowWidth:page.scrollWidth});
+    const canvas=await html2canvas(page,{
+      scale:2,useCORS:true,allowTaint:true,backgroundColor:"#ffffff",logging:false,windowWidth:page.scrollWidth,
+      onclone:(doc)=>{
+        const r=doc.getElementById("jathagam-export-root");
+        if(r){r.style.position="static";r.style.left="0";r.style.top="0";r.style.width="210mm";r.style.maxWidth="210mm";r.style.zIndex="auto";r.style.pointerEvents="auto";}
+        const p=doc.querySelector<HTMLElement>(mode==="one"?".astro-export-one-page":".print-page");
+        if(p){p.style.position="relative";p.style.left="0";p.style.top="0";}
+      }
+    });
     if(i>0) pdf.addPage();
-    const margin=5;
-    const width=210-margin*2;
-    const height=Math.min(287,canvas.height*width/canvas.width);
-    pdf.addImage(canvas.toDataURL("image/jpeg",0.95),"JPEG",margin,5,width,height,undefined,"FAST");
+    const aspect=canvas.height/canvas.width;
+    let width=maxWidth,height=width*aspect;
+    if(height>maxHeight){height=maxHeight;width=height/aspect;}
+    pdf.addImage(canvas.toDataURL("image/jpeg",0.94),"JPEG",(210-width)/2,margin,width,height,undefined,"FAST");
   }
   const safeName=(name||"jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g,"-").replace(/^-+|-+$/g,"")||"jathagam";
   pdf.save(`${safeName}-${mode}-jathagam.pdf`);
@@ -114,7 +127,7 @@ function TraditionalPreview({result,lang}:{result:ChartResult;lang:Lang}) {
   const moon=result.list.find(p=>p.id==="moon"); const lagna=result.list.find(p=>p.id==="lagna");
   const sign=(i:number)=>lang==="ta"?SIGNS_TA[i]:SIGNS_EN[i]; const nak=moon?(lang==="ta"?NAK_TA[moon.nak]:NAK_EN[moon.nak]):"—";
   const rows=result.list.filter(p=>p.id!=="lagna").slice(0,9);
-  return <div className="astro-traditional-preview rounded-xl border border-slate-200 bg-white p-3 sm:p-5"><div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+  return <div className="astro-traditional-preview rounded-xl border border-slate-200 bg-white p-3 sm:p-5"><div className="mb-4 border-b border-accent/20 pb-3 text-center"><div className="text-[10px] font-bold uppercase tracking-widest text-accent">{lang==="ta"?"ஜாதகர்":"Jathakar"}</div><div className="mt-1 break-words text-2xl font-extrabold leading-tight text-accent">{result.input.name?.trim()||"—"}</div><div className="mt-1 break-words text-xs text-slate-500">{result.input.date} · {result.input.time} · {result.input.place}</div></div><div className="grid gap-4 lg:grid-cols-[1fr_340px]">
     <div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{[[lang==="ta"?"பெயர்":"Name",result.input.name||"—"],[lang==="ta"?"பிறந்த தேதி / நேரம்":"Birth date / time",`${result.input.date} · ${result.input.time}`],[lang==="ta"?"பிறந்த இடம்":"Birth place",result.input.place],[lang==="ta"?"லக்னம்":"Lagna",lagna?sign(lagna.sign):"—"],[lang==="ta"?"சந்திர ராசி":"Moon sign",moon?sign(moon.sign):"—"],[lang==="ta"?"நட்சத்திரம்":"Nakshatra",moon?`${nak} · ${moon.pada}`:"—"]].map(([k,v])=><InfoCell key={String(k)} label={String(k)} value={String(v)}/>)}</div>
       <div className="mt-3 rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><InfoCell label={lang==="ta"?"திதி":"Tithi"} value={`${result.pan.paksha==="shukla"?(lang==="ta"?"வளர்பிறை":"Shukla"):(lang==="ta"?"தேய்பிறை":"Krishna")} · ${(lang==="ta"?TITHI_TA:TITHI_EN)[result.pan.tithiIdx]}`}/><InfoCell label={lang==="ta"?"யோகம்":"Yoga"} value={(lang==="ta"?YOGA_TA:YOGA_EN)[result.pan.yogaNum]}/><InfoCell label={lang==="ta"?"கரணம்":"Karana"} value={(lang==="ta"?KARANA_TA:KARANA_EN)[result.pan.karanaIdx]}/><InfoCell label={lang==="ta"?"கிழமை":"Weekday"} value={(lang==="ta"?WEEK_TA:WEEK_EN)[result.weekday]}/><InfoCell label={lang==="ta"?"சூரிய உதயம்":"Sunrise"} value={formatClock(result.sunriseJD,result.input.tz)}/><InfoCell label={lang==="ta"?"சூரிய அஸ்தமனம்":"Sunset"} value={formatClock(result.sunsetJD,result.input.tz)}/></div></div>
       <div className="mt-3 overflow-hidden rounded-xl border border-slate-200"><div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-xs font-extrabold text-slate-700">{lang==="ta"?"கிரக நிலைகள்":"Planetary Positions"}</div><div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-white text-[10px] uppercase text-slate-400"><tr><th className="px-3 py-2">{lang==="ta"?"கிரகம்":"Planet"}</th><th>{lang==="ta"?"ராசி":"Sign"}</th><th>{lang==="ta"?"பாகை":"Degree"}</th><th>{lang==="ta"?"நிலை":"Status"}</th></tr></thead><tbody className="divide-y divide-slate-100">{rows.map(p=><tr key={p.id}><td className="px-3 py-2 font-bold text-slate-800">{planetName(p.id,lang)}</td><td>{sign(p.sign)}</td><td>{p.dms}</td><td className="text-slate-500">{p.retrograde?(lang==="ta"?"வக்கிரம்":"Retrograde"):"—"}</td></tr>)}</tbody></table></div></div>
