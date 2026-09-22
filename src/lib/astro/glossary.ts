@@ -85,7 +85,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     termTa: "அயனாம்சம்",
     termEn: "Ayanamsa",
     bodyTa:
-      "வெப்பமண்டல (tropical) மற்றும் நிரை (sidereal) ராசி வட்டங்களுக்கிடையேயான வித்தியாசம். இல்லாமல் ராசி/நட்சத்திரம் தவறாகும்.",
+      "சாயன (வெப்பமண்டல) மற்றும் நிரயண ராசி வட்டங்களுக்கிடையேயான வித்தியாசமே அயனாம்சம். இதை சரியாகப் பயன்படுத்தாவிட்டால் ராசி மற்றும் நட்சத்திரக் கணக்கில் வேறுபாடு ஏற்படும்.",
     bodyEn:
       "The offset between the tropical and sidereal zodiacs. Without it, rasi and nakshatra would be wrong.",
     tags: ["calculation"],
@@ -151,7 +151,7 @@ export const GLOSSARY: GlossaryEntry[] = [
     termTa: "தசகூடம்",
     termEn: "Dasakoota",
     bodyTa:
-      "தமிழ்நாட்டு திருமணப் பொருத்தம் — 10 பொருத்தங்கள் (தினம், கணம், யோனி, ரசி, ரஜ்ஜு, வேதை முதலியன). உத்தமம்/மத்தியமம்/அதமம் தரங்கள்.",
+      "தமிழ்நாட்டு திருமண மரபில் பயன்படுத்தப்படும் பத்து பொருத்தங்கள் — தினம், கணம், மகேந்திரம், ஸ்திரீ தீர்க்கம், யோனி, ராசி, ராசியதிபதி, வசியம், ரஜ்ஜு, வேதை. இவை உத்தமம், மத்தியமம், அதமம் எனப் பிரித்து விளக்கப்படுகின்றன.",
     bodyEn:
       "Tamil Nadu marriage matching — ten poruthams (dinam, ganam, yoni, rasi, rajju, vedha, etc.) graded Uthamam / Madhyamam / Adhamam.",
     tags: ["porutham"],
