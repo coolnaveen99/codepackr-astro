@@ -167,7 +167,7 @@ export const GANA_NAK = [
   0, 1, 2, 1, 0, 1, 0, 0, 2, 2, 1, 1, 0, 2, 0, 2, 0, 2, 2, 1, 1, 0, 2, 2, 1, 1, 0,
 ] as const;
 
-export const GANA_TA = ["தேவ கணம்", "மனுஷ்ய கணம்", "ராட்சச கணம்"] as const;
+export const GANA_TA = ["தேவ கணம்", "மனித கணம்", "அரக்க கணம்"] as const;
 export const GANA_EN = ["Deva", "Manushya", "Rakshasa"] as const;
 
 /** Yoni animal id per nakshatra. */
@@ -264,11 +264,11 @@ export const VASYA: number[][] = [
 ];
 
 export const PADA_TA: [string, string, string, string][] = [
-  ["சு", "சே", "சோ", "லா"],
-  ["லி", "லு", "லே", "லோ"],
+  ["சூ", "சே", "சோ", "லா"],
+  ["லீ", "லூ", "லே", "லோ"],
   ["அ", "இ", "உ", "எ"],
-  ["ஓ", "வா", "வி", "வு"],
-  ["வே", "வோ", "கா", "கி"],
+  ["ஓ", "வா", "வீ", "வு"],
+  ["வே", "வோ", "கா", "கீ"],
   ["கு", "க", "ங", "ச"],
   ["கே", "கோ", "ஹா", "ஹி"],
   ["ஹு", "ஹே", "ஹோ", "ட"],
