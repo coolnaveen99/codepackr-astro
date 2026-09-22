@@ -421,7 +421,8 @@ function sunTimes(year: number, month: number, day: number, lat: number, lon: nu
   // Calculate the actual following sunrise; sunrise-to-sunrise is not exactly 24 hours.
   const nextStart = timeFromJD(sunsetJD + 1 / 1440);
   const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextStart, 1.5);
-  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;\n  return { sunriseJD, sunsetJD, nextSunriseJD };
+  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;
+  return { sunriseJD, sunsetJD, nextSunriseJD };
 }
 
 function weekdayFromJD(jd: number) {
