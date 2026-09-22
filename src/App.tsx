@@ -81,7 +81,7 @@ function Shell() {
               <ChartViews result={result} lang={lang} />
             </section>
           ) : null}
-        </> </main>
+        </>
       )}
     </AppShell>
   );
