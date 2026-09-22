@@ -71,16 +71,10 @@ export function FullReport({
       <p className="text-[9.5px] font-bold tracking-[0.2em] text-accent mt-0.5 uppercase">
         {lang === "ta" ? "|| ஓம் ஸ்ரீ கணேசாய நமஹ ||" : "|| OM SRI GANESHAYA NAMAHA ||"}
       </p>
-      <div className="mt-0.5 flex items-center justify-between w-full px-1 text-[10.5px] text-muted">
-        <span className="font-bold text-ink truncate max-w-[180px]">
-          {nativeName}
-        </span>
-        <span className="font-display font-semibold text-accent text-xs">
-          {title}
-        </span>
-        <span className="font-medium text-ink truncate max-w-[200px]">
-          {signName(lang, moon.sign)} · {nakName(lang, moon.nak)} ({moon.pada}) · {t(lang, "lagna")}: {signName(lang, lagna.sign)}
-        </span>
+      <div className="mt-0.5 flex w-full flex-col items-center px-1 text-center">
+        <span className="max-w-full break-words text-[10.5px] font-bold leading-tight text-ink">{nativeName?.trim() || (lang === "ta" ? "ஜாதகர்" : "Native")}</span>
+        <span className="mt-0.5 max-w-full break-words font-display font-semibold text-accent text-xs leading-tight">{title}</span>
+        <span className="mt-0.5 max-w-full break-words text-[9.5px] leading-tight font-medium text-ink">{signName(lang, moon.sign)} · {nakName(lang, moon.nak)} ({moon.pada}) · {t(lang, "lagna")}: {signName(lang, lagna.sign)}</span>
       </div>
     </div>
   );
