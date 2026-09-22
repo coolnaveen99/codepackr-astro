@@ -128,7 +128,7 @@ const COPY = {
   yamaganda: { ta: "எமகண்டம்", en: "Yamaganda" },
   gulika: { ta: "குளிக காலம்", en: "Gulika kalam" },
   abhijit: { ta: "அபிஜித்", en: "Abhijit" },
-  choghadiya: { ta: "சோழி நேரம்", en: "Choghadiya" },
+  choghadiya: { ta: "சௌகடியா நேரம்", en: "Choghadiya" },
   gowri: { ta: "கௌரி நல்ல நேரம்", en: "Gowri nalla neram" },
   partner: { ta: "பெண் / இணையர் நட்சத்திரம்", en: "Partner nakshatra" },
   partnerName: { ta: "இணையர் பெயர்", en: "Partner name" },
