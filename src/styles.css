@@ -222,6 +222,14 @@
     z-index: -1;
     background: #fff;
   }
+  .astro-export-one-page .astro-traditional-preview > div {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 270px !important;
+    gap: 12px !important;
+  }
+  .astro-export-one-page .astro-traditional-preview .overflow-x-auto {
+    overflow: visible !important;
+  }
 }
 
 @layer components {
