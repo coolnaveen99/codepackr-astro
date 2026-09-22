@@ -1,13 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://astro.codepackr.com/</loc><lastmod>2026-09-22</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=porutham</loc><lastmod>2026-09-22</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=panchangam</loc><lastmod>2026-09-22</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=rasipalan</loc><lastmod>2026-09-22</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=biodata</loc><lastmod>2026-09-22</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=numerology</loc><lastmod>2026-09-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=prasna</loc><lastmod>2026-09-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=glossary</loc><lastmod>2026-09-22</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=disclaimer</loc><lastmod>2026-09-22</lastmod><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://astro.codepackr.com/?page=contact</loc><lastmod>2026-09-22</lastmod><changefreq>yearly</changefreq><priority>0.4</priority></url>
+  <!-- Core Horoscope & 30-Page Vedic Chart -->
+  <url>
+    <loc>https://astro.codepackr.com/</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://astro.codepackr.com/jathagam</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- 10 Porutham Marriage Compatibility -->
+  <url>
+    <loc>https://astro.codepackr.com/porutham</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Daily Tamil Panchangam, Nalla Neram & Rahu Kalam -->
+  <url>
+    <loc>https://astro.codepackr.com/panchangam</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Marriage Jathaga Biodata Maker (1-Page A4) -->
+  <url>
+    <loc>https://astro.codepackr.com/biodata</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Daily Rasi Palan (12 Zodiacs) -->
+  <url>
+    <loc>https://astro.codepackr.com/rasipalan</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Tamil Numerology Calculator & Name Number -->
+  <url>
+    <loc>https://astro.codepackr.com/numerology</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Chozhi Prasnam & Arudha Calculator -->
+  <url>
+    <loc>https://astro.codepackr.com/prasna</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Vedic Astrology Dictionary & Glossary -->
+  <url>
+    <loc>https://astro.codepackr.com/glossary</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Contact & Astrological Inquiries -->
+  <url>
+    <loc>https://astro.codepackr.com/contact</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Astrology Disclaimer & Privacy -->
+  <url>
+    <loc>https://astro.codepackr.com/disclaimer</loc>
+    <lastmod>2026-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
 </urlset>

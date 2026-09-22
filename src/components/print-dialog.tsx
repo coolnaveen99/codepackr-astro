@@ -96,17 +96,23 @@ export function PrintDialog({
         </div>
 
         {/* Notice for preview iframe users */}
-        <div className="border-b border-amber-200/80 bg-amber-50 px-4 py-2 text-[11px] text-amber-900 flex items-center justify-between gap-2">
+        <div className="border-b border-border/60 bg-elevated/40 px-4 py-2 text-[11px] text-muted flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="inline-block size-1.5 rounded-full bg-accent" />
+            <span className="font-medium text-ink">
+              {lang === "ta" ? "6 பக்கங்கள் கொண்ட முழு ஜாதகம் · ஒவ்வொரு பக்கத்திலும் கணபதி அருள் உருவம்" : "Complete 6-Page Booklet · Lord Ganesha Blessing on every page"}
+            </span>
+          </div>
           <span>
             {lang === "ta"
-              ? "💡 குறிப்பு: பிரவுசர் ஐபிரேமில் அச்சிடுதல் தடைபட்டால், மேலே உள்ள 'புதிய விண்டோவில் அச்சிட திறக்க' என்பதை அழுத்தவும்."
-              : "💡 Tip: If printing is blocked inside the sandboxed preview iframe, click 'Open in New Tab to Print / PDF' above."}
+              ? "💡 குறிப்பு: பிரவுசர் ஐபிரேமில் அச்சிடுதல் தடைபட்டால், மேலே உள்ள 'புதிய விண்டோவில் திறக்க' என்பதை அழுத்தவும்."
+              : "💡 Tip: If printing is sandboxed in iframe, click 'Open in New Tab' above."}
           </span>
         </div>
 
         {/* Modal Body - Scrollable A4 Preview */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-elevated/30">
-          <div className="mx-auto max-w-[210mm] bg-white rounded-lg p-6 sm:p-8 shadow-md border border-border/80 text-black">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-elevated/20">
+          <div className="mx-auto max-w-[210mm]">
             {children}
           </div>
         </div>

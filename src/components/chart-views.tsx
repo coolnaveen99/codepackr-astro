@@ -36,6 +36,7 @@ import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
 import { PrintDialog } from "@/components/print-dialog";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
+import { FullReport } from "@/components/full-report";
 import {
   BavGrid,
   BhavaStrip,
@@ -66,7 +67,8 @@ function find(list: BodyPos[], id: string) {
 export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }) {
   const [tab, setTab] = useState<Tab>("chart");
   const [showPrintModal, setShowPrintModal] = useState(false);
-  const { go } = useNav();
+  const [reportType, setReportType] = useState<"full30" | "summary6">("full30");
+  const { go, getUrl } = useNav();
   const analysis = useMemo(() => analyse(result), [result]);
   const moon = find(result.list, "moon");
   const lagna = find(result.list, "lagna");
@@ -157,43 +159,99 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
             </button>
           ))}
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="no-print" onClick={() => go("porutham")}>
-            {t(lang, "openPorutham")}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline" size="sm" className="no-print">
+            <a
+              href={getUrl("porutham")}
+              onClick={(e) => {
+                e.preventDefault();
+                go("porutham");
+              }}
+            >
+              {t(lang, "openPorutham")}
+            </a>
           </Button>
           <Button
             variant="outline"
             size="sm"
-            className="no-print border-accent text-accent hover:bg-accent hover:text-accent-fg font-medium"
+            className="no-print border-accent bg-accent text-accent-fg hover:opacity-90 font-semibold shadow-xs"
             onClick={() => {
-              try {
-                window.print();
-              } catch {
-                // ignore
-              }
+              setReportType("full30");
               setShowPrintModal(true);
             }}
           >
-            <Printer className="size-4 mr-1" />
-            {t(lang, "print")}
+            <Printer className="size-4 mr-1.5" />
+            {lang === "ta" ? "முழு 30 பக்க ஜாதகம் (அச்சிடுக)" : "Print Full 30-Page Horoscope"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="no-print border-border text-muted hover:text-fg text-xs"
+            onClick={() => {
+              setReportType("summary6");
+              setShowPrintModal(true);
+            }}
+          >
+            {lang === "ta" ? "6 பக்க சுருக்கம்" : "6-Page Summary"}
           </Button>
         </div>
       </div>
 
       <div className="print:hidden">{body}</div>
       <div className="hidden print:block">
-        <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
+        {reportType === "full30" ? (
+          <FullReport result={result} analysis={analysis} lang={lang} />
+        ) : (
+          <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
+        )}
       </div>
 
       {/* Interactive Print / Save as PDF Dialog */}
       <PrintDialog
         open={showPrintModal}
         onClose={() => setShowPrintModal(false)}
-        title={lang === "ta" ? "தமிழ் ஜாதக அச்சுப் பிரதி (A4)" : "Tamil Horoscope Report (A4 Print)"}
+        title={
+          reportType === "full30"
+            ? (lang === "ta" ? "முழு 30 பக்க வேத ஜாதக புத்தகம் (A4 அச்சுப் பிரதி)" : "Full 30-Page Vedic Horoscope Booklet (A4 Print)")
+            : (lang === "ta" ? "சுருக்க வேத ஜாதகம் (6 பக்கங்கள்)" : "Vedic Horoscope Summary (6 Pages)")
+        }
         lang={lang}
-        newTabUrl="/?page=jathagam&print=auto"
+        newTabUrl={`/?page=jathagam&print=auto&mode=${reportType}`}
       >
-        <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
+        <div className="mb-4 flex items-center justify-center gap-2 no-print">
+          <div className="flex rounded-lg bg-surface p-1 border border-border/80 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => setReportType("full30")}
+              className={cn(
+                "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                reportType === "full30"
+                  ? "bg-accent text-accent-fg shadow-xs"
+                  : "text-muted hover:text-fg"
+              )}
+            >
+              {lang === "ta" ? "முழு 30 பக்க விரிவான ஜாதகம்" : "Full 30-Page Comprehensive Report"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReportType("summary6")}
+              className={cn(
+                "px-3 py-1.5 text-xs font-semibold rounded-md transition-all",
+                reportType === "summary6"
+                  ? "bg-accent text-accent-fg shadow-xs"
+                  : "text-muted hover:text-fg"
+              )}
+            >
+              {lang === "ta" ? "6 பக்க சுருக்க ஜாதகம்" : "6-Page Concise Booklet"}
+            </button>
+          </div>
+        </div>
+
+        {reportType === "full30" ? (
+          <FullReport result={result} analysis={analysis} lang={lang} />
+        ) : (
+          <PrintHoroscopeSheet result={result} analysis={analysis} lang={lang} />
+        )}
       </PrintDialog>
     </div>
   );

@@ -601,6 +601,159 @@ function detectYogas(
     detailEn: vasumati ? "Benefics in upachaya houses — wealth flow." : "Vasumati yoga is not formed.",
   });
 
+  // Dharma-Karmadhipati Raja Yoga (9th + 10th lords)
+  const tenthLord = bhavas[9].lord;
+  const dharmaKarma =
+    (nl.house === byId[tenthLord]?.house) ||
+    (nl.aspectsHouses.includes(byId[tenthLord]?.house ?? 0) && byId[tenthLord]?.aspectsHouses.includes(nl.house));
+  push({
+    id: "dharma-karmadhipati",
+    nameTa: "தர்ம-கர்மாதிபதி ராஜயோகம்",
+    nameEn: "Dharma-Karmadhipati raja yoga",
+    present: dharmaKarma,
+    kind: "yoga",
+    detailTa: dharmaKarma
+      ? "9-ஆம் அதிபதி (தர்மம்) மற்றும் 10-ஆம் அதிபதி (கர்மம்) இணைவு அல்லது பரிவர்த்தனை — மிக உயர்ந்த கௌரவம், ஆட்சி அதிகாரம்."
+      : "தர்ம-கர்மாதிபதி யோக அமைப்பு இல்லை.",
+    detailEn: dharmaKarma
+      ? "9th lord (Dharma) and 10th lord (Karma) conjoined or aspecting — top-tier status, authority, and noble legacy."
+      : "Dharma-Karmadhipati combination is not formed.",
+  });
+
+  // Dhana Yoga (Wealth Yoga: Lords of 1, 2, 5, 9, 11 sambandha)
+  const secondLord = bhavas[1].lord;
+  const fifthLord = bhavas[4].lord;
+  const eleventhLord = bhavas[10].lord;
+  const dhanaHits = [
+    byId[secondLord]?.house === byId[eleventhLord]?.house,
+    byId[fifthLord]?.house === byId[ninthLord]?.house,
+    [1, 2, 5, 9, 11].includes(byId[secondLord]?.house ?? 0) && [1, 2, 5, 9, 11].includes(byId[eleventhLord]?.house ?? 0),
+  ];
+  const dhanaYoga = dhanaHits.some(Boolean);
+  push({
+    id: "dhana-yoga",
+    nameTa: "தன யோகம் (Dhana Yoga)",
+    nameEn: "Dhana yoga (Wealth)",
+    present: dhanaYoga,
+    kind: "yoga",
+    detailTa: dhanaYoga
+      ? "2, 5, 9, 11-ஆம் தன பாவ அதிபதிகள் சுப இணைவு அல்லது கேந்திர திரிகோணத்தில் — நிரந்தர சொத்துக்கள் மற்றும் வருமானம்."
+      : "பிரத்யேக தனயோக கிரக இணைவில்லை; சுய உழைப்பால் செல்வம் உயரும்.",
+    detailEn: dhanaYoga
+      ? "Lords of 2nd, 5th, 9th, and 11th houses in auspicious relation — strong capacity for capital accumulation."
+      : "No direct dhana yoga combination; wealth grows steadily through sustained effort.",
+  });
+
+  // Budhaditya Yoga (Sun + Mercury)
+  const sun = find(result, "sun");
+  const merc = find(result, "mercury");
+  const budhaditya = sun.sign === merc.sign && !byId.mercury?.combust;
+  push({
+    id: "budhaditya",
+    nameTa: "புதாதித்ய யோகம்",
+    nameEn: "Budhaditya yoga",
+    present: budhaditya,
+    kind: "yoga",
+    detailTa: budhaditya
+      ? "சூரியன் மற்றும் புதன் ஒரே ராசியில் அஸ்தங்கமின்றி இணைவு — கூரிய அறிவுத்திறன், கல்விச் சிறப்பு, நிர்வாக மேன்மை."
+      : sun.sign === merc.sign
+        ? "சூரியன்-புதன் இணைவு உள்ளது; புதன் நெருக்க அஸ்தங்கம் காரணமாக பலன் மிதமானது."
+        : "சூரியன்-புதன் வெவ்வேறு ராசிகளில் உள்ளனர்.",
+    detailEn: budhaditya
+      ? "Sun and Mercury conjunct without combustion — sharp intellect, eloquence, and administrative skill."
+      : sun.sign === merc.sign
+        ? "Sun and Mercury conjunct, but deep combustion softens its full expression."
+        : "Sun and Mercury are placed in separate signs.",
+  });
+
+  // Lunar Yogas: Sunapha, Anapha, Durudhara
+  const planetsFromMoon2 = result.list.filter((p) => p.id !== "moon" && p.id !== "lagna" && p.id !== "gulika" && p.id !== "rahu" && p.id !== "ketu" && houseFrom(p.sign, moon.sign) === 2);
+  const planetsFromMoon12 = result.list.filter((p) => p.id !== "moon" && p.id !== "lagna" && p.id !== "gulika" && p.id !== "rahu" && p.id !== "ketu" && houseFrom(p.sign, moon.sign) === 12);
+  if (planetsFromMoon2.length > 0 && planetsFromMoon12.length > 0) {
+    push({
+      id: "durudhara",
+      nameTa: "துருதுரா யோகம்",
+      nameEn: "Durudhara yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சந்திரனுக்கு 2 மற்றும் 12 ஆகிய இரு புறங்களிலும் கிரகங்கள் — சர்வ சௌபாக்கியம், நிலையான செல்வாக்கு.",
+      detailEn: "Planets flanking both 2nd and 12th from Moon — balanced comforts, generous nature, and material security.",
+    });
+  } else if (planetsFromMoon2.length > 0) {
+    push({
+      id: "sunapha",
+      nameTa: "சுனபா யோகம்",
+      nameEn: "Sunapha yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சந்திரனுக்கு 2-ஆம் இடத்தில் கிரகம் — சுயமுயற்சியால் செல்வம், புத்தி கூர்மை, குடும்ப ஆதரவு.",
+      detailEn: "Planet in 2nd from Moon — self-made wealth, refined taste, and practical intelligence.",
+    });
+  } else if (planetsFromMoon12.length > 0) {
+    push({
+      id: "anapha",
+      nameTa: "அனபா யோகம்",
+      nameEn: "Anapha yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சந்திரனுக்கு 12-ஆம் இடத்தில் கிரகம் — தர்ம குணம், புலனடக்கம், அமைதியான மனநிலை.",
+      detailEn: "Planet in 12th from Moon — charitable mindset, spiritual inclination, and peace of mind.",
+    });
+  }
+
+  // Solar Yogas: Vesi, Vosi, Ubhayachari
+  const planetsFromSun2 = result.list.filter((p) => p.id !== "sun" && p.id !== "lagna" && p.id !== "gulika" && p.id !== "rahu" && p.id !== "ketu" && houseFrom(p.sign, sun.sign) === 2);
+  const planetsFromSun12 = result.list.filter((p) => p.id !== "sun" && p.id !== "lagna" && p.id !== "gulika" && p.id !== "rahu" && p.id !== "ketu" && houseFrom(p.sign, sun.sign) === 12);
+  if (planetsFromSun2.length > 0 && planetsFromSun12.length > 0) {
+    push({
+      id: "ubhayachari",
+      nameTa: "உபயசாரி யோகம்",
+      nameEn: "Ubhayachari yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சூரியனின் இருபுறமும் (2 மற்றும் 12) கிரகங்கள் — அரசாங்க ஆதரவு, வசீகரப் பேச்சு, சமூக அந்தஸ்து.",
+      detailEn: "Planets in both 2nd and 12th from Sun — magnetic personality, recognition, and well-rounded fortune.",
+    });
+  } else if (planetsFromSun2.length > 0) {
+    push({
+      id: "vesi",
+      nameTa: "வேசி யோகம்",
+      nameEn: "Vesi yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சூரியனுக்கு 2-ஆம் இடத்தில் கிரகம் — உறுதிமிக்க சொல், சத்திய குணம், நல்ல நடத்தை.",
+      detailEn: "Planet in 2nd from Sun — upright character, eloquence, and reliable reputation.",
+    });
+  } else if (planetsFromSun12.length > 0) {
+    push({
+      id: "vosi",
+      nameTa: "வோசி யோகம்",
+      nameEn: "Vosi yoga",
+      present: true,
+      kind: "yoga",
+      detailTa: "சூரியனுக்கு 12-ஆம் இடத்தில் கிரகம் — புகழ், பொறுமை, சிறந்த சிந்தனை.",
+      detailEn: "Planet in 12th from Sun — good memory, endurance, and quiet authority.",
+    });
+  }
+
+  // Pitru Dosha check (Sun with Rahu/Ketu or Saturn in 9th)
+  const ninthHouseOccupants = bhavas[8].occupants;
+  const sunRahuConjunct = sun.sign === find(result, "rahu").sign || sun.sign === find(result, "ketu").sign;
+  const pitruDosha = (ninthHouseOccupants.includes("rahu") || ninthHouseOccupants.includes("ketu") || (sunRahuConjunct && [1, 5, 9].includes(sun.house)));
+  push({
+    id: "pitru-dosha",
+    nameTa: "பித்ரு தோஷம் (Pitru Dosha)",
+    nameEn: "Pitru dosha",
+    present: pitruDosha,
+    kind: "dosha",
+    detailTa: pitruDosha
+      ? "சூரியன் அல்லது 9-ஆம் பாவகத்தில் ராகு/கேது சம்பந்தம் — முன்னோர் ஆசி பெற தான தர்மங்கள் மற்றும் அமாவாசை தர்ப்பணம் நன்று."
+      : "பித்ரு தோஷம் ஜாதகத்தில் அமையவில்லை; முன்னோர்களின் நல் ஆசி உள்ளது.",
+    detailEn: pitruDosha
+      ? "Nodal affliction to Sun or 9th house — ancestor prayers, Amavasya charity, and family harmony rituals are recommended."
+      : "Pitru dosha is absent; blessings of ancestors support life progress.",
+  });
+
   return hits;
 }
 

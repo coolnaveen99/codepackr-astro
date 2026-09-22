@@ -64,28 +64,37 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
       const canvas = await html2canvas(el, {
         scale: 2,
         useCORS: true,
-        backgroundColor: "#fffaf3",
+        backgroundColor: "#fffdfa",
         logging: false,
       });
-      const img = canvas.toDataURL("image/jpeg", 0.93);
+      const img = canvas.toDataURL("image/jpeg", 0.95);
       const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
       const pageW = 210;
       const pageH = 297;
-      const imgH = (canvas.height * pageW) / canvas.width;
-      if (imgH <= pageH) {
-        pdf.addImage(img, "JPEG", 0, 0, pageW, imgH);
-      } else {
-        let y = 0;
-        let left = imgH;
-        while (left > 0) {
-          pdf.addImage(img, "JPEG", 0, y === 0 ? 0 : -(imgH - left), pageW, imgH);
-          left -= pageH;
-          if (left > 0) {
-            pdf.addPage();
-            y = 1;
-          }
-        }
+      
+      // Fit with 4mm safe margin so nothing touches edges or triggers auto page break
+      const margin = 4;
+      const maxW = pageW - margin * 2;
+      const maxH = pageH - margin * 2;
+
+      let targetW = maxW;
+      let targetH = maxW * (canvas.height / canvas.width);
+
+      if (targetH > maxH) {
+        const scale = maxH / targetH;
+        targetW = targetW * scale;
+        targetH = targetH * scale;
       }
+
+      const x = (pageW - targetW) / 2;
+      const y = (pageH - targetH) / 2;
+      pdf.addImage(img, "JPEG", x, y, targetW, targetH, undefined, "FAST");
+
+      // Strictly guarantee exactly 1 single page
+      while (pdf.getNumberOfPages() > 1) {
+        pdf.deletePage(pdf.getNumberOfPages());
+      }
+
       const role = bio.birth.sex === "M" ? "Groom" : "Bride";
       const file = (bio.birth.name ? `${bio.birth.name}-${role}` : `${role}-marriage-biodata`).replace(/\s+/g, "-");
       pdf.save(`${file}.pdf`);

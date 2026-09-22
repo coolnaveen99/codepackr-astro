@@ -6,21 +6,24 @@ import { ShieldAlert, ArrowLeft, CheckCircle2, AlertTriangle, FileText } from "l
 
 export function DisclaimerPage() {
   const { lang } = useLang();
-  const { go } = useNav();
+  const { go, getUrl } = useNav();
 
   const isTa = lang === "ta";
 
   return (
     <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
       <div className="mb-6 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => go("jathagam")}
+        <a
+          href={getUrl("jathagam")}
+          onClick={(e) => {
+            e.preventDefault();
+            go("jathagam");
+          }}
           className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-accent hover:underline"
         >
           <ArrowLeft className="size-4" />
           <span>{isTa ? "முகப்புக்குத் திரும்பு" : "Back to Home"}</span>
-        </button>
+        </a>
         <span className="inline-flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent border border-accent/20">
           <FileText className="size-3.5" />
           <span>{isTa ? "பொறுப்புத் துறப்பு" : "Disclaimer"}</span>
@@ -121,13 +124,16 @@ export function DisclaimerPage() {
             <p className="font-semibold text-fg">Codepackr Astro &bull; astro.codepackr.com</p>
             <p>Contact: codepackr@gmail.com</p>
           </div>
-          <button
-            type="button"
-            onClick={() => go("jathagam")}
+          <a
+            href={getUrl("jathagam")}
+            onClick={(e) => {
+              e.preventDefault();
+              go("jathagam");
+            }}
             className="rounded-lg bg-accent px-4 py-2 font-semibold text-accent-fg hover:opacity-90 transition-opacity"
           >
             {isTa ? "ஜாதகம் கணிக்க" : "Go to Jathagam"}
-          </button>
+          </a>
         </footer>
       </article>
     </main>

@@ -90,6 +90,30 @@ export type ChartResult = {
   dasa: { nak: number; pada: number; lord: string; periods: DasaPeriod[] };
   sav: number[];
   bav: Record<BavPlanet, number[]>;
+  upagrahas: UpagrahaPos[];
+  specialLagnas: SpecialLagnaPos[];
+};
+
+export type UpagrahaPos = {
+  id: string;
+  nameTa: string;
+  nameEn: string;
+  lon: number;
+  sign: number;
+  dms: string;
+  nak: number;
+  pada: number;
+  house: number;
+};
+
+export type SpecialLagnaPos = {
+  id: string;
+  nameTa: string;
+  nameEn: string;
+  lon: number;
+  sign: number;
+  dms: string;
+  house: number;
 };
 
 export function norm360(x: number) {
@@ -209,29 +233,89 @@ export function navamsa(lon: number) {
 }
 
 export function vargaSign(lon: number, n: number) {
-  if (n === 1) return signIndex(lon);
+  const s = signIndex(lon);
+  const within = norm360(lon) % 30;
+  if (n === 1) return s;
   if (n === 9) return navamsa(lon);
+  if (n === 2) {
+    // D2 Hora: odd signs: 0-15 Sun (Leo 4), 15-30 Moon (Cancer 3)
+    // even signs: 0-15 Moon (Cancer 3), 15-30 Sun (Leo 4)
+    const isOdd = s % 2 === 0;
+    const firstHalf = within < 15;
+    return isOdd ? (firstHalf ? 4 : 3) : firstHalf ? 3 : 4;
+  }
   if (n === 3) {
-    const s = signIndex(lon);
-    const part = Math.floor((norm360(lon) % 30) / 10);
+    // D3 Drekkana
+    const part = Math.floor(within / 10);
     return (s + part * 4) % 12;
   }
+  if (n === 4) {
+    // D4 Chaturthamsa
+    const part = Math.floor(within / 7.5);
+    return (s + part * 3) % 12;
+  }
   if (n === 7) {
-    const s = signIndex(lon);
-    const part = Math.floor((norm360(lon) % 30) / (30 / 7));
+    // D7 Saptamsa
+    const part = Math.floor(within / (30 / 7));
     const start = s % 2 === 0 ? s : (s + 6) % 12;
     return (start + part) % 12;
   }
   if (n === 10) {
-    const s = signIndex(lon);
-    const part = Math.floor((norm360(lon) % 30) / 3);
+    // D10 Dasamsa
+    const part = Math.floor(within / 3);
     const odd = s % 2 === 0;
     const start = odd ? s : (s + 8) % 12;
     return (start + part) % 12;
   }
   if (n === 12) {
-    const s = signIndex(lon);
-    const part = Math.floor((norm360(lon) % 30) / 2.5);
+    // D12 Dwadasamsa
+    const part = Math.floor(within / 2.5);
+    return (s + part) % 12;
+  }
+  if (n === 16) {
+    // D16 Shodashamsa: movable from Aries(0), fixed from Leo(4), dual from Sagittarius(8)
+    const part = Math.floor(within / (30 / 16));
+    const start = s % 3 === 0 ? 0 : s % 3 === 1 ? 4 : 8;
+    return (start + part) % 12;
+  }
+  if (n === 20) {
+    // D20 Vimsamsa: movable from Aries(0), fixed from Sagittarius(8), dual from Leo(4)
+    const part = Math.floor(within / 1.5);
+    const start = s % 3 === 0 ? 0 : s % 3 === 1 ? 8 : 4;
+    return (start + part) % 12;
+  }
+  if (n === 24) {
+    // D24 Chaturvimsamsa / Siddhamsa: odd signs from Leo(4), even from Cancer(3)
+    const part = Math.floor(within / 1.25);
+    const start = s % 2 === 0 ? 4 : 3;
+    return (start + part) % 12;
+  }
+  if (n === 27) {
+    // D27 Saptavimsamsa: 0,4,8->0, 1,5,9->3, 2,6,10->6, 3,7,11->9
+    const part = Math.floor(within / (30 / 27));
+    const start = (s % 4) * 3;
+    return (start + part) % 12;
+  }
+  if (n === 30) {
+    // D30 Trimsamsa
+    const isOdd = s % 2 === 0;
+    if (isOdd) {
+      if (within < 5) return 0;
+      if (within < 10) return 10;
+      if (within < 18) return 8;
+      if (within < 25) return 2;
+      return 6;
+    } else {
+      if (within < 5) return 1;
+      if (within < 12) return 5;
+      if (within < 20) return 11;
+      if (within < 25) return 9;
+      return 7;
+    }
+  }
+  if (n === 60) {
+    // D60 Shashtiamsa
+    const part = Math.floor(within / 0.5);
     return (s + part) % 12;
   }
   return signIndex(lon);
@@ -683,6 +767,97 @@ export function compute(input: BirthInput): ChartResult {
   const muh = muhurta(ss.sunriseJD, ss.sunsetJD, wd);
   const dasa = vimshottari(bodies.moon, jd);
   const { sav, bav } = ashtakavarga(bodies);
+
+  // Upagrahas calculation (Parashara tradition)
+  const daySpan = ss.sunsetJD - ss.sunriseJD;
+  const nightSpan = (ss.nextSunriseJD || ss.sunriseJD + 1) - ss.sunsetJD;
+  const span = isDay ? daySpan : nightSpan;
+  const startJD = isDay ? ss.sunriseJD : ss.sunsetJD;
+  const partLen = span / 8;
+
+  const dayOrder = [0, 1, 2, 3, 4, 5, 6].map((offset) => (wd + offset) % 7);
+  const nightOrder = [0, 1, 2, 3, 4, 5, 6].map((offset) => (wd + 4 + offset) % 7);
+  const activeOrder = isDay ? dayOrder : nightOrder;
+
+  const findPartJD = (targetPlanet: number) => {
+    const idx = activeOrder.indexOf(targetPlanet);
+    return startJD + (idx >= 0 ? idx : 0) * partLen;
+  };
+
+  const ascAt = (timeJd: number) => {
+    const trop = tropicalAscendant(timeJd, input.lat, input.lon);
+    return norm360(trop - grahas.aya);
+  };
+
+  const satPartJD = findPartJD(6);
+  const gulikaLon = ascAt(satPartJD);
+  const mandiLon = ascAt(satPartJD + partLen * 0.5);
+  const yamaLon = ascAt(findPartJD(4));
+  const ardhaLon = ascAt(findPartJD(3));
+  const kaalaLon = ascAt(findPartJD(0));
+  const mrityuLon = ascAt(findPartJD(2));
+
+  // Shadow Upagrahas
+  const dhoomaLon = norm360(bodies.sun + 133 + 20 / 60);
+  const vyatipataLon = norm360(360 - dhoomaLon);
+  const pariveshaLon = norm360(vyatipataLon + 180);
+  const indrachapaLon = norm360(360 - pariveshaLon);
+  const upaketuLon = norm360(indrachapaLon + 16 + 40 / 60);
+
+  bodies.gulika = gulikaLon;
+
+  const makeUpagraha = (id: string, nameTa: string, nameEn: string, lon: number): UpagrahaPos => {
+    const n = nakshatra(lon);
+    return {
+      id,
+      nameTa,
+      nameEn,
+      lon,
+      sign: signIndex(lon),
+      dms: dmsText(lon),
+      nak: n.idx,
+      pada: n.pada,
+      house: houseFrom(signIndex(lon), signIndex(lagna)),
+    };
+  };
+
+  const upagrahas: UpagrahaPos[] = [
+    makeUpagraha("gulika", "குளிகன்", "Gulika", gulikaLon),
+    makeUpagraha("mandi", "மாந்தி", "Mandi", mandiLon),
+    makeUpagraha("yamakantaka", "யமகண்டகன்", "Yamakantaka", yamaLon),
+    makeUpagraha("ardhaprahara", "அர்த்தபிரஹாரன்", "Ardhaprahara", ardhaLon),
+    makeUpagraha("kaala", "காலன்", "Kaala", kaalaLon),
+    makeUpagraha("mrityu", "மிருத்யு", "Mrityu", mrityuLon),
+    makeUpagraha("dhooma", "தூமன்", "Dhooma", dhoomaLon),
+    makeUpagraha("vyatipata", "வியதீபாதன்", "Vyatipata", vyatipataLon),
+    makeUpagraha("parivesha", "பரிவேஷன்", "Parivesha", pariveshaLon),
+    makeUpagraha("indrachapa", "இந்திரசாபன்", "Indrachapa", indrachapaLon),
+    makeUpagraha("upaketu", "உபகேது", "Upaketu", upaketuLon),
+  ];
+
+  // Special Lagnas
+  const hoursFromSunrise = (jd - ss.sunriseJD) * 24;
+  const horaLagnaLon = norm360(bodies.sun + hoursFromSunrise * 30);
+  const ghatiLagnaLon = norm360(lagna + hoursFromSunrise * 37.5);
+  const moonNakProg = (norm360(bodies.moon) % (360 / 27)) / (360 / 27);
+  const sreeLagnaLon = norm360(lagna + moonNakProg * 30);
+
+  const makeSpecialLagna = (id: string, nameTa: string, nameEn: string, lon: number): SpecialLagnaPos => ({
+    id,
+    nameTa,
+    nameEn,
+    lon,
+    sign: signIndex(lon),
+    dms: dmsText(lon),
+    house: houseFrom(signIndex(lon), signIndex(lagna)),
+  });
+
+  const specialLagnas: SpecialLagnaPos[] = [
+    makeSpecialLagna("hl", "ஹோர லக்னம் (HL)", "Hora Lagna (HL)", horaLagnaLon),
+    makeSpecialLagna("gl", "கடிகா லக்னம் (GL)", "Ghati Lagna (GL)", ghatiLagnaLon),
+    makeSpecialLagna("sl", "ஸ்ரீ லக்னம் (SL)", "Sree Lagna (SL)", sreeLagnaLon),
+  ];
+
   return {
     input,
     jd,
@@ -699,6 +874,8 @@ export function compute(input: BirthInput): ChartResult {
     dasa,
     sav,
     bav,
+    upagrahas,
+    specialLagnas,
   };
 }
 

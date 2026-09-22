@@ -6,6 +6,8 @@ import { DUSTHANA, KENDRA } from "./tables";
 
 export type LifeAreaId =
   | "marriage"
+  | "spouseD9"
+  | "children"
   | "career"
   | "health"
   | "wealth"
@@ -248,9 +250,64 @@ export function spiritualityPhalan(a: Analysis, lang: Lang): LifeAreaReading {
   return { id: "spirituality", title: lang === "ta" ? "ஆன்மீகம் & தர்மம்" : "Spirituality & dharma", paragraphs, tone };
 }
 
+export function childrenPhalan(a: Analysis, lang: Lang): LifeAreaReading {
+  const h5 = bhava(a, 5);
+  const s5 = lordStrength(a, 5);
+  const jup = graha(a, "jupiter");
+  const tone = s5 === "strong" ? "strong" : s5 === "weak" ? "needs_effort" : "mixed";
+  const paragraphs: string[] = [];
+  if (lang === "ta") {
+    paragraphs.push(`5-ஆம் பாவம் புத்திரஸ்தானம் (${signOf(h5, "ta")}); அதிபதி ${planetName(h5.lord, "ta")} ${h5.lordHouse}-ஆம் இடத்தில். ${savNote(h5, "ta")}`);
+    paragraphs.push(`புத்திரகாரகர் குரு பகவான் நிலை: ${jup ? planetName("jupiter", "ta") + " " + jup.house + "-ஆம் பாவகத்தில்" : "குரு சுப பார்வை நன்று"}.`);
+    if (s5 === "strong") {
+      paragraphs.push("குழந்தை பாக்கியம் நன்முறையில் அமையும். பிள்ளைகளின் அறிவு, கல்வி மற்றும் பண்பு குடும்பத்திற்கு பெருமை சேர்க்கும்.");
+    } else if (s5 === "weak") {
+      paragraphs.push("புத்திர பாக்கியம் தாமதப்படலாம் அல்லது கூடுதல் கவனம் தேவைப்படலாம். திருச்செந்தூர் முருகன் அல்லது குரு பகவான் வழிபாடு மன அமைதி தரும்.");
+    } else {
+      paragraphs.push("புத்திர வழி ஆதரவும் மகிழ்ச்சியும் உண்டு. பிள்ளைகளின் விருப்பங்களை மதித்து வழிகாட்டுவது சிறந்தது.");
+    }
+  } else {
+    paragraphs.push(`5th house rules progeny, intelligence & merits (${signOf(h5, "en")}); lord ${planetName(h5.lord, "en")} in house ${h5.lordHouse}. ${savNote(h5, "en")}`);
+    paragraphs.push(`Putrakaraka Jupiter status: ${jup ? planetName("jupiter", "en") + " in house " + jup.house : "Jupiter's grace supports children"}.`);
+    if (s5 === "strong") {
+      paragraphs.push("Blessings of progeny are well supported. Children bring joy, academic achievement, and upright moral character.");
+    } else if (s5 === "weak") {
+      paragraphs.push("Timing of children may require patience and medical or spiritual care. Lord Muruga and Guru prayers provide calm assurance.");
+    } else {
+      paragraphs.push("Children's welfare progresses positively with balanced guidance and supportive family atmosphere.");
+    }
+  }
+  return { id: "children", title: lang === "ta" ? "புத்திர பாக்கியம் & குழந்தைகள்" : "Progeny & Children", paragraphs, tone };
+}
+
+export function spouseD9Phalan(a: Analysis, lang: Lang): LifeAreaReading {
+  const h7 = bhava(a, 7);
+  const ven = graha(a, "venus");
+  const jup = graha(a, "jupiter");
+  const paragraphs: string[] = [];
+  if (lang === "ta") {
+    paragraphs.push(`நவாம்ச (D9) மற்றும் 7-ஆம் பாவ ஆய்வு மூலம் அமையும் துணைவரின் குணம், குடும்பப் பின்னணி கணிக்கப்படுகிறது.`);
+    paragraphs.push(`களத்திரகாரகர் சுக்கிரன் ${ven?.house ?? 7}-ஆம் பாவத்திலும், குரு ${jup?.house ?? 1}-ஆம் பாவத்திலும் அமர்ந்துள்ளனர்.`);
+    paragraphs.push("துணைவர் பொறுப்புள்ள பண்பும், குடும்ப நலம் காக்கும் அக்கறையும் கொண்டவராக அமைவர். பரஸ்பர மரியாதை மற்றும் நேர்மையான உரையாடல் தாம்பத்ய ஒற்றுமையை உயர்த்தும்.");
+    if (a.chevvai.present) {
+      paragraphs.push("செவ்வாய் அமைப்பிற்கு ஏற்ப மனக்கசப்புகளை தவிர்த்து, அமைதியான கலந்தாலோசனையை கடைபிடிப்பது நலம்.");
+    }
+  } else {
+    paragraphs.push("D9 Navamsa and 7th Bhava reveal the innate nature, temperament, and cultural background of the life partner.");
+    paragraphs.push(`Kalathrakaraka Venus is in house ${ven?.house ?? 7}, while Jupiter is in house ${jup?.house ?? 1}.`);
+    paragraphs.push("The partner is likely to value duty, dignity, and family well-being. Transparent mutual communication ensures lasting marital harmony.");
+    if (a.chevvai.present) {
+      paragraphs.push("With active Mars influence, practicing patient listening and calm consensus helps dissolve minor frictions.");
+    }
+  }
+  return { id: "spouseD9", title: lang === "ta" ? "நவாம்ச துணைவர் குணம் & தாம்பத்யம்" : "Spouse Character & Navamsa", paragraphs, tone: "mixed" };
+}
+
 export function allLifeAreas(a: Analysis, lang: Lang): LifeAreaReading[] {
   return [
     marriagePhalan(a, lang),
+    spouseD9Phalan(a, lang),
+    childrenPhalan(a, lang),
     careerPhalan(a, lang),
     wealthPhalan(a, lang),
     healthPhalan(a, lang),
