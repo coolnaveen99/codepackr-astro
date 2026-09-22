@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileText, Info, Moon, Palette, Printer, ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
+import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileText, Info, Moon, Palette , ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
@@ -47,7 +47,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
 
         <PreviewPanel lang={lang} mode={mode} result={result} onGenerate={generate}/>
         {result&&mode!=="biodata"?<div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>window.print()} className="astro-action astro-action-primary" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})}><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Open detailed analysis"}</button></div>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action astro-action-primary"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Open detailed analysis"}</button></div>
           <TraditionalPreview result={result} lang={lang}/>
         </div>:null}
       </section>
@@ -72,7 +72,7 @@ function PreviewTile({tone,title,pages,active}:{tone:"blue"|"green"|"violet";tit
   return <div className={cn("astro-preview-tile",`tone-${tone}`,active&&"is-active")}><div className="astro-paper-preview"><div className="h-1.5 w-2/3 rounded-full bg-current opacity-30"/><div className="mt-2 grid grid-cols-2 gap-1"><span className="h-10 rounded border border-current/10"/><span className="h-10 rounded border border-current/10"/></div><div className="mt-1.5 h-1 rounded-full bg-current opacity-15"/><div className="mt-1 h-1 w-4/5 rounded-full bg-current opacity-15"/></div><div className="mt-2 flex items-center justify-between gap-2"><span className="text-xs font-bold text-slate-800">{title}</span><span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-bold text-slate-500">{pages}</span></div></div>;
 }
 
-function Setting({icon,label,value}:{icon:React.ReactNode;label:string;value:string}) { return <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5"><div className="flex items-center gap-2 text-slate-500"><span className="text-blue-600">{icon}</span><span className="text-[10px] font-bold uppercase tracking-wide">{label}</span></div><div className="mt-1 text-xs font-bold text-slate-800">{value}</div></div>; }
+function Setting({icon,label,value}:{icon:ReactNode;label:string;value:string}) { return <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5"><div className="flex items-center gap-2 text-slate-500"><span className="text-blue-600">{icon}</span><span className="text-[10px] font-bold uppercase tracking-wide">{label}</span></div><div className="mt-1 text-xs font-bold text-slate-800">{value}</div></div>; }
 
 function TraditionalPreview({result,lang}:{result:ChartResult;lang:Lang}) {
   const moon=result.list.find(p=>p.id==="moon"); const lagna=result.list.find(p=>p.id==="lagna");
