@@ -105,6 +105,18 @@ const COPY = {
   tabDasa: { ta: "தசை", en: "Dasa" },
   tabGochara: { ta: "கோசாரம்", en: "Transits" },
   tabVarga: { ta: "வர்க்கம்", en: "Vargas" },
+  tabRemedies: { ta: "பரிகாரம்", en: "Remedies" },
+  lifeAreas: { ta: "வாழ்க்கைப் பலன்கள்", en: "Life predictions" },
+  lifeAreasHint: {
+    ta: "பாவ அதிபதி, சர்வாஷ்டவர்க்கம், தற்போதைய தசை அடிப்படையில் — வழிகாட்டுதல் மட்டுமே.",
+    en: "Based on house lords, ashtakavarga and current dasa — guidance only.",
+  },
+  fullReport: { ta: "முழு அறிக்கை", en: "Full report" },
+  dasaNarrative: { ta: "தசை பலன்", en: "Dasa reading" },
+  remedyDisclaimerShort: {
+    ta: "பரிகாரம் வழிகாட்டுதல் மட்டுமே.",
+    en: "Remedies are guidance only.",
+  },
   tabMatch: { ta: "பொருத்தம்", en: "Match" },
   tithi: { ta: "திதி", en: "Tithi" },
   yoga: { ta: "யோகம்", en: "Yoga" },
