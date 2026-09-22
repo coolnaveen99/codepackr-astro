@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
-import { ArrowRight, BarChart3, BookOpen, CalendarDays, Check, FileDown, FileText, Info, Moon, Palette, Printer, ShieldCheck, Sparkles, UserRound, UsersRound } from "lucide-react";
+import { BarChart3, BookOpen, Check, FileDown, FileText, Info, Printer, ShieldCheck, Sparkles, UserRound } from "lucide-react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
@@ -8,54 +10,26 @@ import { t } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
 import { BirthForm } from "@/components/birth-form";
 import { SouthChart } from "@/components/south-chart";
+import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
+import { FullReport } from "@/components/full-report";
+import { analyse } from "@/lib/astro/analysis";
 import { cn } from "@/lib/utils";
-import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf";
 
-type ReportMode = "traditional" | "biodata" | "full";
-
-async function exportTraditionalPdf(name?: string) {
-  const element = document.getElementById("traditional-jathagam-report");
-  if (!element) return;
-  const canvas = await html2canvas(element, {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: "#ffffff",
-    windowWidth: element.scrollWidth,
-  });
-  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
-  const margin = 8;
-  const pageWidth = 210 - margin * 2;
-  const pageHeight = 297 - margin * 2;
-  const imageHeight = (canvas.height * pageWidth) / canvas.width;
-  let remaining = imageHeight;
-  let position = margin;
-  const image = canvas.toDataURL("image/png");
-  pdf.addImage(image, "PNG", margin, position, pageWidth, imageHeight, undefined, "FAST");
-  remaining -= pageHeight;
-  while (remaining > 0) {
-    position -= pageHeight;
-    pdf.addPage();
-    pdf.addImage(image, "PNG", margin, position, pageWidth, imageHeight, undefined, "FAST");
-    remaining -= pageHeight;
-  }
-  const safeName = (name || "jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g, "-").replace(/^-+|-+$/g, "") || "jathagam";
-  pdf.save(`${safeName}-traditional-jathagam.pdf`);
-}
+type ReportMode = "one" | "six" | "thirty";
 
 export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:Lang;draft:BirthInput;onChange:(v:BirthInput)=>void;onSubmit:()=>void;result:ChartResult|null}) {
-  const [mode,setMode]=useState<ReportMode>("traditional");
+  const [mode,setMode]=useState<ReportMode>("one");
   const {go}=useNav();
-  const generate=()=>mode==="biodata"?go("biodata"):onSubmit();
+  const generate=()=>onSubmit();
 
   return <main className="astro-dashboard mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-    <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center">
+    <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center lg:items-center">
       <div>
-        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent"><Sparkles className="size-3.5"/>{lang==="ta"?"இப்போது 3 விதமான ஜாதக அறிக்கைகள்":"3 horoscope report formats"}</div>
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-[11px] font-bold text-accent"><Sparkles className="size-3.5"/>{lang==="ta"?"ஜாதக அறிக்கை வடிவங்கள்":"Horoscope report formats"}</div>
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">{lang==="ta"?"ஜாதக அறிக்கை":"Horoscope Report"}</h1>
-        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">{lang==="ta"?"உங்கள் பிறப்பு விவரங்களை உள்ளிட்டு, பாரம்பரிய ஜாதகம் முதல் விரிவான ஜாதக புத்தகம் வரை உருவாக்குங்கள்.":"Enter birth details and generate a traditional chart, biodata-ready horoscope, or comprehensive report."}</p>
+        <p className="mt-1.5 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">{lang==="ta"?"உங்கள் பிறப்பு விவரங்களை உள்ளிட்டு, தேவையான பக்க அளவிலான ஜாதக அறிக்கையை உருவாக்குங்கள்.":"Enter birth details and generate a 1-page, 6-page, or 30-page horoscope report."}</p>
       </div>
-      <div className="hidden max-w-sm rounded-xl border border-accent/20 bg-accent/10 px-5 py-4 text-right lg:block"><div className="text-2xl font-serif text-accent">“</div><p className="text-sm font-semibold leading-6 text-slate-600">{lang==="ta"?"கிரகங்கள் காட்டும் பாதை, நம்பிக்கையான வாழ்க்கை வழிகாட்டி":"A clear view of the chart, with practical guidance."}</p><span className="mt-1 block text-xs font-bold text-accent">— CodePackr Astro</span></div>
+      <div className="hidden max-w-sm rounded-xl border border-accent/20 bg-accent/10 px-5 py-4 text-right lg:block"><div className="text-2xl font-serif text-accent">“</div><p className="text-sm font-semibold leading-6 text-slate-600">{lang==="ta"?"பிறப்பு விவரங்களிலிருந்து ஒழுங்கான ஜாதக அறிக்கை":"A structured horoscope report from your birth details."}</p><span className="mt-1 block text-xs font-bold text-accent">— CodePackr Astro</span></div>
     </section>
 
     <div className="grid gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
@@ -67,46 +41,74 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
 
       <section className="min-w-0 space-y-5">
         <div className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-4 flex items-center gap-2.5"><span className="flex size-9 items-center justify-center rounded-xl bg-accent/10 text-accent"><FileText className="size-5"/></span><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"அறிக்கை வகையை தேர்வு செய்யுங்கள்":"Choose a report format"}</h2><p className="text-xs text-slate-500">{lang==="ta"?"ஒரே பிறப்பு தரவிலிருந்து தேவையான வடிவத்தை தேர்வு செய்யலாம்.":"Choose the output format that matches your purpose."}</p></div></div>
+          <div className="mb-4 flex items-center gap-2.5"><span className="flex size-9 items-center justify-center rounded-xl bg-accent/10 text-accent"><FileText className="size-5"/></span><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"ஜாதக அறிக்கை வகையை தேர்வு செய்யுங்கள்":"Choose your horoscope report"}</h2><p className="text-xs text-slate-500">{lang==="ta"?"தேவைக்கேற்ப 1, 6 அல்லது 30 பக்க அறிக்கையை தேர்வு செய்யலாம்.":"Select the report length you need."}</p></div></div>
           <div className="grid gap-3 lg:grid-cols-3">
-            <ReportCard mode="traditional" selected={mode==="traditional"} onSelect={setMode} lang={lang} icon={<FileText className="size-8"/>} titleTa="பாரம்பரிய ஜாதகம்" titleEn="Traditional Jathagam" descTa="1–2 பக்கங்கள்\nபஞ்சாங்கம், கிரக நிலைகள், ராசி & நவாம்சம்" descEn="1–2 pages\nPanchangam, planets, Rasi & Navamsa"/>
-            <ReportCard mode="biodata" selected={mode==="biodata"} onSelect={setMode} lang={lang} icon={<UsersRound className="size-8"/>} titleTa="ஜாதகம் + பயோடேட்டா" titleEn="Jathagam + Biodata" descTa="ஜாதகம் + தனிப்பட்ட விவரங்கள்\nதிருமண / குடும்ப பயன்பாட்டிற்கு" descEn="Horoscope + personal details\nFor marriage & family sharing"/>
-            <ReportCard mode="full" selected={mode==="full"} onSelect={setMode} lang={lang} icon={<BookOpen className="size-8"/>} titleTa="முழு ஜாதகம்" titleEn="Full Jathagam" descTa="25–30+ பக்கங்கள்\nவிரிவான ஆய்விற்கான ஜாதக புத்தகம்" descEn="25–30+ pages\nComprehensive horoscope book"/>
+            <ReportCard mode="one" selected={mode==="one"} onSelect={setMode} lang={lang} icon={<FileText className="size-8"/>} titleTa="1 பக்க ஜாதகம்" titleEn="1-Page Jathagam" descTa="ஒரே பக்கத்தில் முக்கிய பிறப்பு விவரங்கள், பஞ்சாங்கம், கிரக நிலைகள், ராசி & நவாம்சம்." descEn="Key birth details, Panchangam, planetary positions, Rasi & Navamsa on one A4 page."/>
+            <ReportCard mode="six" selected={mode==="six"} onSelect={setMode} lang={lang} icon={<BookOpen className="size-8"/>} titleTa="6 பக்க ஜாதகம்" titleEn="6-Page Jathagam" descTa="முக்கிய ஜாதகக் கணிப்புகள், பாவ பலன், யோகங்கள், தோஷங்கள், தசா மற்றும் பரிகாரங்கள்." descEn="Core chart, Bhava readings, Yogas, Doshas, Dasa and remedies."/>
+            <ReportCard mode="thirty" selected={mode==="thirty"} onSelect={setMode} lang={lang} icon={<BookOpen className="size-8"/>} titleTa="30 பக்க ஜாதகம்" titleEn="30-Page Jathagam" descTa="விரிவான ஜாதகப் புத்தகம் — பாவம், யோகம், தசா, கோச்சாரம், வர்க்கங்கள், அஷ்டகவர்க்கம் மற்றும் பரிகாரங்கள்." descEn="Comprehensive horoscope book with Bhava, Yoga, Dasa, Gochara, Vargas, Ashtakavarga and remedies."/>
           </div>
-          <div className="mt-3 flex items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-xs text-accent"><Check className="size-4 shrink-0"/><span>{mode==="traditional"?(lang==="ta"?"பயோடேட்டா இல்லாமல் சுத்தமான பாரம்பரிய ஜாதகத் தாள்.":"A clean traditional horoscope sheet without biodata."):mode==="biodata"?(lang==="ta"?"பயோடேட்டா வடிவத்திற்கு தனிப்பட்ட விவரங்களை அடுத்த கட்டத்தில் நிரப்பலாம்.":"Continue to the dedicated biodata builder for personal details."):lang==="ta"?"விரிவான கணக்கீடுகள் மற்றும் விளக்கங்களுக்கான ஜாதக புத்தகம்.":"A comprehensive horoscope book for detailed calculations and interpretation."}</span></div>
+          <div className="mt-3 flex items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-xs text-accent"><Check className="size-4 shrink-0"/><span>{mode==="one"?(lang==="ta"?"சுருக்கமான 1 பக்க ஜாதகம் — விரைவாக அச்சிடவும் பகிரவும் ஏற்றது.":"A compact 1-page horoscope for quick printing and sharing."):mode==="six"?(lang==="ta"?"6 பக்க விரிவான ஜாதக அறிக்கை — ஒவ்வொரு முக்கிய பகுதியும் தனிப் பக்கமாக.":"A 6-page report with dedicated pages for major sections."):lang==="ta"?"30 பக்க விரிவான ஜாதகப் புத்தகம் — முழுமையான ஆய்விற்காக.":"A 30-page comprehensive horoscope book for detailed study."}</span></div>
         </div>
 
-        <PreviewPanel lang={lang} mode={mode} result={result} onGenerate={generate}/>
-        {result&&mode!=="biodata"?<div id="traditional-jathagam-report" className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div><button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action astro-action-primary"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Open detailed analysis"}</button></div>
-          <TraditionalPreview result={result} lang={lang}/>
+        <div className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"ஜாதகம் உருவாக்கவும்":"Generate Jathagam"}</h2><p className="text-xs text-slate-500">{lang==="ta"?"மேலே தேர்வு செய்த பக்க வடிவில் ஜாதகம் உருவாக்கப்படும்.":"The selected report format will be generated from your birth details."}</p></div>
+            <button type="button" onClick={generate} className="astro-action astro-action-primary justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Jathagam"}<span aria-hidden>→</span></button>
+          </div>
+          {result?<div className="mt-4 rounded-xl border border-accent/20 bg-accent/10 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div><div className="text-[10px] font-bold uppercase tracking-wide text-accent">{lang==="ta"?"தேர்ந்தெடுத்த அறிக்கை":"Selected report"}</div><div className="mt-0.5 text-sm font-extrabold text-slate-900">{reportTitle(mode,lang)}</div></div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" onClick={()=>window.print()} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button>
+                <button type="button" onClick={()=>void exportSelectedPdf(mode,result.input.name)} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button>
+              </div>
+            </div>
+          </div>:null}
+        </div>
+
+        {result?<div id="astro-analysis" className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {result.input.date} · {result.input.time}</p></div></div>
+          {mode==="one"?<TraditionalPreview result={result} lang={lang}/>:mode==="six"?<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang}/></div>:<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><FullReport result={result} analysis={analyse(result)} lang={lang}/></div>}
+        </div>:null}
+
+        {result?<div id="jathagam-export-root" className="astro-export-host" aria-hidden="true">
+          {mode==="one"?<div className="astro-export-one-page"><TraditionalPreview result={result} lang={lang}/></div>:mode==="six"?<PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang}/>:<FullReport result={result} analysis={analyse(result)} lang={lang}/>}
         </div>:null}
       </section>
     </div>
   </main>;
 }
 
+function reportTitle(mode:ReportMode,lang:Lang) {
+  if(mode==="one") return lang==="ta"?"1 பக்க ஜாதகம்":"1-Page Jathagam";
+  if(mode==="six") return lang==="ta"?"6 பக்க ஜாதகம்":"6-Page Jathagam";
+  return lang==="ta"?"30 பக்க ஜாதகம்":"30-Page Jathagam";
+}
+
+async function exportSelectedPdf(mode:ReportMode,name?:string) {
+  const root=document.getElementById("jathagam-export-root");
+  if(!root) return;
+  await document.fonts?.ready;
+  await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
+  const pages=mode==="one" ? [root.querySelector(".astro-export-one-page") as HTMLElement] : Array.from(root.querySelectorAll<HTMLElement>(".print-page"));
+  if(!pages.length || pages.some(p=>!p)) return;
+  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+  for(let i=0;i<pages.length;i++){
+    const page=pages[i];
+    const canvas=await html2canvas(page,{scale:2,useCORS:true,backgroundColor:"#ffffff",windowWidth:page.scrollWidth});
+    if(i>0) pdf.addPage();
+    const margin=5;
+    const width=210-margin*2;
+    const height=Math.min(287,canvas.height*width/canvas.width);
+    pdf.addImage(canvas.toDataURL("image/jpeg",0.95),"JPEG",margin,5,width,height,undefined,"FAST");
+  }
+  const safeName=(name||"jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g,"-").replace(/^-+|-+$/g,"")||"jathagam";
+  pdf.save(`${safeName}-${mode}-jathagam.pdf`);
+}
+
 function ReportCard({mode,selected,onSelect,lang,icon,titleTa,titleEn,descTa,descEn}:{mode:ReportMode;selected:boolean;onSelect:(m:ReportMode)=>void;lang:Lang;icon:ReactNode;titleTa:string;titleEn:string;descTa:string;descEn:string}) {
   return <button type="button" onClick={()=>onSelect(mode)} className={cn("astro-report-card group relative text-left",selected&&"is-selected")}>{selected?<span className="absolute right-3 top-3 flex size-6 items-center justify-center rounded-full bg-accent text-white"><Check className="size-4"/></span>:null}<span className={cn("mb-3 flex size-12 items-center justify-center rounded-2xl",selected?"bg-accent text-white":"bg-accent/10 text-accent group-hover:bg-accent/20")}>{icon}</span><span className="block pr-7 font-display text-base font-extrabold text-slate-900">{lang==="ta"?titleTa:titleEn}</span><span className="mt-2 block whitespace-pre-line text-xs leading-5 text-slate-500">{lang==="ta"?descTa:descEn}</span></button>;
 }
-
-function PreviewPanel({lang,mode,result,onGenerate}:{lang:Lang;mode:ReportMode;result:ChartResult|null;onGenerate:()=>void}) {
-  return <div className="astro-panel overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 sm:px-5"><div className="flex items-center gap-2.5"><span className="flex size-8 items-center justify-center rounded-lg bg-accent/10 text-accent"><Moon className="size-4"/></span><h2 className="font-display text-base font-extrabold text-slate-900">{lang==="ta"?"முன்னோட்டம் (Sample)":"Preview (Sample)"}</h2></div><span className="hidden text-[11px] font-semibold text-slate-400 sm:block">{lang==="ta"?"கணக்கீட்டுக்குப் பிறகு முன்னோட்டம் புதுப்பிக்கப்படும்":"Preview updates after calculation"}</span></div>
-    <div className="grid gap-3 p-4 sm:grid-cols-3 sm:p-5"><PreviewTile tone="blue" title={lang==="ta"?"பாரம்பரிய ஜாதகம்":"Traditional Jathagam"} pages="1–2" active={mode==="traditional"}/><PreviewTile tone="green" title={lang==="ta"?"ஜாதகம் + பயோடேட்டா":"Jathagam + Biodata"} pages="2–4" active={mode==="biodata"}/><PreviewTile tone="violet" title={lang==="ta"?"முழு ஜாதகம்":"Full Jathagam"} pages="25–30+" active={mode==="full"}/></div>
-    <div className="grid gap-3 border-t border-slate-100 bg-slate-50/70 p-4 sm:grid-cols-4 sm:p-5"><Setting icon={<Palette/>} label={lang==="ta"?"வண்ணமைப்பு":"Theme"} value="CodePackr"/><Setting icon={<FileText/>} label={lang==="ta"?"பக்க அளவு":"Page size"} value="A4"/><Setting icon={<CalendarDays/>} label={lang==="ta"?"மொழி":"Language"} value={lang==="ta"?"தமிழ்":"English"}/><Setting icon={<BarChart3/>} label={lang==="ta"?"வெளியீடு":"Output"} value="PDF / Print"/></div>
-    <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4 sm:p-5">
-      <button type="button" onClick={onGenerate} className="astro-action astro-action-primary flex-1 justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Horoscope"}<ArrowRight className="size-4"/></button>
-      {result?<><button type="button" onClick={()=>window.print()} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button><button type="button" onClick={()=>void exportTraditionalPdf(result.input.name)} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button><button type="button" onClick={()=>document.getElementById("astro-analysis")?.scrollIntoView({behavior:"smooth"})} className="astro-action justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"விரிவான ஆய்வு":"Detailed analysis"}</button></>:null}
-    </div>
-  </div>;
-}
-
-function PreviewTile({tone,title,pages,active}:{tone:"blue"|"green"|"violet";title:string;pages:string;active:boolean}) {
-  return <div className={cn("astro-preview-tile",`tone-${tone}`,active&&"is-active")}><div className="astro-paper-preview"><div className="h-1.5 w-2/3 rounded-full bg-current opacity-30"/><div className="mt-2 grid grid-cols-2 gap-1"><span className="h-10 rounded border border-current/10"/><span className="h-10 rounded border border-current/10"/></div><div className="mt-1.5 h-1 rounded-full bg-current opacity-15"/><div className="mt-1 h-1 w-4/5 rounded-full bg-current opacity-15"/></div><div className="mt-2 flex items-center justify-between gap-2"><span className="text-xs font-bold text-slate-800">{title}</span><span className="rounded-full bg-white/80 px-2 py-0.5 text-[10px] font-bold text-slate-500">{pages}</span></div></div>;
-}
-
-function Setting({icon,label,value}:{icon:ReactNode;label:string;value:string}) { return <div className="rounded-xl border border-slate-200 bg-white px-3 py-2.5"><div className="flex items-center gap-2 text-slate-500"><span className="text-accent">{icon}</span><span className="text-[10px] font-bold uppercase tracking-wide">{label}</span></div><div className="mt-1 text-xs font-bold text-slate-800">{value}</div></div>; }
 
 function TraditionalPreview({result,lang}:{result:ChartResult;lang:Lang}) {
   const moon=result.list.find(p=>p.id==="moon"); const lagna=result.list.find(p=>p.id==="lagna");
