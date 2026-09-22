@@ -124,16 +124,13 @@
     box-shadow: none !important;
     width: 210mm !important;
     max-width: 210mm !important;
-    height: 284mm !important;
-    max-height: 286mm !important;
-    padding: 5mm 6mm !important;
+    padding: 6mm 8mm !important;
     margin: 0 auto !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
     break-after: avoid !important;
     break-inside: avoid !important;
     position: relative !important;
-    overflow: hidden !important;
     background: #fffdfa !important;
   }
   .print-page {

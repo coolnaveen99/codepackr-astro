@@ -2,23 +2,33 @@
 import type { BirthInput } from "./engine";
 import { DEFAULT_INPUT } from "./samples";
 
+export type IncomePeriod = "per_month" | "per_annum";
+
 export type Complexion =
   | "fair"
-  | "wheatish"
   | "very_fair"
+  | "wheatish"
+  | "wheatish_medium"
   | "golden"
-  | "wheatish_brown"
   | "dusky"
   | (string & {});
 
-export const COMPLEXIONS = [
-  { id: "fair", ta: "சிகப்பு", en: "Fair" },
-  { id: "wheatish", ta: "மாநிறம்", en: "Wheatish (Maaniram)" },
-  { id: "very_fair", ta: "நல்ல சிகப்பு", en: "Very Fair" },
-  { id: "golden", ta: "பொன்னிறம்", en: "Golden Fair" },
-  { id: "wheatish_brown", ta: "கோதுமை நிறம்", en: "Wheatish Brown" },
-  { id: "dusky", ta: "கருஞ்சிவப்பு", en: "Dusky" },
-] as const;
+export interface ComplexionOption {
+  id: string;
+  ta: string;
+  en: string;
+  displayTa: string;
+  displayEn: string;
+}
+
+export const COMPLEXIONS: ComplexionOption[] = [
+  { id: "fair", ta: "சிகப்பு (Fair)", en: "Fair", displayTa: "சிகப்பு", displayEn: "Fair" },
+  { id: "very_fair", ta: "நல்ல சிகப்பு (Very Fair)", en: "Very Fair", displayTa: "நல்ல சிகப்பு", displayEn: "Very Fair" },
+  { id: "wheatish", ta: "மாநிறம் (Wheatish)", en: "Wheatish", displayTa: "மாநிறம்", displayEn: "Wheatish" },
+  { id: "wheatish_medium", ta: "கோதுமை மாநிறம் (Wheatish Medium)", en: "Wheatish Medium", displayTa: "கோதுமை மாநிறம்", displayEn: "Wheatish Medium" },
+  { id: "golden", ta: "பொன்னிறம் (Fair Glow)", en: "Fair Glow", displayTa: "பொன்னிறம்", displayEn: "Fair Glow" },
+  { id: "dusky", ta: "மாநிறம் - நடுத்தரம் (Dusky / Natural)", en: "Dusky / Natural", displayTa: "மாநிறம் (நடுத்தரம்)", displayEn: "Dusky / Natural" },
+];
 
 export type Biodata = {
   birth: BirthInput;
@@ -38,6 +48,7 @@ export type Biodata = {
   work: string;
   company: string;
   income: string;
+  incomePeriod: IncomePeriod;
   father: string;
   fatherJob: string;
   mother: string;
@@ -69,6 +80,7 @@ export const DEFAULT_BIODATA: Biodata = {
   work: "",
   company: "",
   income: "",
+  incomePeriod: "per_month",
   father: "",
   fatherJob: "",
   mother: "",

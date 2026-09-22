@@ -1,5 +1,5 @@
 // Codepackr Astro - Elevated App Shell & Auspicious Header Navigation
-import { useState, type ReactNode } from "react";
+import { useState, useRef, useEffect, type ReactNode } from "react";
 import {
   Compass,
   HeartHandshake,
@@ -13,46 +13,91 @@ import {
   Menu,
   X,
   ShieldCheck,
+  ChevronDown,
 } from "lucide-react";
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
 import { useNav, type Page } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 
-const NAV: { id: Page; label: string; icon: typeof Compass }[] = [
-  { id: "jathagam", label: "navChart", icon: Compass },
-  { id: "porutham", label: "navPorutham", icon: HeartHandshake },
-  { id: "panchangam", label: "navPanchang", icon: CalendarDays },
-  { id: "rasipalan", label: "navRasiPalan", icon: Sparkles },
-  { id: "numerology", label: "navNumerology", icon: Hash },
-  { id: "prasna", label: "navPrasna", icon: HelpCircle },
-  { id: "biodata", label: "navBiodata", icon: FileText },
-  { id: "glossary", label: "navGlossary", icon: BookOpen },
-  { id: "contact", label: "Contact", icon: Mail },
+// Primary Navigation (Core Vedic Astrological Services)
+const PRIMARY_NAV: { id: Page; labelKey: string; shortTa: string; shortEn: string; icon: typeof Compass }[] = [
+  { id: "jathagam", labelKey: "navChart", shortTa: "ஜாதகம்", shortEn: "Horoscope", icon: Compass },
+  { id: "porutham", labelKey: "navPorutham", shortTa: "பொருத்தம்", shortEn: "Porutham", icon: HeartHandshake },
+  { id: "panchangam", labelKey: "navPanchang", shortTa: "பஞ்சாங்கம்", shortEn: "Panchangam", icon: CalendarDays },
+  { id: "biodata", labelKey: "navBiodata", shortTa: "பயோடேட்டா", shortEn: "Biodata", icon: FileText },
+  { id: "rasipalan", labelKey: "navRasiPalan", shortTa: "ராசி பலன்", shortEn: "Rasi Palan", icon: Sparkles },
+];
+
+// Secondary / Additional Tools (Organized in "More" Dropdown)
+const MORE_NAV: {
+  id: Page;
+  titleTa: string;
+  titleEn: string;
+  descTa: string;
+  descEn: string;
+  icon: typeof Compass;
+}[] = [
+  {
+    id: "prasna",
+    titleTa: "பிரஷ்னம் (சோழி ஆருடம்)",
+    titleEn: "Prasna (Horary)",
+    descTa: "1-108 சோழி ஆருட எண் கணிப்பு",
+    descEn: "1-108 Horary question divination",
+    icon: HelpCircle,
+  },
+  {
+    id: "numerology",
+    titleTa: "எண் கணிதம்",
+    titleEn: "Numerology",
+    descTa: "பிறந்த தேதி மற்றும் பெயர் பலன்கள்",
+    descEn: "Birth date & name number analysis",
+    icon: Hash,
+  },
+  {
+    id: "contact",
+    titleTa: "தொடர்புக்கு",
+    titleEn: "Contact & Support",
+    descTa: "கருத்துக்கள் & உதவி",
+    descEn: "Feedback & developer support",
+    icon: Mail,
+  },
+];
+
+// All Nav Items for Footer Directory
+const ALL_NAV = [
+  ...PRIMARY_NAV.map((p) => ({ id: p.id, labelKey: p.labelKey, icon: p.icon })),
+  { id: "prasna" as Page, labelKey: "navPrasna", icon: HelpCircle },
+  { id: "numerology" as Page, labelKey: "navNumerology", icon: Hash },
+  { id: "glossary" as Page, labelKey: "navGlossary", icon: BookOpen },
+  { id: "contact" as Page, labelKey: "Contact", icon: Mail },
+  { id: "disclaimer" as Page, labelKey: "navDisclaimer", icon: ShieldCheck },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { lang, setLang } = useLang();
   const { page, go, getUrl } = useNav();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const isMoreActive = MORE_NAV.some((m) => m.id === page);
 
   return (
     <div className="min-h-screen bg-bg text-fg flex flex-col justify-between">
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
-        {/* Top Info Banner */}
-        <div className="border-b border-border/50 bg-elevated/40 px-4 py-1 text-center text-[11px] text-muted flex items-center justify-between sm:px-6">
-          <div className="flex items-center gap-1.5 text-accent font-medium">
-            <span className="inline-block size-1.5 rounded-full bg-accent animate-pulse" />
-            <span>{lang === "ta" ? "100% இலவசம் · தனிநபர் ரகசியம் காக்கப்படும்" : "100% Free · Client-Side Private · Accurate Vedic Engine"}</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <a href="mailto:codepackr@gmail.com" className="hover:text-accent text-[10.5px]">
-              codepackr@gmail.com
-            </a>
-          </div>
-        </div>
-
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-4 py-2.5 sm:px-6">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           {/* Logo & Brand */}
           <a
             href={getUrl("jathagam")}
@@ -60,8 +105,9 @@ export function AppShell({ children }: { children: ReactNode }) {
               e.preventDefault();
               go("jathagam");
               setMobileMenuOpen(false);
+              setMoreMenuOpen(false);
             }}
-            className="flex items-center gap-2.5 text-left rounded-md transition-transform active:scale-[0.98] focus-visible:outline-none"
+            className="flex items-center gap-2.5 text-left rounded-md transition-transform active:scale-[0.98] focus-visible:outline-none shrink-0"
             aria-label="Home"
           >
             <div className="relative flex size-9 sm:size-10 items-center justify-center rounded-lg bg-accent text-accent-fg shadow-xs">
@@ -82,16 +128,14 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </a>
 
-          {/* Desktop & Tablet Navigation */}
-          <nav className="hidden lg:flex items-center gap-1 overflow-x-auto py-1 scrollbar-none" aria-label="Main Navigation">
-            {NAV.map((n) => {
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
+            {PRIMARY_NAV.map((n) => {
               const Icon = n.icon;
               const active = page === n.id;
               const url = getUrl(n.id);
-              const label =
-                n.id === "contact"
-                  ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
-                  : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata");
+              const label = lang === "ta" ? n.shortTa : n.shortEn;
+
               return (
                 <a
                   key={n.id}
@@ -99,11 +143,12 @@ export function AppShell({ children }: { children: ReactNode }) {
                   onClick={(e) => {
                     e.preventDefault();
                     go(n.id);
+                    setMoreMenuOpen(false);
                   }}
                   className={cn(
-                    "flex items-center gap-1.5 h-8.5 rounded-lg px-2.5 text-xs font-medium transition-all whitespace-nowrap",
+                    "flex items-center gap-1.5 h-8.5 rounded-lg px-2.5 text-xs font-semibold transition-all whitespace-nowrap",
                     active
-                      ? "bg-accent text-accent-fg font-semibold shadow-2xs"
+                      ? "bg-accent text-accent-fg shadow-2xs"
                       : "text-muted hover:text-fg hover:bg-elevated/70"
                   )}
                 >
@@ -112,6 +157,67 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </a>
               );
             })}
+
+            {/* "More" Dropdown Menu */}
+            <div className="relative" ref={moreMenuRef}>
+              <button
+                type="button"
+                onClick={() => setMoreMenuOpen((o) => !o)}
+                aria-expanded={moreMenuOpen}
+                aria-haspopup="true"
+                className={cn(
+                  "flex items-center gap-1.5 h-8.5 rounded-lg px-2.5 text-xs font-semibold transition-all whitespace-nowrap cursor-pointer",
+                  isMoreActive
+                    ? "bg-accent text-accent-fg shadow-2xs font-semibold"
+                    : "text-muted hover:text-fg hover:bg-elevated/70"
+                )}
+              >
+                <span>{lang === "ta" ? "மேலும்" : "More"}</span>
+                <ChevronDown className={cn("size-3.5 transition-transform duration-200", moreMenuOpen && "rotate-180")} />
+              </button>
+
+              {moreMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-border/80 bg-surface/98 p-1.5 shadow-xl backdrop-blur-md z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+                  <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted border-b border-border/50 mb-1">
+                    {lang === "ta" ? "கூடுதல் சேவைகள்" : "More Astrological Tools"}
+                  </div>
+                  {MORE_NAV.map((m) => {
+                    const Icon = m.icon;
+                    const active = page === m.id;
+                    const url = getUrl(m.id);
+                    return (
+                      <a
+                        key={m.id}
+                        href={url}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          go(m.id);
+                          setMoreMenuOpen(false);
+                        }}
+                        className={cn(
+                          "flex items-start gap-2.5 rounded-lg p-2 text-xs transition-colors",
+                          active
+                            ? "bg-accent/15 text-accent font-semibold"
+                            : "text-fg hover:bg-elevated/80"
+                        )}
+                      >
+                        <div className={cn("p-1.5 rounded-md mt-0.5", active ? "bg-accent text-accent-fg" : "bg-elevated text-muted")}>
+                          <Icon className="size-3.5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold leading-tight text-ink">
+                            {lang === "ta" ? m.titleTa : m.titleEn}
+                          </p>
+                          <p className="text-[10px] text-muted leading-tight mt-0.5 truncate">
+                            {lang === "ta" ? m.descTa : m.descEn}
+                          </p>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Language Switch & Mobile Hamburger */}
@@ -123,7 +229,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   type="button"
                   onClick={() => setLang(l)}
                   className={cn(
-                    "h-7 rounded-full px-2.5 text-xs font-semibold transition-all",
+                    "h-7 rounded-full px-2.5 text-xs font-semibold transition-all cursor-pointer",
                     lang === l
                       ? "bg-accent text-accent-fg shadow-2xs"
                       : "text-muted hover:text-fg"
@@ -137,7 +243,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setMobileMenuOpen((o) => !o)}
-              className="lg:hidden flex size-8.5 items-center justify-center rounded-lg border border-border bg-surface text-muted hover:text-fg"
+              className="lg:hidden flex size-8.5 items-center justify-center rounded-lg border border-border bg-surface text-muted hover:text-fg cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="size-4.5" /> : <Menu className="size-4.5" />}
@@ -145,71 +251,85 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
         </div>
 
-        {/* Responsive Secondary Horizontal Nav for Medium Screens */}
-        <nav className="hidden md:flex lg:hidden border-t border-border/40 px-4 py-1.5 overflow-x-auto gap-1 bg-surface/80" aria-label="Tablet Navigation">
-          {NAV.map((n) => {
-            const Icon = n.icon;
-            const active = page === n.id;
-            const url = getUrl(n.id);
-            const label =
-              n.id === "contact"
-                ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
-                : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata");
-            return (
-              <a
-                key={n.id}
-                href={url}
-                onClick={(e) => {
-                  e.preventDefault();
-                  go(n.id);
-                }}
-                className={cn(
-                  "flex items-center gap-1 h-7 rounded-md px-2 text-[11.5px] font-medium whitespace-nowrap transition-colors",
-                  active
-                    ? "bg-accent text-accent-fg font-semibold"
-                    : "text-muted hover:text-fg hover:bg-elevated"
-                )}
-              >
-                <Icon className="size-3" />
-                <span>{label}</span>
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Mobile Drawer Menu */}
+        {/* Organized Mobile & Tablet Drawer Menu */}
         {mobileMenuOpen && (
-          <nav className="lg:hidden border-t border-border/80 bg-surface px-4 py-3 shadow-lg" aria-label="Mobile Navigation">
-            <div className="grid grid-cols-2 gap-1.5">
-              {NAV.map((n) => {
-                const Icon = n.icon;
-                const active = page === n.id;
-                const url = getUrl(n.id);
-                const label =
-                  n.id === "contact"
-                    ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
-                    : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata");
-                return (
-                  <a
-                    key={n.id}
-                    href={url}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      go(n.id);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={cn(
-                      "flex items-center gap-2 rounded-lg p-2.5 text-xs font-medium text-left transition-colors",
-                      active
-                        ? "bg-accent text-accent-fg font-semibold shadow-2xs"
-                        : "bg-elevated/40 text-fg hover:bg-elevated"
-                    )}
-                  >
-                    <Icon className="size-4" />
-                    <span>{label}</span>
-                  </a>
-                );
-              })}
+          <nav className="lg:hidden border-t border-border/80 bg-surface px-4 py-3.5 shadow-xl max-h-[85vh] overflow-y-auto" aria-label="Mobile Navigation">
+            {/* Core Services Section */}
+            <div>
+              <p className="text-[10.5px] font-bold uppercase tracking-wider text-accent mb-2 px-1">
+                {lang === "ta" ? "முக்கிய ஜோதிட சேவைகள்" : "Core Astrological Services"}
+              </p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {PRIMARY_NAV.map((n) => {
+                  const Icon = n.icon;
+                  const active = page === n.id;
+                  const url = getUrl(n.id);
+                  const label = lang === "ta" ? n.shortTa : n.shortEn;
+                  return (
+                    <a
+                      key={n.id}
+                      href={url}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        go(n.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-center gap-2 rounded-lg p-2.5 text-xs font-medium text-left transition-colors",
+                        active
+                          ? "bg-accent text-accent-fg font-semibold shadow-2xs"
+                          : "bg-elevated/40 text-fg hover:bg-elevated"
+                      )}
+                    >
+                      <Icon className="size-4 shrink-0" />
+                      <span className="truncate">{label}</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Additional Tools Section */}
+            <div className="mt-4 pt-3 border-t border-border/60">
+              <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted mb-2 px-1">
+                {lang === "ta" ? "கூடுதல் கருவிகள் & தகவல்" : "More Tools & Information"}
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                {MORE_NAV.map((m) => {
+                  const Icon = m.icon;
+                  const active = page === m.id;
+                  const url = getUrl(m.id);
+                  return (
+                    <a
+                      key={m.id}
+                      href={url}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        go(m.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={cn(
+                        "flex items-center gap-2.5 rounded-lg p-2.5 text-xs transition-colors",
+                        active
+                          ? "bg-accent/15 text-accent font-semibold border border-accent/30"
+                          : "bg-elevated/30 text-fg hover:bg-elevated/70"
+                      )}
+                    >
+                      <div className={cn("p-1.5 rounded-md shrink-0", active ? "bg-accent text-accent-fg" : "bg-elevated text-muted")}>
+                        <Icon className="size-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold leading-tight text-ink">
+                          {lang === "ta" ? m.titleTa : m.titleEn}
+                        </p>
+                        <p className="text-[10.5px] text-muted leading-tight mt-0.5 truncate">
+                          {lang === "ta" ? m.descTa : m.descEn}
+                        </p>
+                      </div>
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </nav>
         )}
@@ -285,13 +405,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
-              {NAV.map((n) => {
+              {ALL_NAV.map((n) => {
                 const isCurrent = page === n.id;
                 const url = getUrl(n.id);
                 const label =
                   n.id === "contact"
                     ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
-                    : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata");
+                    : t(lang, n.labelKey as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata" | "navDisclaimer");
                 return (
                   <a
                     key={n.id}
@@ -301,19 +421,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                       go(n.id);
                     }}
                     className={cn(
-                      "group block rounded-lg border p-2 transition-all text-left",
+                      "group flex items-center gap-2 rounded-lg border px-3 py-2.5 transition-all text-left",
                       isCurrent
                         ? "border-accent bg-accent/10 shadow-2xs font-semibold"
                         : "border-border/60 bg-surface/80 hover:border-accent/40 hover:bg-elevated/60"
                     )}
                   >
-                    <div className="flex items-center gap-1.5 text-xs text-ink group-hover:text-accent">
-                      <n.icon className={cn("size-3.5 shrink-0", isCurrent ? "text-accent" : "text-muted group-hover:text-accent")} />
-                      <span className="truncate">{label}</span>
-                    </div>
-                    <span className="text-[10px] text-muted mt-1 block font-mono truncate">
-                      {url}
-                    </span>
+                    <n.icon className={cn("size-4 shrink-0", isCurrent ? "text-accent" : "text-muted group-hover:text-accent")} />
+                    <span className="truncate text-xs text-ink group-hover:text-accent font-medium">{label}</span>
                   </a>
                 );
               })}

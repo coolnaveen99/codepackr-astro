@@ -40,20 +40,10 @@ export function BiodataSheet({
   const ampm = bio.birth.hour < 12 ? t(lang, "am") : t(lang, "pm");
   const tob = `${clockH}:${String(bio.birth.minute).padStart(2, "0")} ${ampm}`;
   
-  const complexion =
-    bio.complexion === "fair"
-      ? t(lang, "fair")
-      : bio.complexion === "wheatish"
-        ? t(lang, "wheatish")
-        : bio.complexion === "very_fair"
-          ? t(lang, "very_fair")
-          : bio.complexion === "golden"
-            ? t(lang, "golden")
-            : bio.complexion === "wheatish_brown"
-              ? t(lang, "wheatish_brown")
-              : bio.complexion === "dusky"
-                ? t(lang, "dusky")
-                : (COMPLEXIONS.find((c) => c.id === bio.complexion)?.[lang] || bio.complexion);
+  const compOption = COMPLEXIONS.find((c) => c.id === bio.complexion);
+  const complexion = compOption
+    ? (lang === "ta" ? compOption.displayTa : compOption.displayEn)
+    : (bio.complexion || "—");
 
   const marital =
     bio.marital === "divorced"
@@ -86,10 +76,18 @@ export function BiodataSheet({
     [t(lang, "native"), bio.native || "—"],
   ];
 
+  const incomePeriodLabel =
+    bio.incomePeriod === "per_annum"
+      ? (lang === "ta" ? "ஆண்டு" : "Per Annum")
+      : (lang === "ta" ? "மாதம்" : "Per Month");
+
+  const incomeDisplay = bio.income ? `${bio.income} / ${incomePeriodLabel}` : "—";
+
   const workRows: [string, string][] = [
     [t(lang, "education"), bio.education || "—"],
     [t(lang, "work"), bio.work || "—"],
     [t(lang, "company"), bio.company || "—"],
+    [t(lang, "income"), incomeDisplay],
   ];
 
   const familyRows: [string, string][] = [
@@ -102,24 +100,24 @@ export function BiodataSheet({
     <div
       ref={sheetRef}
       id="biodata-sheet"
-      className="biodata-sheet relative mx-auto w-full max-w-[210mm] bg-[#fffdfa] text-ink p-3.5 sm:p-4 shadow-card border border-[#dcd3c4] overflow-hidden"
+      className="biodata-sheet relative mx-auto w-full max-w-[210mm] bg-[#fffdfa] text-ink p-4 sm:p-5 shadow-card border border-[#dcd3c4] overflow-hidden"
       style={{ boxSizing: "border-box" }}
     >
       {/* Decorative double border */}
       <div className="pointer-events-none absolute inset-1.5 rounded border border-accent/40" />
-      <div className="pointer-events-none absolute inset-2 rounded border border-accent/15" />
+      <div className="pointer-events-none absolute inset-2.5 rounded border border-accent/15" />
       
       <Watermark />
 
-      <div className="relative z-1 flex flex-col justify-between h-full space-y-1.5">
+      <div className="relative z-1 flex flex-col space-y-3 sm:space-y-3.5">
         {/* Top Auspicious Header */}
-        <header className="flex flex-col items-center text-center pb-1.5 border-b border-accent/30">
+        <header className="flex flex-col items-center text-center pb-2 border-b border-accent/30">
           <img
             src={ganeshSrc}
             alt="Lord Ganesha"
             className="h-9 sm:h-10 w-auto object-contain"
           />
-          <p className="text-[9.5px] sm:text-[10px] font-bold tracking-[0.2em] text-accent mt-0.5 uppercase">
+          <p className="text-[10px] sm:text-[10.5px] font-bold tracking-[0.2em] text-accent mt-0.5 uppercase">
             {lang === "ta" ? "|| ஓம் ஸ்ரீ கணேசாய நமஹ ||" : "|| OM SRI GANESHAYA NAMAHA ||"}
           </p>
           <div className="mt-0.5 flex items-center justify-center gap-2">
@@ -133,14 +131,14 @@ export function BiodataSheet({
             </span>
           </div>
           {bio.birth.name && (
-            <p className="font-display text-sm font-bold text-ink sm:text-base mt-0.5">
+            <p className="font-display text-base font-bold text-ink sm:text-lg mt-0.5 tracking-wide">
               {bio.birth.name}
             </p>
           )}
         </header>
 
         {/* Section 1: Astrological & Birth Details (Left 2 columns) + Photo (Right) */}
-        <section className="mt-2.5">
+        <section>
           <div className="flex items-center gap-2 border-b border-accent/30 pb-0.5 mb-1.5">
             <span className="inline-block size-1.5 rounded-full bg-accent" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-accent">
@@ -148,7 +146,7 @@ export function BiodataSheet({
             </h2>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3.5">
             {/* 2-column key-value table */}
             <div className="min-w-0 flex-1 grid grid-cols-2 gap-x-3 text-[11px] leading-tight">
               <div className="space-y-1">
@@ -190,7 +188,7 @@ export function BiodataSheet({
         </section>
 
         {/* Section 2: Education, Profession & Family Details */}
-        <section className="mt-2 grid grid-cols-2 gap-x-4 text-[11px] leading-tight">
+        <section className="grid grid-cols-2 gap-x-5 text-[11px] leading-tight">
           <div>
             <div className="flex items-center gap-1.5 border-b border-accent/30 pb-0.5 mb-1">
               <span className="inline-block size-1.5 rounded-full bg-accent" />
@@ -226,33 +224,9 @@ export function BiodataSheet({
           </div>
         </section>
 
-        {/* Section 3: Contact Details */}
-        <section className="mt-2">
-          <div className="flex items-center gap-1.5 border-b border-accent/30 pb-0.5 mb-1">
-            <span className="inline-block size-1.5 rounded-full bg-accent" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-accent">
-              {t(lang, "contactSec")}
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-elevated/30 rounded p-1.5 border border-border/60 text-[10.5px]">
-            <div>
-              <span className="text-muted block text-[9.5px] uppercase">{t(lang, "phone")}</span>
-              <span className="font-semibold text-ink">{bio.phone || "—"}</span>
-            </div>
-            <div>
-              <span className="text-muted block text-[9.5px] uppercase">{t(lang, "email")}</span>
-              <span className="font-medium text-ink truncate block">{bio.email || "—"}</span>
-            </div>
-            <div>
-              <span className="text-muted block text-[9.5px] uppercase">{t(lang, "address")}</span>
-              <span className="font-medium text-ink truncate block">{bio.address || "—"}</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 4: Horoscope Charts (Rasi & Navamsa) */}
+        {/* Section 3: Horoscope Charts (Rasi & Navamsa) */}
         {chart ? (
-          <section className="mt-2.5">
+          <section>
             <div className="flex items-center justify-between border-b border-accent/30 pb-0.5 mb-1.5">
               <div className="flex items-center gap-1.5">
                 <span className="inline-block size-1.5 rounded-full bg-accent" />
@@ -265,12 +239,12 @@ export function BiodataSheet({
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 max-w-md mx-auto">
-              <div className="flex flex-col items-center">
-                <p className="font-display mb-0.5 text-center text-[10.5px] font-bold text-accent">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 max-w-xl mx-auto w-full justify-items-center">
+              <div className="flex flex-col items-center w-full max-w-[250px]">
+                <p className="font-display mb-1 text-center text-xs font-bold text-accent">
                   {t(lang, "d1")} ({lang === "ta" ? "இராசி" : "Rasi"})
                 </p>
-                <div className="w-32 sm:w-36 aspect-square">
+                <div className="w-full aspect-square">
                   <SouthChart
                     positions={chart.list}
                     lang={lang}
@@ -280,11 +254,11 @@ export function BiodataSheet({
                   />
                 </div>
               </div>
-              <div className="flex flex-col items-center">
-                <p className="font-display mb-0.5 text-center text-[10.5px] font-bold text-accent">
+              <div className="flex flex-col items-center w-full max-w-[250px]">
+                <p className="font-display mb-1 text-center text-xs font-bold text-accent">
                   {t(lang, "d9")} ({lang === "ta" ? "நவாம்சம்" : "Navamsa"})
                 </p>
-                <div className="w-32 sm:w-36 aspect-square">
+                <div className="w-full aspect-square">
                   <SouthChart
                     positions={chart.list}
                     lang={lang}
@@ -298,70 +272,64 @@ export function BiodataSheet({
           </section>
         ) : null}
 
-        {/* Bottom Legal Disclaimer & Footer */}
-        <div className="mt-1 pt-1 border-t border-accent/25">
-          <p className="text-[8px] leading-tight text-muted text-center">
-            <span className="font-semibold text-ink">{t(lang, "legalDisclaimerTitle")}: </span>
-            {lang === "ta" ? (
-              <>
-                சுயவிவரம் மற்றும் ஜாதகத் தகவல்கள் வரன் வீட்டார் அளித்த உள்ளீட்டின்படி அச்சிடப்பட்டது. திருமணத்திற்கு முன் இருவீட்டாரும் விவரங்களையும் ஜாதகப் பொருத்தத்தையும் நேரில் சரிபார்த்துக் கொள்ளவும். விவரங்களுக்கு:{" "}
-                <a
-                  href="https://astro.codepackr.com/?page=disclaimer"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-accent underline hover:opacity-80"
-                >
-                  astro.codepackr.com/?page=disclaimer
-                </a>
-              </>
-            ) : (
-              <>
-                All matrimonial and astrological details are printed as entered by the user. Families are advised to independently verify all credentials and compatibility. Refer:{" "}
-                <a
-                  href="https://astro.codepackr.com/?page=disclaimer"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-semibold text-accent underline hover:opacity-80"
-                >
-                  astro.codepackr.com/?page=disclaimer
-                </a>
-              </>
-            )}
-          </p>
-          <footer className="mt-0.5 flex items-center justify-between text-[9.5px] text-muted">
-            <div className="flex items-center gap-1.5">
-              <img src={ganeshSrc} alt="" className="h-3 w-auto object-contain" />
-              <a
-                href="https://astro.codepackr.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-accent hover:underline"
-              >
-                astro.codepackr.com
-              </a>
-              <span>&bull;</span>
-              <a href="mailto:codepackr@gmail.com" className="hover:underline text-accent">
-                codepackr@gmail.com
-              </a>
+        {/* Section 4: Contact Details */}
+        <section>
+          <div className="flex items-center gap-1.5 border-b border-accent/30 pb-0.5 mb-1">
+            <span className="inline-block size-1.5 rounded-full bg-accent" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-accent">
+              {t(lang, "contactSec")}
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-accent/5 rounded-lg p-2 border border-accent/20 text-[10.5px]">
+            <div>
+              <span className="text-muted block text-[9.5px] uppercase font-semibold">{t(lang, "phone")}</span>
+              <span className="font-semibold text-ink">{bio.phone || "—"}</span>
             </div>
-            <div className="flex items-center gap-2">
-              <a
-                href="https://astro.codepackr.com/?page=disclaimer"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent underline font-medium"
-              >
-                {lang === "ta" ? "பொறுப்புத் துறப்பு" : "Disclaimer"}
-              </a>
-              <span>&bull;</span>
-              <span>
-                {lang === "ta"
-                  ? (isGroom ? "மணமகன் திருமண விவரம்" : "மணமகள் திருமண விவரம்")
-                  : (isGroom ? "Groom Marriage Biodata" : "Bride Marriage Biodata")}
-              </span>
+            <div>
+              <span className="text-muted block text-[9.5px] uppercase font-semibold">{t(lang, "email")}</span>
+              <span className="font-medium text-ink truncate block">{bio.email || "—"}</span>
             </div>
-          </footer>
-        </div>
+            <div>
+              <span className="text-muted block text-[9.5px] uppercase font-semibold">{t(lang, "address")}</span>
+              <span className="font-medium text-ink truncate block">{bio.address || "—"}</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom Footer */}
+        <footer className="pt-2 border-t border-accent/25 flex items-center justify-between text-[9.5px] text-muted">
+          <div className="flex items-center gap-1.5">
+            <img src={ganeshSrc} alt="" className="h-3.5 w-auto object-contain" />
+            <a
+              href="https://astro.codepackr.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-accent hover:underline"
+            >
+              astro.codepackr.com
+            </a>
+            <span>&bull;</span>
+            <a href="mailto:codepackr@gmail.com" className="hover:underline text-accent">
+              codepackr@gmail.com
+            </a>
+          </div>
+          <div className="flex items-center gap-2">
+            <a
+              href="https://astro.codepackr.com/?page=disclaimer"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline font-medium"
+            >
+              {lang === "ta" ? "பொறுப்புத் துறப்பு" : "Disclaimer"}
+            </a>
+            <span>&bull;</span>
+            <span className="font-medium text-ink">
+              {lang === "ta"
+                ? (isGroom ? "மணமகன் திருமண விவரம்" : "மணமகள் திருமண விவரம்")
+                : (isGroom ? "Groom Marriage Biodata" : "Bride Marriage Biodata")}
+            </span>
+          </div>
+        </footer>
       </div>
     </div>
   );

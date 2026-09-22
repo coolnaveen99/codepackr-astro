@@ -142,7 +142,7 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,22rem)_1fr]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,24rem)_1fr] items-start">
         <form className="no-print flex flex-col gap-4 rounded-xl bg-surface p-4 shadow-card sm:p-5">
           <Section title={lang === "ta" ? "வரன் தேர்வு" : "Profile"}>
             <div className="grid grid-cols-2 gap-2">
@@ -246,6 +246,24 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
             <Field label={t(lang, "company")}>
               <Input value={bio.company} onChange={(e) => patch({ company: e.target.value })} />
             </Field>
+            <Field label={t(lang, "income")}>
+              <div className="flex gap-2">
+                <Input
+                  placeholder={lang === "ta" ? "எ.கா: ₹75,000 அல்லது 12 LPA" : "e.g. ₹75,000 or 12 LPA"}
+                  value={bio.income}
+                  onChange={(e) => patch({ income: e.target.value })}
+                  className="flex-1"
+                />
+                <FieldSelect
+                  value={bio.incomePeriod || "per_month"}
+                  onChange={(v) => patch({ incomePeriod: v as "per_month" | "per_annum" })}
+                  className="w-36 shrink-0"
+                >
+                  <option value="per_month">{t(lang, "perMonth")}</option>
+                  <option value="per_annum">{t(lang, "perAnnum")}</option>
+                </FieldSelect>
+              </div>
+            </Field>
           </Section>
 
           <Section title={t(lang, "familySec")}>
@@ -273,7 +291,9 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
           </Section>
         </form>
 
-        <BiodataSheet sheetRef={sheetRef} lang={lang} bio={bio} chart={chart} analysis={analysis} />
+        <div className="w-full flex justify-center items-start lg:sticky lg:top-6 overflow-x-auto pb-6">
+          <BiodataSheet sheetRef={sheetRef} lang={lang} bio={bio} chart={chart} analysis={analysis} />
+        </div>
       </div>
 
       {showPrintModal && (
