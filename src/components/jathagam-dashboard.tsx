@@ -19,8 +19,12 @@ type ReportMode = "one" | "six" | "thirty";
 
 export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:Lang;draft:BirthInput;onChange:(v:BirthInput)=>void;onSubmit:()=>void;result:ChartResult|null}) {
   const [mode,setMode]=useState<ReportMode>("one");
+  const [pdfBusy,setPdfBusy]=useState(false);
+  const [pdfError,setPdfError]=useState("");
   const {go}=useNav();
   const generate=()=>onSubmit();
+  const printSelected=()=>{ setPdfError(""); window.print(); };
+  const downloadPdf=async()=>{ setPdfBusy(true); setPdfError(""); try { await exportSelectedPdf(mode,result?.input.name); } catch (error) { console.error("Jathagam PDF export failed",error); setPdfError(lang==="ta"?"PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.":"PDF export failed. Please try again."); } finally { setPdfBusy(false); } };
 
   return <main className="astro-dashboard mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
     <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center lg:items-center">
@@ -59,8 +63,8 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div><div className="text-[10px] font-bold uppercase tracking-wide text-accent">{lang==="ta"?"தேர்ந்தெடுத்த அறிக்கை":"Selected report"}</div><div className="mt-0.5 text-sm font-extrabold text-slate-900">{reportTitle(mode,lang)}</div></div>
               <div className="flex flex-wrap gap-2">
-                <button type="button" onClick={()=>window.print()} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button>
-                <button type="button" onClick={()=>void exportSelectedPdf(mode,result.input.name)} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button>
+                <button type="button" onClick={printSelected} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button>
+                <button type="button" onClick={()=>void downloadPdf()} disabled={pdfBusy} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button>
               </div>
             </div>
           </div>:null}
