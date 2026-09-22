@@ -8,6 +8,7 @@ const NAV: { id: Page; label: string }[] = [
   { id: "jathagam", label: "navChart" },
   { id: "porutham", label: "navPorutham" },
   { id: "panchangam", label: "navPanchang" },
+  { id: "rasipalan", label: "navRasiPalan" },
   { id: "biodata", label: "navBiodata" },
   { id: "contact", label: "Contact" },
 ];
@@ -44,7 +45,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               >
                 {n.id === "contact"
                   ? "Contact"
-                  : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navBiodata")}
+                  : t(lang, n.label as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navBiodata")}
               </button>
             ))}
             <div className="ml-2 flex rounded-full bg-elevated p-1">
