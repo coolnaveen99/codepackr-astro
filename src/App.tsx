@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { BiodataMaker } from "@/components/biodata-maker";
-import { BirthForm } from "@/components/birth-form";
+import { JathagamDashboard } from "@/components/jathagam-dashboard";
 import { ChartViews } from "@/components/chart-views";
 import { ContactForm } from "@/components/contact-form";
 import { DisclaimerPage } from "@/components/disclaimer-page";
@@ -61,81 +61,27 @@ function Shell() {
       ) : page === "disclaimer" ? (
         <DisclaimerPage />
       ) : (
-        <main className="mx-auto grid max-w-6xl gap-8 px-4 py-6 sm:px-6 lg:grid-cols-3 lg:py-10">
-          <aside className="no-print min-w-0 lg:sticky lg:top-6 lg:col-span-1 lg:self-start">
-            <div className="rounded-xl bg-surface p-4 shadow-card sm:p-5">
-              <BirthForm lang={lang} value={draft} onChange={setDraft} onSubmit={() => setCast(draft)} />
-            </div>
-          </aside>
-          <section className="min-w-0 lg:col-span-2">
-            {result ? (
-              <ChartViews result={result} lang={lang} />
-            ) : (
-              <div className="flex min-h-96 flex-col justify-center rounded-2xl bg-surface border border-border/80 p-6 sm:p-10 text-center shadow-card relative overflow-hidden">
-                <div className="absolute -top-16 -right-16 size-48 rounded-full bg-accent/5 blur-2xl pointer-events-none" />
-                <div className="relative z-1 max-w-lg mx-auto">
-                  <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent border border-accent/20 mb-3">
-                    {lang === "ta" ? "முழுமையான இலவச ஜோதிட தளம்" : "100% Free Complete Astrological Platform"}
-                  </span>
-                  <h2 className="font-display text-2xl sm:text-3xl font-bold text-ink tracking-tight">
-                    {t(lang, "emptyTitle")}
-                  </h2>
-                  <p className="mt-2.5 text-sm text-muted leading-relaxed">
-                    {t(lang, "emptyBody")}
-                  </p>
-
-                  {/* Feature Highlights Grid */}
-                  <div className="mt-6 grid grid-cols-2 gap-2.5 text-left text-xs">
-                    <div className="rounded-xl border border-border/70 bg-elevated/40 p-3">
-                      <strong className="text-accent block font-display text-sm">
-                        {lang === "ta" ? "30 பக்க ஜாதக புத்தகம்" : "30-Page Horoscope"}
-                      </strong>
-                      <span className="text-muted text-[11px] mt-0.5 block">
-                        {lang === "ta" ? "ஷட்பலம், 12 பாவ பலன்கள், விம்சொத்தரி தசா" : "Shadbala, 12 Bhavas, Vimshottari Dasa narrative"}
-                      </span>
-                    </div>
-                    <div className="rounded-xl border border-border/70 bg-elevated/40 p-3">
-                      <strong className="text-accent block font-display text-sm">
-                        {lang === "ta" ? "1-பக்க திருமண பயோடேட்டா" : "1-Page Marriage Biodata"}
-                      </strong>
-                      <span className="text-muted text-[11px] mt-0.5 block">
-                        {lang === "ta" ? "சரியான ஒற்றை A4 பக்க PDF பதிவிறக்கம்" : "Strict 1-Page A4 PDF download with charts"}
-                      </span>
-                    </div>
-                    <div className="rounded-xl border border-border/70 bg-elevated/40 p-3">
-                      <strong className="text-accent block font-display text-sm">
-                        {lang === "ta" ? "10 திருமணப் பொருத்தம்" : "10-Porutham Matching"}
-                      </strong>
-                      <span className="text-muted text-[11px] mt-0.5 block">
-                        {lang === "ta" ? "ரஜ்ஜு, வேதை, நாடி, தினப் பொருத்தம்" : "Rajju, Vedha, Nadi, Dina compatibility"}
-                      </span>
-                    </div>
-                    <div className="rounded-xl border border-border/70 bg-elevated/40 p-3">
-                      <strong className="text-accent block font-display text-sm">
-                        {lang === "ta" ? "வாக்கியம் / திருக்கணிதம்" : "Vakya & Thirukanitham"}
-                      </strong>
-                      <span className="text-muted text-[11px] mt-0.5 block">
-                        {lang === "ta" ? "பாரம்பரிய கணித முறைகள்" : "Authentic Tamil computational engines"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-accent-fg shadow-md hover:opacity-95 transition-transform active:scale-95"
-                      onClick={() => {
-                        setCast(draft);
-                      }}
-                    >
-                      <span>{lang === "ta" ? "ஜாதகத்தைக் கணிக்கவும்" : "Calculate Horoscope Now"} &rarr;</span>
-                    </button>
-                  </div>
-                </div>
+        <>
+          <JathagamDashboard
+            lang={lang}
+            draft={draft}
+            onChange={setDraft}
+            onSubmit={() => setCast(draft)}
+            result={result}
+          />
+          {result ? (
+            <section className="astro-analysis-shell mx-auto w-full max-w-[1440px] px-4 pb-10 sm:px-6 lg:px-8">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="h-px flex-1 bg-slate-200" />
+                <span className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                  {lang === "ta" ? "மேலும் விரிவான ஜாதக ஆய்வு" : "Detailed horoscope analysis"}
+                </span>
+                <div className="h-px flex-1 bg-slate-200" />
               </div>
-            )}
-          </section>
-        </main>
+              <ChartViews result={result} lang={lang} />
+            </section>
+          ) : null}
+        </> </main>
       )}
     </AppShell>
   );
