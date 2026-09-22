@@ -1,4 +1,4 @@
-// Codepackr Astro - Tamil / Chaldean-style name & birth numerology (client-side)
+// Codepackr Astro - Tamil / Pythagorean name & birth numerology (client-side)
 import type { Lang } from "./i18n";
 
 /** Pythagorean letter values (A=1 … I=9, J=1 …) — widely used in Tamil apps. */
