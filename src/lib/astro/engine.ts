@@ -21,7 +21,7 @@ import {
   type PlanetId,
   type School,
 } from "./constants";
-import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, YONI_ENEMY, NAT_FRIEND, NAT_ENEMY, type BavPlanet } from "./tables";
+import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, YONI_ENEMY, NAT_FRIEND, NAT_ENEMY, SIGN_LORD, type BavPlanet } from "./tables";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -609,7 +609,6 @@ const VASHYA_POINTS = [
   [1, 1, 1, 0, 2],
 ] as const;
 const NADI_NAK = [0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2];
-const SIGN_LORD = [4, 3, 2, 1, 0, 2, 3, 4, 5, 6, 6, 5];
 export function ashtakoot(boyMoon: number, girlMoon: number) {
   const bs = signIndex(boyMoon);
   const gs = signIndex(girlMoon);
