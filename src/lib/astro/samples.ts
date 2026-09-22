@@ -1,4 +1,4 @@
-// Codepackr Astro - Default Input & Sample Cities
+// Codepackr Astro - Default Input, Sample Cities & Sample Charts
 import type { BirthInput } from "./engine";
 
 export const DEFAULT_INPUT: BirthInput = {
@@ -15,6 +15,105 @@ export const DEFAULT_INPUT: BirthInput = {
   place: "Madras",
   school: "thirukanitham",
 };
+
+/** Named sample charts for testing & demos (client-side only). */
+export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; input: BirthInput }[] = [
+  {
+    id: "chennai-1990",
+    labelTa: "சென்னை · 1990",
+    labelEn: "Chennai · 1990",
+    input: {
+      name: "Sample A",
+      sex: "M",
+      year: 1990,
+      month: 5,
+      day: 15,
+      hour: 10,
+      minute: 30,
+      tz: 5.5,
+      lat: 13.0827,
+      lon: 80.2707,
+      place: "Chennai (Madras)",
+      school: "thirukanitham",
+    },
+  },
+  {
+    id: "madurai-1985",
+    labelTa: "மதுரை · 1985",
+    labelEn: "Madurai · 1985",
+    input: {
+      name: "Sample B",
+      sex: "F",
+      year: 1985,
+      month: 8,
+      day: 22,
+      hour: 6,
+      minute: 15,
+      tz: 5.5,
+      lat: 9.9252,
+      lon: 78.1198,
+      place: "Madurai",
+      school: "thirukanitham",
+    },
+  },
+  {
+    id: "coimbatore-vakya",
+    labelTa: "கோவை · வாக்கியம்",
+    labelEn: "Coimbatore · Vakya",
+    input: {
+      name: "Sample C",
+      sex: "M",
+      year: 1978,
+      month: 12,
+      day: 3,
+      hour: 14,
+      minute: 45,
+      tz: 5.5,
+      lat: 11.0168,
+      lon: 76.9558,
+      place: "Coimbatore",
+      school: "vakya",
+    },
+  },
+  {
+    id: "bengaluru-lahiri",
+    labelTa: "பெங்களூரு · லாஹிரி",
+    labelEn: "Bengaluru · Lahiri",
+    input: {
+      name: "Sample D",
+      sex: "F",
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 0,
+      minute: 5,
+      tz: 5.5,
+      lat: 12.9716,
+      lon: 77.5946,
+      place: "Bengaluru",
+      school: "lahiri",
+    },
+  },
+  {
+    id: "singapore-1995",
+    labelTa: "சிங்கப்பூர் · 1995",
+    labelEn: "Singapore · 1995",
+    input: {
+      name: "Sample E",
+      sex: "M",
+      year: 1995,
+      month: 11,
+      day: 11,
+      hour: 18,
+      minute: 20,
+      tz: 8.0,
+      lat: 1.3521,
+      lon: 103.8198,
+      place: "Singapore",
+      school: "thirukanitham",
+    },
+  },
+];
 
 export const POPULAR_CITIES = [
   { n: "Chennai (Madras)", tz: 5.5, lon: 80.2707, lat: 13.0827 },
