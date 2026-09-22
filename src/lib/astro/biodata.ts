@@ -22,12 +22,12 @@ export interface ComplexionOption {
 }
 
 export const COMPLEXIONS: ComplexionOption[] = [
-  { id: "fair", ta: "சிகப்பு (Fair)", en: "Fair", displayTa: "சிகப்பு", displayEn: "Fair" },
-  { id: "very_fair", ta: "நல்ல சிகப்பு (Very Fair)", en: "Very Fair", displayTa: "நல்ல சிகப்பு", displayEn: "Very Fair" },
-  { id: "wheatish", ta: "மாநிறம் (Wheatish)", en: "Wheatish", displayTa: "மாநிறம்", displayEn: "Wheatish" },
-  { id: "wheatish_medium", ta: "கோதுமை மாநிறம் (Wheatish Medium)", en: "Wheatish Medium", displayTa: "கோதுமை மாநிறம்", displayEn: "Wheatish Medium" },
-  { id: "golden", ta: "பொன்னிறம் (Fair Glow)", en: "Fair Glow", displayTa: "பொன்னிறம்", displayEn: "Fair Glow" },
-  { id: "dusky", ta: "மாநிறம் - நடுத்தரம் (Dusky / Natural)", en: "Dusky / Natural", displayTa: "மாநிறம் (நடுத்தரம்)", displayEn: "Dusky / Natural" },
+  { id: "fair", ta: "சிகப்பு", en: "Fair", displayTa: "சிகப்பு", displayEn: "Fair" },
+  { id: "very_fair", ta: "நல்ல சிகப்பு", en: "Very Fair", displayTa: "நல்ல சிகப்பு", displayEn: "Very Fair" },
+  { id: "wheatish", ta: "மாநிறம்", en: "Wheatish", displayTa: "மாநிறம்", displayEn: "Wheatish" },
+  { id: "wheatish_medium", ta: "கோதுமை மாநிறம்", en: "Wheatish Medium", displayTa: "கோதுமை மாநிறம்", displayEn: "Wheatish Medium" },
+  { id: "golden", ta: "பொன்னிறம்", en: "Fair Glow", displayTa: "பொன்னிறம்", displayEn: "Fair Glow" },
+  { id: "dusky", ta: "மாநிறம் - நடுத்தரம்", en: "Dusky / Natural", displayTa: "மாநிறம் (நடுத்தரம்)", displayEn: "Dusky / Natural" },
 ];
 
 export type Biodata = {
