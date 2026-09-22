@@ -68,16 +68,10 @@ export function PrintHoroscopeSheet({
       <p className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] text-accent mt-0.5 uppercase">
         {lang === "ta" ? "|| ஓம் ஸ்ரீ கணேசாய நமஹ ||" : "|| OM SRI GANESHAYA NAMAHA ||"}
       </p>
-      <div className="mt-1 flex items-center justify-between w-full px-1 text-[11px] text-muted">
-        <span className="font-bold text-ink text-xs truncate max-w-[200px]">
-          {result.input.name || (lang === "ta" ? "ஜாதகர்" : "Native")}
-        </span>
-        <span className="font-display font-semibold text-accent">
-          {title}
-        </span>
-        <span className="font-medium text-ink">
-          {signName(lang, moon.sign)} · {nakName(lang, moon.nak)} ({moon.pada}) · {t(lang, "lagna")}: {signName(lang, lagna.sign)}
-        </span>
+      <div className="mt-1 flex w-full flex-col items-center px-1 text-center">
+        <span className="max-w-full break-words text-xs font-bold leading-tight text-ink">{result.input.name?.trim() || (lang === "ta" ? "ஜாதகர்" : "Native")}</span>
+        <span className="mt-0.5 max-w-full break-words font-display text-xs font-semibold leading-tight text-accent">{title}</span>
+        <span className="mt-0.5 max-w-full break-words text-[10px] leading-tight font-medium text-ink">{signName(lang, moon.sign)} · {nakName(lang, moon.nak)} ({moon.pada}) · {t(lang, "lagna")}: {signName(lang, lagna.sign)}</span>
       </div>
     </div>
   );
