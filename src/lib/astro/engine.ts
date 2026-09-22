@@ -582,7 +582,23 @@ function ashtakavarga(bodies: Record<string, number>) {
 }
 
 const VARNA_SIGN_STD = [2, 1, 0, 3, 2, 1, 0, 3, 2, 1, 0, 3];
-const VASHYA_SIGN = [0, 1, 2, 3, 0, 1, 4, 3, 0, 1, 4, 2];
+// Vashya classes: 0=Chatushpada, 1=Manava, 2=Jalachara, 3=Vanachara, 4=Keeta.
+// Sagittarius and Capricorn are split at 15 degrees.
+function vashyaClass(lon: number) {
+  const sign = signIndex(lon);
+  const within = norm360(lon) - sign * 30;
+  if (sign === 8) return within < 15 ? 1 : 0; // Sagittarius
+  if (sign === 9) return within < 15 ? 0 : 2; // Capricorn
+  const classes = [0, 0, 1, 2, 3, 1, 1, 4, 0, 0, 1, 2];
+  return classes[sign] ?? 0;
+}
+const VASHYA_POINTS = [
+  [2, 0, 0.5, 0, 0],
+  [0, 2, 0.5, 0, 1],
+  [0.5, 0.5, 2, 0, 1],
+  [0, 0, 0, 2, 0],
+  [1, 1, 1, 0, 2],
+] as const;
 const GANA_NAK = [0, 1, 2, 1, 2, 1, 0, 2, 2, 0, 1, 1, 0, 2, 2, 1, 2, 0, 0, 1, 1, 0, 2, 2, 1, 1, 2];
 const NADI_NAK = [0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2, 2, 1, 0, 0, 1, 2];
 const YONI_NAK = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 4, 13, 2, 8, 14, 15, 1, 16, 13, 7, 5, 14, 16, 3];
@@ -602,11 +618,25 @@ export function ashtakoot(boyMoon: number, girlMoon: number) {
   const gs = signIndex(girlMoon);
   const bn = nakshatra(boyMoon).idx;
   const gn = nakshatra(girlMoon).idx;
-  const varna = VARNA_SIGN_STD[gs] >= VARNA_SIGN_STD[bs] ? 1 : 0;
-  const vashya = bs === gs ? 2 : VASHYA_SIGN[bs] === VASHYA_SIGN[gs] ? 1 : 0.5;
-  const taraCount = ((gn - bn + 27) % 27) + 1;
-  const taraPts = [3, 1.5, 3, 1.5, 3, 1.5, 3, 1.5, 3][(taraCount % 9 || 9) - 1];
-  const yoni = YONI_NAK[bn] === YONI_NAK[gn] ? 4 : 2;
+  // Traditional Ashtakoota Varna awards the point when the groom's Varna
+  // is equal to or higher than the bride's.
+  const varna = VARNA_SIGN_STD[bs] >= VARNA_SIGN_STD[gs] ? 1 : 0;
+  const bv = vashyaClass(boyMoon);
+  const gv = vashyaClass(girlMoon);
+  const vashya = VASHYA_POINTS[bv]?.[gv] ?? 0;
+  const taraScore = (from: number, to: number) => {
+    const count = ((to - from + 27) % 27) + 1;
+    const tara = count % 9 || 9;
+    return [2, 4, 6, 8, 9].includes(tara) ? 1 : 0;
+  };
+  const taraA = taraScore(gn, bn);
+  const taraB = taraScore(bn, gn);
+  const taraPts = taraA + taraB === 2 ? 3 : taraA + taraB === 1 ? 1.5 : 0;
+  const sameYoni = YONI_NAK[bn] === YONI_NAK[gn];
+  const yoniEnemy = YONI_ENEMY.some(([a, b]) =>
+    (a === YONI_NAK[bn] && b === YONI_NAK[gn]) || (a === YONI_NAK[gn] && b === YONI_NAK[bn]),
+  );
+  const yoni = sameYoni ? 4 : yoniEnemy ? 0 : 2;
   const bl = SIGN_LORD[bs];
   const gl = SIGN_LORD[gs];
   let gm = 0.5;
