@@ -632,7 +632,7 @@ function detectYogas(
   const dhanaYoga = dhanaHits.some(Boolean);
   push({
     id: "dhana-yoga",
-    nameTa: "தன யோகம் (Dhana Yoga)",
+    nameTa: "தன யோகம்",
     nameEn: "Dhana yoga (Wealth)",
     present: dhanaYoga,
     kind: "yoga",
@@ -742,7 +742,7 @@ function detectYogas(
   const pitruDosha = (ninthHouseOccupants.includes("rahu") || ninthHouseOccupants.includes("ketu") || (sunRahuConjunct && [1, 5, 9].includes(sun.house)));
   push({
     id: "pitru-dosha",
-    nameTa: "பித்ரு தோஷம் (Pitru Dosha)",
+    nameTa: "பித்ரு தோஷம்",
     nameEn: "Pitru dosha",
     present: pitruDosha,
     kind: "dosha",
@@ -778,7 +778,7 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Dina",
     max: 1,
     ...grade(dinaG),
-    noteTa: `மணமகளிலிருந்து ${countNak}-ஆம் நட்சத்திரம் (தாரா ${tara}).`,
+    noteTa: `மணமகளின் நட்சத்திரத்திலிருந்து ${countNak}-ஆம் இடம் (தாரா ${tara}).`,
     noteEn: `Count from Bride ${countNak} (tara ${tara}).`,
   });
 
@@ -803,7 +803,7 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
     en: "Gana",
     max: 1,
     ...grade(ganaG),
-    noteTa: `மணமகன்: ${GANA_NAK[bNak] === 0 ? "தேவ" : GANA_NAK[bNak] === 1 ? "மனுஷ்ய" : "ராட்சச"} · மணமகள்: ${GANA_NAK[gNak] === 0 ? "தேவ" : GANA_NAK[gNak] === 1 ? "மனுஷ்ய" : "ராட்சச"}`,
+    noteTa: `மணமகன்: ${GANA_NAK[bNak] === 0 ? "தேவ கணம்" : GANA_NAK[bNak] === 1 ? "மனித கணம்" : "அரக்க கணம்"} · மணமகள்: ${GANA_NAK[gNak] === 0 ? "தேவ கணம்" : GANA_NAK[gNak] === 1 ? "மனித கணம்" : "அரக்க கணம்"}`,
     noteEn: `Groom: ${["Deva", "Manushya", "Rakshasa"][bg]} · Bride: ${["Deva", "Manushya", "Rakshasa"][gg]}.`,
   });
 
@@ -821,7 +821,7 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
   const sdG: PoruthamItem["grade"] = countNak >= 13 ? "uthamam" : countNak >= 7 ? "madhyamam" : "adhamam";
   items.push({
     id: "stree",
-    ta: "ஸ்த்ரீ தீர்க்கம்",
+    ta: "ஸ்திரீ தீர்க்கம்",
     en: "Stree Deergha",
     max: 1,
     ...grade(sdG),
