@@ -314,9 +314,11 @@ export function vargaSign(lon: number, n: number) {
     }
   }
   if (n === 60) {
-    // D60 Shashtiamsa
+    // D60 Shashtiamsa: 60 x 0°30′ divisions.
+    // Odd signs count forward from Aries; even signs count forward from Pisces.
     const part = Math.floor(within / 0.5);
-    return (s + part) % 12;
+    const start = s % 2 === 0 ? 0 : 11;
+    return (start + part * (s % 2 === 0 ? 1 : -1) + 12 * 60) % 12;
   }
   return signIndex(lon);
 }
@@ -406,7 +408,10 @@ function sunTimes(year: number, month: number, day: number, lat: number, lon: nu
   const start = MakeTime(new Date(utc0));
   const observer = new Observer(lat, lon, 0);
   const rise = SearchRiseSet(Body.Sun, observer, +1, start, 1.2);
-  const set = SearchRiseSet(Body.Sun, observer, -1, start, 1.2);
+  // Search backwards from midday so we get this date's sunset,
+  // not the previous day's sunset at local midnight.
+  const sunsetSearchStart = MakeTime(new Date(utc0 + 12 * 3600000));
+  const set = SearchRiseSet(Body.Sun, observer, -1, sunsetSearchStart, 1.0);
   const toJd = (tm: AstroTime | null, fallbackHour: number) => {
     if (!tm) return julianDay(year, month, day, fallbackHour - tz);
     return tm.ut + 2451545.0;
