@@ -1,21 +1,36 @@
 name: CI Check
 
 on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/copilot-instructions.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.node-version'
+      - '.nvmrc'
   pull_request:
     branches: [ main ]
     paths-ignore:
       - '**.md'
       - 'docs/**'
-      - '.github/**'
+      - '.github/copilot-instructions.md'
       - 'LICENSE'
       - '.gitignore'
       - '.node-version'
       - '.nvmrc'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     name: Typecheck & Build Verification
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -24,13 +39,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Typecheck
-        run: npx tsc --noEmit
+        run: npm run lint
 
       - name: Test Production Build
         run: npm run build
