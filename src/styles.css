@@ -99,24 +99,60 @@
     print-color-adjust: exact !important;
   }
   header,
-  footer.no-print,
+  nav,
+  footer,
+  aside,
+  button,
   .no-print,
-  [data-print-hide] {
+  [data-print-hide],
+  .astro-hero,
+  .astro-analysis-shell {
     display: none !important;
   }
-  body * {
-    visibility: hidden !important;
+
+  /* When PrintDialog is open, hide the main page underneath */
+  body:has(.print-dialog-overlay) main,
+  body:has(.print-dialog-overlay) header,
+  body:has(.print-dialog-overlay) nav,
+  body:has(.print-dialog-overlay) footer {
+    display: none !important;
   }
-  #jathagam-export-root,
-  #jathagam-export-root * {
-    visibility: visible !important;
-  }
-  #jathagam-export-root {
+  .print-dialog-overlay {
     position: static !important;
-    left: auto !important;
-    top: auto !important;
-    width: 210mm !important;
-    margin: 0 auto !important;
+    inset: auto !important;
+    display: block !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+  .print-dialog-overlay > div {
+    border: none !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+  .print-dialog-body {
+    overflow: visible !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  /* Reset layout grids so print sheets take full width */
+  .grid,
+  .astro-dashboard,
+  main {
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   html,
@@ -127,12 +163,6 @@
     margin: 0 !important;
     padding: 0 !important;
     width: 210mm !important;
-  }
-  main {
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
   }
   @page {
     size: A4 portrait;
@@ -185,16 +215,19 @@
   }
   #jathagam-export-root {
     display: block !important;
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
     width: 210mm !important;
     max-width: 210mm !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding: 0 !important;
     border: 0 !important;
     background: #ffffff !important;
   }
   #jathagam-export-root .astro-export-one-page {
     box-sizing: border-box !important;
-    text-align: center !important;
+    text-align: left !important;
     width: 210mm !important;
     min-height: 286mm !important;
     padding: 8mm !important;
@@ -206,6 +239,20 @@
   #jathagam-export-root .astro-traditional-preview {
     border: 0 !important;
     padding: 0 !important;
+  }
+  #jathagam-export-root .astro-traditional-preview .astro-preview-body {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 290px !important;
+    gap: 14px !important;
+  }
+  #jathagam-export-root .astro-traditional-preview .astro-charts-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 290px !important;
+  }
+  #jathagam-export-root .astro-traditional-preview .astro-charts-col > div {
+    width: 100% !important;
   }
   #jathagam-export-root .print-page { text-align: center !important; }
   #jathagam-export-root .print-page table,
@@ -229,10 +276,22 @@
     z-index: -1;
     background: #fff;
   }
-  .astro-export-one-page .astro-traditional-preview > div {
+  .astro-export-one-page {
+    text-align: left !important;
+  }
+  .astro-export-one-page .astro-traditional-preview .astro-preview-body {
     display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 270px !important;
+    grid-template-columns: minmax(0, 1fr) 290px !important;
+    gap: 14px !important;
+  }
+  .astro-export-one-page .astro-traditional-preview .astro-charts-col {
+    display: flex !important;
+    flex-direction: column !important;
     gap: 12px !important;
+    width: 290px !important;
+  }
+  .astro-export-one-page .astro-traditional-preview .astro-charts-col > div {
+    width: 100% !important;
   }
   .astro-export-one-page .astro-traditional-preview .overflow-x-auto {
     overflow: visible !important;

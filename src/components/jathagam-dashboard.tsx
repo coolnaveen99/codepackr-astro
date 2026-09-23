@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { BarChart3, BookOpen, Check, FileDown, FileText, Info, Printer, ShieldCheck, Sparkles, UserRound } from "lucide-react";
-import html2canvas from "html2canvas";
+import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
@@ -12,6 +12,7 @@ import { BirthForm } from "@/components/birth-form";
 import { SouthChart } from "@/components/south-chart";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
 import { FullReport } from "@/components/full-report";
+import { PrintDialog } from "@/components/print-dialog";
 import { analyse } from "@/lib/astro/analysis";
 import { cn } from "@/lib/utils";
 
@@ -21,9 +22,18 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
   const [mode,setMode]=useState<ReportMode>("one");
   const [pdfBusy,setPdfBusy]=useState(false);
   const [pdfError,setPdfError]=useState("");
+  const [showPrintModal,setShowPrintModal]=useState(false);
   const {go}=useNav();
   const generate=()=>onSubmit();
-  const printSelected=()=>{ setPdfError(""); window.print(); };
+  const printSelected=()=>{
+    setPdfError("");
+    setShowPrintModal(true);
+    try {
+      window.print();
+    } catch (err) {
+      console.warn("window.print deferred to modal:", err);
+    }
+  };
   const downloadPdf=async()=>{
     setPdfBusy(true);
     setPdfError("");
@@ -58,7 +68,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
       </aside>
 
       <section className="min-w-0 space-y-5">
-        <div className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="astro-panel no-print rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex items-center gap-2.5"><span className="flex size-9 items-center justify-center rounded-xl bg-accent/10 text-accent"><FileText className="size-5"/></span><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"ஜாதக அறிக்கை வகையை தேர்வு செய்யுங்கள்":"Choose your horoscope report"}</h2><p className="text-xs text-slate-500">{lang==="ta"?"தேவைக்கேற்ப 1, 6 அல்லது 30 பக்க அறிக்கையை தேர்வு செய்யலாம்.":"Select the report length you need."}</p></div></div>
           <div className="grid gap-3 lg:grid-cols-3">
             <ReportCard mode="one" selected={mode==="one"} onSelect={setMode} lang={lang} icon={<FileText className="size-8"/>} titleTa="1 பக்க ஜாதகம்" titleEn="1-Page Jathagam" descTa="ஒரே பக்கத்தில் முக்கிய பிறப்பு விவரங்கள், பஞ்சாங்கம், கிரக நிலைகள், ராசி & நவாம்சம்." descEn="Key birth details, Panchangam, planetary positions, Rasi & Navamsa on one A4 page."/>
@@ -68,7 +78,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
           <div className="mt-3 flex items-center gap-2 rounded-xl border border-accent/20 bg-accent/10 px-3 py-2 text-xs text-accent"><Check className="size-4 shrink-0"/><span>{mode==="one"?(lang==="ta"?"சுருக்கமான 1 பக்க ஜாதகம் — விரைவாக அச்சிடவும் பகிரவும் ஏற்றது.":"A compact 1-page horoscope for quick printing and sharing."):mode==="six"?(lang==="ta"?"6 பக்க விரிவான ஜாதக அறிக்கை — ஒவ்வொரு முக்கிய பகுதியும் தனிப் பக்கமாக.":"A 6-page report with dedicated pages for major sections."):lang==="ta"?"30 பக்க விரிவான ஜாதகப் புத்தகம் — முழுமையான ஆய்விற்காக.":"A 30-page comprehensive horoscope book for detailed study."}</span></div>
         </div>
 
-        <div className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="astro-panel no-print rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"ஜாதகம் உருவாக்கவும்":"Generate Jathagam"}</h2><p className="text-xs text-slate-500">{lang==="ta"?"மேலே தேர்வு செய்த பக்க வடிவில் ஜாதகம் உருவாக்கப்படும்.":"The selected report format will be generated from your birth details."}</p></div>
             <button type="button" onClick={generate} className="astro-action astro-action-primary justify-center"><BarChart3 className="size-4"/>{lang==="ta"?"ஜாதகம் உருவாக்கு":"Generate Jathagam"}<span aria-hidden>→</span></button>
@@ -85,7 +95,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
           </div>:null}
         </div>
 
-        {result?<div id="astro-calculated-card" className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        {result?<div id="astro-calculated-card" className="astro-panel no-print rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {birthDate} · {birthTime}</p></div></div>
           {mode==="one"?<TraditionalPreview result={result} lang={lang}/>:mode==="six"?<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang}/></div>:<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><FullReport result={result} analysis={analyse(result)} lang={lang}/></div>}
         </div>:null}
@@ -93,6 +103,26 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
         {result?<div id="jathagam-export-root" className="astro-export-host" aria-hidden="true">
           {mode==="one"?<div className="astro-export-one-page"><TraditionalPreview result={result} lang={lang}/></div>:mode==="six"?<PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang}/>:<FullReport result={result} analysis={analyse(result)} lang={lang}/>}
         </div>:null}
+
+        {showPrintModal && result ? (
+          <PrintDialog
+            open={showPrintModal}
+            onClose={() => setShowPrintModal(false)}
+            title={reportTitle(mode, lang)}
+            lang={lang}
+            newTabUrl={`/?print=auto&mode=${mode}&name=${encodeURIComponent(result.input.name || "")}&d=${result.input.day}&m=${result.input.month}&y=${result.input.year}&h=${result.input.hour}&min=${result.input.minute}&lat=${result.input.lat}&lon=${result.input.lon}&tz=${result.input.tz}&place=${encodeURIComponent(result.input.place)}`}
+          >
+            {mode === "one" ? (
+              <div className="astro-export-one-page mx-auto bg-white p-4 sm:p-6 rounded-xl border border-border shadow-xs">
+                <TraditionalPreview result={result} lang={lang} />
+              </div>
+            ) : mode === "six" ? (
+              <PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang} />
+            ) : (
+              <FullReport result={result} analysis={analyse(result)} lang={lang} />
+            )}
+          </PrintDialog>
+        ) : null}
       </section>
     </div>
   </main>;
@@ -119,13 +149,43 @@ async function exportSelectedPdf(mode:ReportMode,name?:string) {
   const margin=5,maxWidth=200,maxHeight=287;
   for(let i=0;i<pages.length;i++){
     const page=pages[i];
+    const targetWidth = page.scrollWidth || 794;
     const canvas=await html2canvas(page,{
-      scale:2,useCORS:true,allowTaint:true,backgroundColor:"#ffffff",logging:false,windowWidth:page.scrollWidth,
+      scale:2,useCORS:true,allowTaint:true,backgroundColor:"#ffffff",logging:false,windowWidth:targetWidth,
       onclone:(doc)=>{
         const r=doc.getElementById("jathagam-export-root");
-        if(r){r.style.position="static";r.style.left="0";r.style.top="0";r.style.width="210mm";r.style.maxWidth="210mm";r.style.zIndex="auto";r.style.pointerEvents="auto";}
-        const p=doc.querySelector<HTMLElement>(mode==="one"?".astro-export-one-page":".print-page");
-        if(p){p.style.position="relative";p.style.left="0";p.style.top="0";}
+        if(r){
+          r.style.position="static";
+          r.style.left="0";
+          r.style.top="0";
+          r.style.width="210mm";
+          r.style.maxWidth="210mm";
+          r.style.zIndex="auto";
+          r.style.pointerEvents="auto";
+          r.style.display="block";
+          r.style.visibility="visible";
+        }
+        const clonedPages=doc.querySelectorAll<HTMLElement>(".print-page, .astro-export-one-page");
+        clonedPages.forEach(cp=>{
+          cp.style.position="relative";
+          cp.style.left="0";
+          cp.style.top="0";
+          cp.style.display="block";
+          cp.style.visibility="visible";
+        });
+        const chartCols=doc.querySelectorAll<HTMLElement>(".astro-charts-col");
+        chartCols.forEach(cc=>{
+          cc.style.display="flex";
+          cc.style.flexDirection="column";
+          cc.style.gap="12px";
+          cc.style.width="290px";
+        });
+        const previewBodies=doc.querySelectorAll<HTMLElement>(".astro-preview-body");
+        previewBodies.forEach(pb=>{
+          pb.style.display="grid";
+          pb.style.gridTemplateColumns="minmax(0, 1fr) 290px";
+          pb.style.gap="14px";
+        });
       }
     });
     if(i>0) pdf.addPage();
@@ -135,7 +195,7 @@ async function exportSelectedPdf(mode:ReportMode,name?:string) {
     pdf.addImage(canvas.toDataURL("image/jpeg",0.94),"JPEG",(210-width)/2,margin,width,height,undefined,"FAST");
   }
   const safeName=(name||"jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g,"-").replace(/^-+|-+$/g,"")||"jathagam";
-  pdf.save(`${safeName}-${mode}-jathagam.pdf`);
+  pdf.save(`${safeName}-${mode}-jathagam(astro.codepackr.com).pdf`);
 }
 
 function ReportCard({mode,selected,onSelect,lang,icon,titleTa,titleEn,descTa,descEn}:{mode:ReportMode;selected:boolean;onSelect:(m:ReportMode)=>void;lang:Lang;icon:ReactNode;titleTa:string;titleEn:string;descTa:string;descEn:string}) {
@@ -148,12 +208,15 @@ function TraditionalPreview({result,lang}:{result:ChartResult;lang:Lang}) {
   const moon=result.list.find(p=>p.id==="moon"); const lagna=result.list.find(p=>p.id==="lagna");
   const sign=(i:number)=>lang==="ta"?SIGNS_TA[i]:SIGNS_EN[i]; const nak=moon?(lang==="ta"?NAK_TA[moon.nak]:NAK_EN[moon.nak]):"—";
   const rows=result.list.filter(p=>p.id!=="lagna").slice(0,9);
-  return <div className="astro-traditional-preview rounded-xl border border-slate-200 bg-white p-3 sm:p-5"><div className="mb-4 border-b border-accent/20 pb-3 text-center"><div className="text-[10px] font-bold uppercase tracking-widest text-accent">{lang==="ta"?"ஜாதகர்":"Jathakar"}</div><div className="mt-1 break-words text-2xl font-extrabold leading-tight text-accent">{result.input.name?.trim()||"—"}</div><div className="mt-1 break-words text-xs text-slate-500">{birthDate} · {birthTime} · {result.input.place}</div></div><div className="grid gap-4 lg:grid-cols-[1fr_340px]">
+  return <div className="astro-traditional-preview rounded-xl border border-slate-200 bg-white p-3 sm:p-5"><div className="mb-4 border-b border-accent/20 pb-3 text-center"><div className="text-[10px] font-bold uppercase tracking-widest text-accent">{lang==="ta"?"ஜாதகர்":"Jathakar"}</div><div className="mt-1 break-words text-2xl font-extrabold leading-tight text-accent">{result.input.name?.trim()||"—"}</div><div className="mt-1 break-words text-xs text-slate-500">{birthDate} · {birthTime} · {result.input.place}</div></div><div className="astro-preview-body grid gap-4 lg:grid-cols-[1fr_300px]">
     <div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{[[lang==="ta"?"பெயர்":"Name",result.input.name||"—"],[lang==="ta"?"பிறந்த தேதி / நேரம்":"Birth date / time",`${birthDate} · ${birthTime}`],[lang==="ta"?"பிறந்த இடம்":"Birth place",result.input.place],[lang==="ta"?"லக்னம்":"Lagna",lagna?sign(lagna.sign):"—"],[lang==="ta"?"சந்திர ராசி":"Moon sign",moon?sign(moon.sign):"—"],[lang==="ta"?"நட்சத்திரம்":"Nakshatra",moon?`${nak} · ${moon.pada}`:"—"]].map(([k,v])=><InfoCell key={String(k)} label={String(k)} value={String(v)}/>)}</div>
       <div className="mt-3 rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><InfoCell label={lang==="ta"?"திதி":"Tithi"} value={`${result.pan.paksha==="shukla"?(lang==="ta"?"வளர்பிறை":"Shukla"):(lang==="ta"?"தேய்பிறை":"Krishna")} · ${(lang==="ta"?TITHI_TA:TITHI_EN)[result.pan.tithiIdx]}`}/><InfoCell label={lang==="ta"?"யோகம்":"Yoga"} value={(lang==="ta"?YOGA_TA:YOGA_EN)[result.pan.yogaNum]}/><InfoCell label={lang==="ta"?"கரணம்":"Karana"} value={(lang==="ta"?KARANA_TA:KARANA_EN)[result.pan.karanaIdx]}/><InfoCell label={lang==="ta"?"கிழமை":"Weekday"} value={(lang==="ta"?WEEK_TA:WEEK_EN)[result.weekday]}/><InfoCell label={lang==="ta"?"சூரிய உதயம்":"Sunrise"} value={formatClock(result.sunriseJD,result.input.tz)}/><InfoCell label={lang==="ta"?"சூரிய அஸ்தமனம்":"Sunset"} value={formatClock(result.sunsetJD,result.input.tz)}/></div></div>
       <div className="mt-3 overflow-hidden rounded-xl border border-slate-200"><div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-xs font-extrabold text-slate-700">{lang==="ta"?"கிரக நிலைகள்":"Planetary Positions"}</div><div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-white text-[10px] uppercase text-slate-400"><tr><th className="px-3 py-2">{lang==="ta"?"கிரகம்":"Planet"}</th><th>{lang==="ta"?"ராசி":"Sign"}</th><th>{lang==="ta"?"பாகை":"Degree"}</th><th>{lang==="ta"?"நிலை":"Status"}</th></tr></thead><tbody className="divide-y divide-slate-100">{rows.map(p=><tr key={p.id}><td className="px-3 py-2 font-bold text-slate-800">{planetName(p.id,lang)}</td><td>{sign(p.sign)}</td><td>{p.dms}</td><td className="text-slate-500">{p.retrograde?(lang==="ta"?"வக்கிரம்":"Retrograde"):"—"}</td></tr>)}</tbody></table></div></div>
     </div>
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1"><div className="rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="mb-2 text-center text-xs font-extrabold text-accent">{lang==="ta"?"ராசி கட்டம்":"Rasi Chart"}</div><SouthChart positions={result.list} lang={lang}/></div><div className="rounded-xl border border-violet-100 bg-violet-50/30 p-3"><div className="mb-2 text-center text-xs font-extrabold text-violet-800">{lang==="ta"?"நவாம்சம் (D9)":"Navamsa (D9)"}</div><SouthChart positions={result.list} lang={lang} mode="navamsa"/></div></div>
+    <div className="astro-charts-col flex flex-col gap-3">
+      <div className="w-full rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="mb-2 text-center text-xs font-extrabold text-accent">{lang==="ta"?"ராசி கட்டம்":"Rasi Chart"}</div><SouthChart positions={result.list} lang={lang}/></div>
+      <div className="w-full rounded-xl border border-violet-100 bg-violet-50/30 p-3"><div className="mb-2 text-center text-xs font-extrabold text-violet-800">{lang==="ta"?"நவாம்சம் (D9)":"Navamsa (D9)"}</div><SouthChart positions={result.list} lang={lang} mode="navamsa"/></div>
+    </div>
   </div></div>;
 }
 function InfoCell({label,value}:{label:string;value:string}) { return <div><div className="text-[9px] font-bold uppercase tracking-wide text-slate-400">{label}</div><div className="mt-0.5 text-xs font-bold leading-5 text-slate-800">{value}</div></div>; }

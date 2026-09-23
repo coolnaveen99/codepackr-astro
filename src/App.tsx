@@ -36,8 +36,53 @@ function Shell() {
   const { lang } = useLang();
   const { page } = useNav();
   usePageSeo(page, lang);
-  const [draft, setDraft] = useState<BirthInput>(DEFAULT_INPUT);
-  const [cast, setCast] = useState<BirthInput | null>(null);
+  const [draft, setDraft] = useState<BirthInput>(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get("d") && p.get("m") && p.get("y")) {
+        return {
+          ...DEFAULT_INPUT,
+          name: p.get("name") || "",
+          sex: (p.get("sex") === "F" ? "F" : "M") as "M" | "F",
+          day: Number(p.get("d")),
+          month: Number(p.get("m")),
+          year: Number(p.get("y")),
+          hour: Number(p.get("h") || 6),
+          minute: Number(p.get("min") || 0),
+          lat: Number(p.get("lat") || 13.0667),
+          lon: Number(p.get("lon") || p.get("lng") || 80.25),
+          tz: Number(p.get("tz") || 5.5),
+          place: p.get("place") || "Madras",
+        };
+      }
+    }
+    return DEFAULT_INPUT;
+  });
+  const [cast, setCast] = useState<BirthInput | null>(() => {
+    if (typeof window !== "undefined") {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get("print") === "auto") {
+        if (p.get("d") && p.get("m") && p.get("y")) {
+          return {
+            ...DEFAULT_INPUT,
+            name: p.get("name") || "",
+            sex: (p.get("sex") === "F" ? "F" : "M") as "M" | "F",
+            day: Number(p.get("d")),
+            month: Number(p.get("m")),
+            year: Number(p.get("y")),
+            hour: Number(p.get("h") || 6),
+            minute: Number(p.get("min") || 0),
+            lat: Number(p.get("lat") || 13.0667),
+            lon: Number(p.get("lon") || p.get("lng") || 80.25),
+            tz: Number(p.get("tz") || 5.5),
+            place: p.get("place") || "Madras",
+          };
+        }
+        return DEFAULT_INPUT;
+      }
+    }
+    return null;
+  });
   const result = useMemo(() => (cast ? compute(cast) : null), [cast]);
 
   return (

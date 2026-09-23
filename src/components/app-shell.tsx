@@ -26,7 +26,7 @@ const PRIMARY_NAV: { id: Page; labelKey: string; shortTa: string; shortEn: strin
   { id: "jathagam", labelKey: "navChart", shortTa: "ஜாதகம்", shortEn: "Horoscope", icon: Compass },
   { id: "porutham", labelKey: "navPorutham", shortTa: "பொருத்தம்", shortEn: "Porutham", icon: HeartHandshake },
   { id: "panchangam", labelKey: "navPanchang", shortTa: "பஞ்சாங்கம்", shortEn: "Panchangam", icon: CalendarDays },
-  { id: "biodata", labelKey: "navBiodata", shortTa: "பயோடேட்டா", shortEn: "Biodata", icon: FileText },
+  { id: "biodata", labelKey: "navBiodata", shortTa: "திருமண விவரம்", shortEn: "Biodata", icon: FileText },
   { id: "rasipalan", labelKey: "navRasiPalan", shortTa: "ராசி பலன்", shortEn: "Rasi Palan", icon: Sparkles },
 ];
 

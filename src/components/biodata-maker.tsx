@@ -97,7 +97,7 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
 
       const role = bio.birth.sex === "M" ? "Groom" : "Bride";
       const file = (bio.birth.name ? `${bio.birth.name}-${role}` : `${role}-marriage-biodata`).replace(/\s+/g, "-");
-      pdf.save(`${file}.pdf`);
+      pdf.save(`${file}(astro.codepackr.com).pdf`);
     } catch (err) {
       console.error("PDF generation error:", err);
       window.print();

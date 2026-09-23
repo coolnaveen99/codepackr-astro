@@ -137,14 +137,7 @@ export function PoruthamView({ lang }: { lang: Lang }) {
               variant="outline"
               size="sm"
               className="no-print border-accent text-accent hover:bg-accent hover:text-accent-fg font-medium"
-              onClick={() => {
-                try {
-                  window.print();
-                } catch {
-                  // ignore
-                }
-                setShowPrintModal(true);
-              }}
+              onClick={() => setShowPrintModal(true)}
             >
               <Printer className="size-4 mr-1" />
               {t(lang, "print")}

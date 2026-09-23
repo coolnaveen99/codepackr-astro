@@ -41,10 +41,10 @@ export function PrintDialog({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4 backdrop-blur-xs no-print">
-      <div className="relative flex max-h-[96vh] w-full max-w-4xl flex-col rounded-xl bg-surface border-2 border-border shadow-2xl overflow-hidden">
+    <div className="print-dialog-overlay fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-2 sm:p-4 backdrop-blur-xs print:static print:inset-auto print:p-0 print:bg-white print:block print:w-full">
+      <div className="relative flex max-h-[96vh] w-full max-w-4xl flex-col rounded-xl bg-surface border-2 border-border shadow-2xl overflow-hidden print:border-0 print:shadow-none print:max-h-none print:max-w-none print:w-full print:bg-white print:overflow-visible">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-border bg-elevated/60 px-4 py-3 sm:px-6">
+        <div className="no-print flex items-center justify-between border-b border-border bg-elevated/60 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-2.5">
             <div className="rounded-md bg-accent/10 p-2 text-accent">
               <Printer className="size-5" />
@@ -96,23 +96,23 @@ export function PrintDialog({
         </div>
 
         {/* Notice for preview iframe users */}
-        <div className="border-b border-border/60 bg-elevated/40 px-4 py-2 text-[11px] text-muted flex flex-wrap items-center justify-between gap-2">
+        <div className="no-print border-b border-border/60 bg-elevated/40 px-4 py-2 text-[11px] text-muted flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-1.5">
             <span className="inline-block size-1.5 rounded-full bg-accent" />
             <span className="font-medium text-ink">
-              {lang === "ta" ? "6 பக்கங்கள் கொண்ட முழு ஜாதகம் · ஒவ்வொரு பக்கத்திலும் கணபதி அருள் உருவம்" : "Complete 6-Page Booklet · Lord Ganesha Blessing on every page"}
+              {lang === "ta" ? "முழு ஜாதகம் / விவரப் படிவம் · உயர்தர அச்சுத் தயாரிப்பு" : "Full Horoscope / Profile Sheet · High Quality Print Ready"}
             </span>
           </div>
           <span>
             {lang === "ta"
-              ? "💡 குறிப்பு: பிரவுசர் ஐபிரேமில் அச்சிடுதல் தடைபட்டால், மேலே உள்ள 'புதிய விண்டோவில் திறக்க' என்பதை அழுத்தவும்."
-              : "💡 Tip: If printing is sandboxed in iframe, click 'Open in New Tab' above."}
+              ? "💡 குறிப்பு: பிரவுசர் ஐபிரேமில் அச்சிடுதல் தடைபட்டால், PDF ஏற்றுமதி பொத்தானைப் பயன்படுத்தவும்."
+              : "💡 Tip: If printing is blocked by iframe, use the PDF export button."}
           </span>
         </div>
 
         {/* Modal Body - Scrollable A4 Preview */}
-        <div className="flex-1 overflow-y-auto p-3 sm:p-6 bg-elevated/20">
-          <div className="mx-auto max-w-[210mm]">
+        <div className="print-dialog-body flex-1 overflow-y-auto p-3 sm:p-6 bg-elevated/20 print:p-0 print:bg-white print:overflow-visible">
+          <div className="mx-auto max-w-[210mm] print:max-w-none print:w-full print:m-0">
             {children}
           </div>
         </div>
