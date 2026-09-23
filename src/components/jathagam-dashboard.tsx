@@ -24,7 +24,21 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
   const {go}=useNav();
   const generate=()=>onSubmit();
   const printSelected=()=>{ setPdfError(""); window.print(); };
-  const downloadPdf=async()=>{ setPdfBusy(true); setPdfError(""); try { await exportSelectedPdf(mode,result?.input.name); } catch (error) { console.error("Jathagam PDF export failed",error); setPdfError(lang==="ta"?"PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.":"PDF export failed. Please try again."); } finally { setPdfBusy(false); } };
+  const downloadPdf=async()=>{
+    setPdfBusy(true);
+    setPdfError("");
+    try {
+      await exportSelectedPdf(mode,result?.input.name);
+    } catch (error) {
+      console.error("Jathagam PDF export failed",error);
+      setPdfError(lang==="ta"?"PDF உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.":"PDF export failed. Please try again.");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
+
+  const birthDate = result ? `${String(result.input.day).padStart(2,"0")}-${String(result.input.month).padStart(2,"0")}-${result.input.year}` : "";
+  const birthTime = result ? `${String(result.input.hour).padStart(2,"0")}:${String(result.input.minute).padStart(2,"0")}` : "";
 
   return <main className="astro-dashboard mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
     <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center lg:items-center">
@@ -64,13 +78,14 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
               <div><div className="text-[10px] font-bold uppercase tracking-wide text-accent">{lang==="ta"?"தேர்ந்தெடுத்த அறிக்கை":"Selected report"}</div><div className="mt-0.5 text-sm font-extrabold text-slate-900">{reportTitle(mode,lang)}</div></div>
               <div className="flex flex-wrap gap-2">
                 <button type="button" onClick={printSelected} className="astro-action justify-center"><Printer className="size-4"/>{lang==="ta"?"அச்சிடு":"Print"}</button>
-                <button type="button" onClick={()=>void downloadPdf()} disabled={pdfBusy} className="astro-action justify-center"><FileDown className="size-4"/>{lang==="ta"?"PDF ஏற்றுமதி":"Export PDF"}</button>
+                <button type="button" onClick={()=>void downloadPdf()} disabled={pdfBusy} className="astro-action justify-center"><FileDown className="size-4"/>{pdfBusy ? (lang==="ta"?"தயாராகிறது...":"Generating...") : (lang==="ta"?"PDF ஏற்றுமதி":"Export PDF")}</button>
               </div>
             </div>
+            {pdfError ? <p className="mt-2 text-xs font-semibold text-rose-600">{pdfError}</p> : null}
           </div>:null}
         </div>
 
-        {result?<div id="astro-analysis" className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+        {result?<div id="astro-calculated-card" className="astro-panel rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {birthDate} · {birthTime}</p></div></div>
           {mode==="one"?<TraditionalPreview result={result} lang={lang}/>:mode==="six"?<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><PrintHoroscopeSheet result={result} analysis={analyse(result)} lang={lang}/></div>:<div className="rounded-xl border border-accent/20 bg-[#fffdfa] p-2"><FullReport result={result} analysis={analyse(result)} lang={lang}/></div>}
         </div>:null}
