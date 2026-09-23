@@ -18,6 +18,7 @@ import {
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
 import { useNav, type Page } from "@/lib/nav";
+import { RotatingQuote } from "@/components/rotating-quote";
 import { cn } from "@/lib/utils";
 import { CodepackrFamilyBar } from "@/components/CodepackrFamilyBar";
 
@@ -339,6 +340,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Footer */}
       <footer className="no-print border-t border-border/80 bg-surface/70 mt-12">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+          <RotatingQuote lang={lang} variant="compact" className="mb-6 shadow-xs" />
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 items-center border-b border-border/60 pb-6">
             <div>
               <a

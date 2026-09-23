@@ -13,6 +13,7 @@ import { SouthChart } from "@/components/south-chart";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
 import { FullReport } from "@/components/full-report";
 import { PrintDialog } from "@/components/print-dialog";
+import { RotatingQuote } from "@/components/rotating-quote";
 import { analyse } from "@/lib/astro/analysis";
 import { cn } from "@/lib/utils";
 
@@ -57,7 +58,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">{lang==="ta"?"உங்கள் ஜன்ம ஜாதகம் — முழு அறிக்கை":"Your Birth Chart — Complete Report"}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">{lang==="ta"?"பிறந்த நேரத்திலிருந்து ராசி, நவாம்சம், தசை, யோகம் வரை — தெளிவான கணக்கீடு, அழகான அறிக்கை. 1 · 6 · 30 பக்கங்களில் உடனடியாக உருவாக்குங்கள்.":"From birth moment to rasi, navamsa, dasha and yogas — clear calculations, elegant reports. Generate instantly in 1, 6, or 30 pages."}</p>
       </div>
-      <div className="hidden max-w-sm rounded-xl border border-accent/20 bg-gradient-to-br from-accent/10 via-white to-accent/5 px-5 py-4 text-right lg:block shadow-sm"><div className="text-2xl font-serif text-accent">“</div><p className="text-sm font-semibold leading-6 text-slate-700">{lang==="ta"?"பாரம்பரிய ஜோதிடம் · நவீன துல்லியம் · முழு தனியுரிமை":"Classical Jyotish · modern precision · full privacy"}</p><span className="mt-1.5 block text-xs font-bold tracking-wide text-accent">— CodePackr Astro</span></div>
+      <RotatingQuote lang={lang} className="w-full lg:max-w-md shrink-0 no-print" />
     </section>
 
     <div className="grid gap-5 xl:grid-cols-[390px_minmax(0,1fr)]">
