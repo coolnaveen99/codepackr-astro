@@ -213,6 +213,111 @@ export const SEO_DATA: Record<Page, ToolSeoConfig> = {
       "Strict client-side privacy commitments",
       "Decision-making guidance notices"
     ]
+  },
+  chandrashtama: {
+    titleTa: "சந்திராஷ்டம காலக் கணிப்பான் & அடுத்தடுத்த தேதிகள் அட்டவணை | Codepackr Astro",
+    titleEn: "Chandrashtama Calculator & 60-Day Transit Schedule | Codepackr Astro",
+    descTa: "உங்கள் பிறந்த ராசிக்கு சந்திரன் 8-ஆம் இடத்தில் சஞ்சரிக்கும் துல்லியமான சந்திராஷ்டம தொடக்க மற்றும் முடிவு நேரங்கள், முன்னெச்சரிக்கைகள், விநாயகர் வழிபாட்டுப் பரிகாரங்கள்.",
+    descEn: "Calculate accurate start and end transit timestamps when Moon enters your 8th house from natal Janma Rasi. 60-day schedule, guidelines, and pariharams.",
+    keywordsTa: "சந்திராஷ்டமம், சந்திராஷ்டம தேதிகள், சந்திராஷ்டம கணிப்பான், சந்திராஷ்டம பரிகாரம், chandrashtamam dates, chandrashtama calculator Tamil",
+    keywordsEn: "chandrashtama calculator, chandrashtamam dates today, 8th moon transit, chandrashtama pariharam, lunar transit astrology",
+    category: "AstrologyApplication",
+    featureListTa: [
+      "சந்திராஷ்டமம் தொடங்கும் மற்றும் முடியும் துல்லிய நேரம்",
+      "அடுத்த 60 நாட்களுக்கான சந்திராஷ்டம அட்டவணை",
+      "செய்ய வேண்டியவை & தவிர்க்க வேண்டிய முன்னெச்சரிக்கைகள்",
+      "சந்திர காயத்ரி மற்றும் எளிய பரிகார வழிபாடுகள்"
+    ],
+    featureListEn: [
+      "Exact start and end timestamps of 8th Moon transit",
+      "Next 60 days upcoming Chandrashtama schedule",
+      "Traditional mindfulness guidelines and precautions",
+      "Vedic mantras and divine worship remedies"
+    ]
+  },
+  gochara: {
+    titleTa: "கோசார பலன் கணிப்பான் | ஏழரைச் சனி, குரு பலம் & 9 கிரக சஞ்சாரம் | Codepackr Astro",
+    titleEn: "Gochara Transit Calculator | Sade Sati, Guru Balam & Transits | Codepackr Astro",
+    descTa: "இன்றைய வானியல் கிரக நிலைகளை உங்கள் பிறந்த ராசியுடன் ஒப்பிட்டு ஏழரைச் சனி, அஷ்டமச் சனி, குரு பலம், ராகு-கேது மற்றும் 9 கிரகங்களின் கோசார பலன்களை உடனே கணிக்கவும்.",
+    descEn: "Analyze live planetary transits against your Janma Rasi: Sade Sati, Ashtama Sani, Jupiter Guru Balam, Rahu-Ketu axis, and 9-planet house placements.",
+    keywordsTa: "கோசார பலன், ஏழரைச் சனி, குரு பலம், ராகு கேது பெயர்ச்சி, சனி பெயர்ச்சி, குரு பெயர்ச்சி, gochara calculator Tamil",
+    keywordsEn: "Gochara calculator, planetary transits Vedic, Sade Sati calculator, Guru Balam check, transit astrology Tamil",
+    category: "AstrologyApplication",
+    featureListTa: [
+      "9 கிரகங்களின் நேரடி வானியல் பாகை நிலைகள்",
+      "ஏழரைச் சனி மற்றும் அஷ்டமச் சனி நிலை ஆய்வு",
+      "குரு பலம் மற்றும் குரு பார்வை சரிபார்ப்பு",
+      "பலதீபிகை பாரம்பரிய விதிகள் அடிப்படையிலான பலன்கள்"
+    ],
+    featureListEn: [
+      "Live astronomical DMS longitudes for all 9 planets",
+      "Sade Sati and Ashtama Sani transit assessment",
+      "Guru Balam & Jupiter aspect analysis",
+      "Phaladeepika classical transit rules and effects"
+    ]
+  },
+  nakshatra: {
+    titleTa: "27 நட்சத்திரங்கள் & 108 பாதங்கள் விரிவான கணிப்பான் | Codepackr Astro",
+    titleEn: "27 Nakshatras & 108 Padas Complete Astrological Tool | Codepackr Astro",
+    descTa: "27 நட்சத்திரங்கள் மற்றும் 108 பாதங்களுக்கான அதிதேவதை, கணம், யோனி, நாடி, விருட்சம், பறவை, பூதம், சுப திசைகள் மற்றும் நான்கு பாதங்களுக்கான பெயரிடும் எழுத்துக்கள்.",
+    descEn: "Comprehensive guide to all 27 Nakshatras and 108 Padas: Deities, Gana, Yoni animal, Nadi, Sacred Tree, Bird, Element, and all 4 Pada naming letters.",
+    keywordsTa: "27 நட்சத்திரங்கள், 108 பாதங்கள், நட்சத்திர அதிபதி, விருட்சம், யோனி, கணம், நாடி, பெயரிடும் எழுத்துக்கள், nakshatra calculator Tamil",
+    keywordsEn: "27 nakshatras, 108 padas, nakshatra pada syllables, nakshatra yoni gana nadi, birth star tree animal, Vedic nakshatra tool",
+    category: "EducationalApplication",
+    featureListTa: [
+      "27 நட்சத்திரங்கள் மற்றும் 108 பாதங்களுக்கான பண்புகள்",
+      "அதிதேவதை, விருட்சம் (மரம்), பறவை மற்றும் பூதம்",
+      "4 பாதங்களுக்குரிய பாரம்பரிய பெயரிடும் எழுத்துக்கள்",
+      "பிறந்த தேதியிலிருந்து நட்சத்திரம் அறியும் வசதி"
+    ],
+    featureListEn: [
+      "Complete attributes for 27 stars and 108 padas",
+      "Sacred deity, tree, bird, and elemental ruler",
+      "Authentic naming syllables for all 4 padas",
+      "Automatic calculation from birth date and time"
+    ]
+  },
+  babynames: {
+    titleTa: "நட்சத்திர பாதம் வாரியாக குழந்தைப் பெயர் தேர்வு | தூய தமிழ்ப் பெயர்கள் | Codepackr Astro",
+    titleEn: "Tamil Baby Names by Nakshatra & Pada | Auspicious Name Finder | Codepackr Astro",
+    descTa: "27 நட்சத்திரங்கள் மற்றும் 108 பாதங்களுக்குரிய அதிர்ஷ்ட தொடக்க எழுத்துக்களில் அமைந்த ஆயிரக்கணக்கான தூய தமிழ், பாரம்பரிய மற்றும் நவீன ஆண்/பெண் குழந்தைப் பெயர்கள்.",
+    descEn: "Find thousands of meaningful Tamil baby names for boys and girls filtered by birth Nakshatra and Pada starting syllables. Pure Tamil, traditional, and modern names.",
+    keywordsTa: "குழந்தைப் பெயர்கள், நட்சத்திர பெயர் எழுத்துக்கள், தூய தமிழ் குழந்தை பெயர்கள், ஆண் குழந்தை பெயர்கள், பெண் குழந்தை பெயர்கள், baby names by nakshatra Tamil",
+    keywordsEn: "Tamil baby names by nakshatra pada, auspicious baby names, pure Tamil names, boy baby names Tamil, girl baby names Tamil",
+    category: "SearchApplication",
+    featureListTa: [
+      "நட்சத்திர பாதம் மற்றும் தொடக்க எழுத்து தேர்வு",
+      "ஆண், பெண், இருபாலர் மற்றும் தூய தமிழ் வடிகட்டல்",
+      "நேரடி தமிழ் மற்றும் ஆங்கில பொருள் விளக்கம்",
+      "எளிய பெயர் நகலெடுக்கும் வசதி"
+    ],
+    featureListEn: [
+      "Filter by birth nakshatra, pada, and starting syllable",
+      "Boy, Girl, Unisex, Pure Tamil, and Modern filters",
+      "Verified meanings in Tamil and English",
+      "One-click copy and sharing"
+    ]
+  },
+  nazhigai: {
+    titleTa: "நாழிகை - மணி நேர மாற்றி | சூரியோதயம் முதல் நாழிகைக் கணிப்பான் | Codepackr Astro",
+    titleEn: "Nazhigai to Clock Time Converter | Sunrise Relative Horology | Codepackr Astro",
+    descTa: "சூரிய உதயம் அடிப்படையிலான பாரம்பரிய நாழிகை மற்றும் விநாடிக் கணக்கீடு. 1 நாள் = 60 நாழிகை, 1 நாழிகை = 24 நிமிடங்கள், தற்பரை மற்றும் கடிகார நேர மாற்றி.",
+    descEn: "Convert between ancient Tamil Nazhigai/Vinadi and modern hours/minutes, computed from exact local astronomical sunrise.",
+    keywordsTa: "நாழிகை மாற்றி, நாழிகை கணக்கு, கடிகார நேரம் நாழிகை, சூரிய உதயம் முதல் நாழிகை, nazhigai to time converter Tamil, nazhigai calculator",
+    keywordsEn: "Nazhigai converter, Tamil nazhigai to hours, vinadi to minutes, sunrise relative time, Vedic horology converter",
+    category: "UtilityApplication",
+    featureListTa: [
+      "சூரியோதயம் அடிப்படையிலான துல்லிய நாழிகைக் கணிப்பு",
+      "நாழிகை, விநாடி, தற்பரை முழுமையான மாற்றி",
+      "பகல் பிறப்பு / இரவு பிறப்பு மற்றும் சாமம் சுட்டிக்காட்டி",
+      "பண்டைய தமிழ் கால அளவீடு குறிப்பு அட்டவணை"
+    ],
+    featureListEn: [
+      "Astronomical sunrise-relative Nazhigai calculation",
+      "Two-way conversion: Modern time ↔ Nazhigai & Vinadi",
+      "Day/Night birth classification & Yaamam tracker",
+      "Classical Tamil horological scale reference"
+    ]
   }
 };
 

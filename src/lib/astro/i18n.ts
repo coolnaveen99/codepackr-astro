@@ -316,6 +316,12 @@ const COPY = {
     ta: "பிரஷ்னம் வழிகாட்டுதல் மட்டுமே. பிறந்த ஜாதகத்திற்கு மாற்றாக அல்ல.",
     en: "Prasna is guidance only — not a substitute for a birth chart.",
   },
+  navChandrashtama: { ta: "சந்திராஷ்டமம்", en: "Chandrashtamam" },
+  navGochara: { ta: "கோசாரம்", en: "Gochara" },
+  navNakshatraPada: { ta: "நட்சத்திரம் & பாதம்", en: "Nakshatra & Pada" },
+  navBabyNames: { ta: "குழந்தைப் பெயர்", en: "Baby Names" },
+  navNazhigai: { ta: "நாழிகை மாற்றி", en: "Nazhigai Converter" },
+  navTools: { ta: "ஜோதிடக் கருவிகள்", en: "Astro Tools" },
 } as const;
 
 export type CopyKey = keyof typeof COPY;

@@ -14,6 +14,10 @@ import {
   X,
   ShieldCheck,
   ChevronDown,
+  Moon,
+  Orbit,
+  Baby,
+  Clock,
 } from "lucide-react";
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
@@ -41,6 +45,46 @@ const MORE_NAV: {
   icon: typeof Compass;
 }[] = [
   {
+    id: "chandrashtama",
+    titleTa: "சந்திராஷ்டமம்",
+    titleEn: "Chandrashtamam",
+    descTa: "8-ஆம் இட சந்திரன் துல்லிய ஆரம்ப/முடிவு நேரம்",
+    descEn: "Exact 8th Moon transit start/end times",
+    icon: Moon,
+  },
+  {
+    id: "gochara",
+    titleTa: "கோசார பலன்",
+    titleEn: "Gochara Transits",
+    descTa: "ஏழரைச் சனி, குரு பலம் & 9 கிரக சஞ்சாரம்",
+    descEn: "Sade Sati, Guru Balam & 9-planet transits",
+    icon: Orbit,
+  },
+  {
+    id: "nakshatra",
+    titleTa: "நட்சத்திரம் & பாதம்",
+    titleEn: "Nakshatra & Pada",
+    descTa: "27 நட்சத்திரங்கள், யோனி, நாடி, அதிதேவதை",
+    descEn: "27 Stars, Yoni, Nadi, Deities & 4 padas",
+    icon: Sparkles,
+  },
+  {
+    id: "babynames",
+    titleTa: "குழந்தைப் பெயர் தேர்வு",
+    titleEn: "Baby Name Finder",
+    descTa: "நட்சத்திர பாதம் & தொடக்க எழுத்துப் பெயர்கள்",
+    descEn: "Auspicious Tamil names by star syllables",
+    icon: Baby,
+  },
+  {
+    id: "nazhigai",
+    titleTa: "நாழிகை மாற்றி",
+    titleEn: "Nazhigai Converter",
+    descTa: "சூரியோதயம் முதல் நாழிகை, விநாடி மாற்றி",
+    descEn: "Sunrise-based Nazhigai & clock time converter",
+    icon: Clock,
+  },
+  {
     id: "prasna",
     titleTa: "பிரஷ்னம் (சோழி ஆருடம்)",
     titleEn: "Prasna (Horary)",
@@ -57,6 +101,14 @@ const MORE_NAV: {
     icon: Hash,
   },
   {
+    id: "glossary",
+    titleTa: "சொற்பொருள் விளக்கம்",
+    titleEn: "Astro Glossary",
+    descTa: "ஜோதிடச் சொற்களின் எளிய விளக்கங்கள்",
+    descEn: "Definitions of Tamil astrology terms",
+    icon: BookOpen,
+  },
+  {
     id: "contact",
     titleTa: "தொடர்புக்கு",
     titleEn: "Contact & Support",
@@ -67,13 +119,18 @@ const MORE_NAV: {
 ];
 
 // All Nav Items for Footer Directory
-const ALL_NAV = [
+const ALL_NAV: { id: Page; labelKey: string; icon: typeof Compass }[] = [
   ...PRIMARY_NAV.map((p) => ({ id: p.id, labelKey: p.labelKey, icon: p.icon })),
-  { id: "prasna" as Page, labelKey: "navPrasna", icon: HelpCircle },
-  { id: "numerology" as Page, labelKey: "navNumerology", icon: Hash },
-  { id: "glossary" as Page, labelKey: "navGlossary", icon: BookOpen },
-  { id: "contact" as Page, labelKey: "Contact", icon: Mail },
-  { id: "disclaimer" as Page, labelKey: "navDisclaimer", icon: ShieldCheck },
+  { id: "chandrashtama", labelKey: "navChandrashtama", icon: Moon },
+  { id: "gochara", labelKey: "navGochara", icon: Orbit },
+  { id: "nakshatra", labelKey: "navNakshatraPada", icon: Sparkles },
+  { id: "babynames", labelKey: "navBabyNames", icon: Baby },
+  { id: "nazhigai", labelKey: "navNazhigai", icon: Clock },
+  { id: "prasna", labelKey: "navPrasna", icon: HelpCircle },
+  { id: "numerology", labelKey: "navNumerology", icon: Hash },
+  { id: "glossary", labelKey: "navGlossary", icon: BookOpen },
+  { id: "contact", labelKey: "contactTitle", icon: Mail },
+  { id: "disclaimer", labelKey: "navDisclaimer", icon: ShieldCheck },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -410,7 +467,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 const label =
                   n.id === "contact"
                     ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
-                    : t(lang, n.labelKey as "navChart" | "navPorutham" | "navPanchang" | "navRasiPalan" | "navNumerology" | "navPrasna" | "navGlossary" | "navBiodata" | "navDisclaimer");
+                    : t(lang, n.labelKey as any);
                 return (
                   <a
                     key={n.id}

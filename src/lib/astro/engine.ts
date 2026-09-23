@@ -403,7 +403,7 @@ function tropicalBodies(jd: number) {
   };
 }
 
-function sunTimes(year: number, month: number, day: number, lat: number, lon: number, tz: number) {
+export function sunTimes(year: number, month: number, day: number, lat: number, lon: number, tz: number) {
   const utc0 = Date.UTC(year, month - 1, day, 0, 0, 0) - tz * 3600000;
   const start = MakeTime(new Date(utc0));
   const observer = new Observer(lat, lon, 0);

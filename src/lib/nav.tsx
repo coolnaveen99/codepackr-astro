@@ -7,6 +7,11 @@ export type Page =
   | "biodata"
   | "panchangam"
   | "rasipalan"
+  | "chandrashtama"
+  | "gochara"
+  | "nakshatra"
+  | "babynames"
+  | "nazhigai"
   | "numerology"
   | "glossary"
   | "prasna"
@@ -19,6 +24,11 @@ export const PAGE_SET = new Set<string>([
   "biodata",
   "panchangam",
   "rasipalan",
+  "chandrashtama",
+  "gochara",
+  "nakshatra",
+  "babynames",
+  "nazhigai",
   "numerology",
   "glossary",
   "prasna",
@@ -32,6 +42,11 @@ export const PAGE_PATHS: Record<Page, string> = {
   biodata: "/biodata",
   panchangam: "/panchangam",
   rasipalan: "/rasipalan",
+  chandrashtama: "/chandrashtama",
+  gochara: "/gochara",
+  nakshatra: "/nakshatra",
+  babynames: "/babynames",
+  nazhigai: "/nazhigai",
   numerology: "/numerology",
   glossary: "/glossary",
   prasna: "/prasna",

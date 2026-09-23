@@ -12,6 +12,11 @@ import { DailyRasiView } from "@/components/daily-rasi";
 import { NumerologyView } from "@/components/numerology-view";
 import { GlossaryView } from "@/components/glossary-view";
 import { PrasnaView } from "@/components/prasna-view";
+import { ChandrashtamaView } from "@/components/chandrashtama-view";
+import { GocharaView } from "@/components/gochara-view";
+import { NakshatraView } from "@/components/nakshatra-view";
+import { BabyNamesView } from "@/components/baby-names-view";
+import { NazhigaiView } from "@/components/nazhigai-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t } from "@/lib/astro/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
@@ -93,6 +98,16 @@ function Shell() {
         <PanchangamView lang={lang} />
       ) : page === "rasipalan" ? (
         <DailyRasiView lang={lang} />
+      ) : page === "chandrashtama" ? (
+        <ChandrashtamaView lang={lang} />
+      ) : page === "gochara" ? (
+        <GocharaView lang={lang} />
+      ) : page === "nakshatra" ? (
+        <NakshatraView lang={lang} onNavigateToBabyNames={() => window.location.href = "/babynames"} />
+      ) : page === "babynames" ? (
+        <BabyNamesView lang={lang} />
+      ) : page === "nazhigai" ? (
+        <NazhigaiView lang={lang} />
       ) : page === "numerology" ? (
         <NumerologyView lang={lang} />
       ) : page === "glossary" ? (
