@@ -1,4 +1,4 @@
-# Codepackr Astro
+# Codepackr Astro.
 
 Tamil jathagam in the [Codepackr](https://www.codepackr.com) family.
 
