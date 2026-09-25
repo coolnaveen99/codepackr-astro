@@ -190,17 +190,25 @@ export function YogaPane({ analysis, lang }: { analysis: Analysis; lang: Lang })
 }
 
 function YogaList({ items, lang }: { items: Analysis["yogas"]; lang: Lang }) {
+  const sorted = [...items].sort((a, b) => Number(b.present) - Number(a.present));
   return (
     <ul className="divide-y divide-border">
-      {items.map((y) => (
-        <li key={y.id} className="py-3">
+      {sorted.map((y) => (
+        <li key={y.id} className={cn("py-3", y.present && "bg-accent/5 -mx-1 px-1 rounded-md")}>
           <div className="flex items-baseline justify-between gap-3">
-            <span className="font-medium">{lang === "ta" ? y.nameTa : y.nameEn}</span>
-            <span className={cn("text-xs", y.present ? "text-accent" : "text-muted")}>
+            <span className={cn("font-medium", y.present && "text-fg")}>{lang === "ta" ? y.nameTa : y.nameEn}</span>
+            <span
+              className={cn(
+                "text-xs font-semibold rounded-full px-2 py-0.5",
+                y.present ? "bg-accent/15 text-accent" : "text-muted",
+              )}
+            >
               {y.present ? t(lang, "present") : t(lang, "absent")}
             </span>
           </div>
-          <p className="mt-1 text-sm text-muted">{lang === "ta" ? y.detailTa : y.detailEn}</p>
+          <p className={cn("mt-1 text-sm", y.present ? "text-fg/85" : "text-muted")}>
+            {lang === "ta" ? y.detailTa : y.detailEn}
+          </p>
         </li>
       ))}
     </ul>
@@ -322,7 +330,20 @@ export function GrahaTable({ result, analysis, lang }: { result: ChartResult; an
                   {g && p.id !== "lagna" ? dignityLabel(g.dignity, lang) : "—"}
                 </td>
                 <td className="hidden px-4 py-2.5 md:table-cell">
-                  {g && p.id !== "lagna" && p.id !== "gulika" ? strengthText(g.strength, lang) : "—"}
+                  {g && p.id !== "lagna" && p.id !== "gulika" ? (
+                    <span
+                      className={cn(
+                        "inline-flex rounded-full px-2 py-0.5 text-xs font-medium",
+                        g.strength === "strong" && "bg-emerald-50 text-emerald-800 border border-emerald-200",
+                        g.strength === "medium" && "bg-slate-50 text-slate-700 border border-slate-200",
+                        g.strength === "needs_support" && "bg-amber-50 text-amber-900 border border-amber-200",
+                      )}
+                    >
+                      {strengthText(g.strength, lang)}
+                    </span>
+                  ) : (
+                    "—"
+                  )}
                 </td>
                 <td className="px-3 py-2.5 sm:px-4">
                   {lang === "ta" ? NAK_TA[p.nak] : NAK_EN[p.nak]} {p.pada}

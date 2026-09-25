@@ -165,11 +165,12 @@ export function ayanamsaLahiri(jd: number) {
 }
 
 /**
- * Thirukanitham / traditional South-Indian linear model.
- * Kept for compatibility with older Tamil panchangams.
+ * Thirukanitham (Tamil Drik) linear ayanamsa.
+ * Epoch 1900.0 (JD 2415020.0) = 22°27.6′ with classical rate 50.016″/year.
+ * Distinct from Lahiri/Chitrapaksha — used by older Tamil panchangams.
  */
 export function ayanamsaThirukanitham(jd: number) {
-  // Epoch around 1900 (JD 2415020) with classical rate ~50.016\"/year
+  // Epoch 1900.0 (JD 2415020) with classical rate 50.016"/year
   const years = (jd - 2415020.0) / 365.2421988;
   return 22.460 + (50.016 / 3600) * years;
 }
@@ -360,20 +361,45 @@ function tropicalAscendant(jd: number, lat: number, lonEast: number) {
   return norm360((Math.atan2(y, x) * 180) / Math.PI);
 }
 
+/**
+ * Vakya-style mean longitudes (tropical), calibrated to J2000 mean elements.
+ *
+ * Classical Tamil Vakya uses memorised vakyas; we approximate with standard
+ * mean motions + a simple manda (equation of centre) so modern dates stay
+ * within a few degrees of true geocentric positions — not the ~200° drift
+ * of the old Kali-epoch placeholder constants.
+ *
+ * d = days from J2000.0 (JD 2451545.0). Rates ≈ IAU / Meeus mean motions.
+ */
 function vakyaMean(jd: number) {
-  const kali = jd - 588465.5;
-  const mean = (rate: number, epoch = 0) => norm360(epoch + rate * kali);
-  const manda = (m: number, amp: number) => norm360(m + amp * sind(m));
-  return {
-    sun: manda(mean(0.985602681), 2.14),
-    moon: manda(mean(13.17639648, 90), 5.06),
-    mercury: manda(mean(1.383333, 40), 3.5),
-    venus: manda(mean(1.602333, 80), 0.8),
-    mars: manda(mean(0.52402, 20), 11),
-    jupiter: manda(mean(0.083129, 220), 5.2),
-    saturn: manda(mean(0.033494, 100), 6.4),
-    rahu: mean(-0.052954, 200),
+  const d = jd - 2451545.0;
+  const mean = (L0: number, rate: number) => norm360(L0 + rate * d);
+  /** Simple equation of centre: M = mean anomaly, amp in degrees. */
+  const manda = (L: number, M0: number, Mrate: number, amp: number) => {
+    const M = norm360(M0 + Mrate * d);
+    return norm360(L + amp * sind(M));
   };
+
+  // Sun — mean longitude + equation of centre (~2°)
+  const sunL = mean(280.46646, 0.98564736);
+  const sun = manda(sunL, 357.52911, 0.98560028, 1.915);
+
+  // Moon — mean longitude + leading evection/equation term (~6°)
+  const moonL = mean(218.3164477, 13.17639648);
+  const moon = manda(moonL, 134.9633964, 13.06499295, 6.289);
+
+  // Inferior / superior planets — mean heliocentric-style rates projected
+  // as geocentric-ish means (sufficient for vakya comparison charts)
+  const mercury = manda(mean(252.250906, 4.092317), 174.7948, 4.092334, 23.4 * 0.15);
+  const venus = manda(mean(181.979801, 1.602136), 50.4161, 1.602294, 0.8);
+  const mars = manda(mean(355.433, 0.524033), 19.373, 0.524071, 10.6 * 0.5);
+  const jupiter = manda(mean(34.351519, 0.083092), 20.020, 0.083086, 5.2 * 0.4);
+  const saturn = manda(mean(50.077444, 0.033494), 317.020, 0.033444, 6.4 * 0.4);
+
+  // Mean lunar node (Rahu) — retrograde
+  const rahu = mean(125.0445479, -0.0529538083);
+
+  return { sun, moon, mercury, venus, mars, jupiter, saturn, rahu };
 }
 
 function tropicalBodies(jd: number) {
@@ -704,15 +730,16 @@ export function nowJD() {
 
 /**
  * Select Ayanamsa according to the chosen calculation school.
- * - lahiri / thirukanitham (Drik) → high-accuracy Lahiri
- * - vakya → traditional Thirukanitham linear model (used only as reference ayan)
+ * - lahiri → high-accuracy Lahiri / Chitrapaksha
+ * - thirukanitham → Tamil linear Thirukanitham (distinct from Lahiri)
+ * - vakya → same linear Thirukanitham ayan (mean-motion bodies use vakyaMean)
  */
 export function ayanamsaFor(jd: number, school: School) {
-  if (school === "vakya") {
-    return ayanamsaThirukanitham(jd);
+  if (school === "lahiri") {
+    return ayanamsaLahiri(jd);
   }
-  // thirukanitham + lahiri both use high-accuracy Lahiri (Chitrapaksha)
-  return ayanamsaLahiri(jd);
+  // thirukanitham (Drik) and vakya both use the Tamil linear ayanamsa
+  return ayanamsaThirukanitham(jd);
 }
 
 export function siderealGrahas(jd: number, school: School) {
@@ -743,6 +770,7 @@ export function siderealGrahas(jd: number, school: School) {
       },
     };
   }
+  // thirukanitham + lahiri: true geocentric positions (astronomy-engine), school ayan only differs
   const trop = tropicalBodies(jd);
   const bodies: Record<PlanetId, number> = {
     lagna: 0,

@@ -96,6 +96,71 @@ const REMEDIES: Remedy[] = [
     bodyEn:
       "Lighting a lamp at dusk supports calm. Continue family-deity worship. Astrology is guidance only — self-effort matters.",
   },
+  {
+    id: "weak_moon",
+    triggers: ["weak_moon"],
+    titleTa: "சந்திரன் பலவீனம் — பரிகாரம்",
+    titleEn: "Weak Moon remedies",
+    bodyTa:
+      "திங்கட்கிழமை வெண்மை / பால் தானம். சந்திர மந்திரம் அல்லது சோம வழிபாடு. உறக்கம், உணவு ஒழுங்கு மன அமைதிக்கு உதவும்.",
+    bodyEn:
+      "Monday white/milk charity. Chandra mantra or Soma worship. Sleep and food discipline support mental calm.",
+    days: ["monday"],
+  },
+  {
+    id: "weak_jupiter",
+    triggers: ["weak_jupiter"],
+    titleTa: "குரு பலவீனம் — பரிகாரம்",
+    titleEn: "Weak Jupiter remedies",
+    bodyTa:
+      "வியாழக்கிழமை மஞ்சள் ஆடை / பயறு / புத்தக தானம். குரு வழிபாடு, கல்வி மற்றும் தானம் ஜாதகத்தை ஆதரிக்கும்.",
+    bodyEn:
+      "Thursday yellow cloth, pulses, or book charity. Guru worship, study, and giving support the chart.",
+    days: ["thursday"],
+  },
+  {
+    id: "weak_venus",
+    triggers: ["weak_venus"],
+    titleTa: "சுக்கிரன் பலவீனம் — பரிகாரம்",
+    titleEn: "Weak Venus remedies",
+    bodyTa:
+      "வெள்ளிக்கிழமை வெண்மை / இனிப்பு தானம். லட்சுமி அல்லது சுக்கிர வழிபாடு. உறவுகளில் மரியாதையும் கலையும் உதவும்.",
+    bodyEn:
+      "Friday white/sweet charity. Lakshmi or Venus worship. Respect in relationships and arts support harmony.",
+    days: ["friday"],
+  },
+  {
+    id: "weak_saturn",
+    triggers: ["weak_saturn"],
+    titleTa: "சனி பலவீனம் — பரிகாரம்",
+    titleEn: "Weak Saturn remedies",
+    bodyTa:
+      "சனிக்கிழமை எள் / கருப்பு உடை தானம். ஹனுமான் அல்லது சனி வழிபாடு. பொறுமை, நேரம், கடமை ஒழுங்கு முக்கியம்.",
+    bodyEn:
+      "Saturday sesame or dark-cloth charity. Hanuman or Saturn worship. Patience, time discipline, and duty matter.",
+    days: ["saturday"],
+  },
+  {
+    id: "weak_mars",
+    triggers: ["weak_mars"],
+    titleTa: "செவ்வாய் பலவீனம் / கோபம் — பரிகாரம்",
+    titleEn: "Weak or afflicted Mars remedies",
+    bodyTa:
+      "செவ்வாய்க்கிழமை சிவன்/சுப்பிரமணியர் வழிபாடு. சிவப்பு பருப்பு தானம். கோபத்தை அடக்கி உடற்பயிற்சி நல்லது.",
+    bodyEn:
+      "Tuesday Shiva/Subrahmanya worship. Red lentil charity. Channel anger into exercise; avoid rash speech.",
+    days: ["tuesday"],
+  },
+  {
+    id: "rahu_ketu",
+    triggers: ["rahu_ketu"],
+    titleTa: "ராகு-கேது பரிகாரம்",
+    titleEn: "Rahu–Ketu remedies",
+    bodyTa:
+      "நாக பஞ்சமி / ராகு-கேது ஸ்தோத்திரம். கலச ஹோமம் பாரம்பரிய ஸ்தலத்தில். திடீர் முடிவுகளைத் தவிர்த்து ஒழுக்கம் வைத்திருங்கள்.",
+    bodyEn:
+      "Naga Panchami or Rahu–Ketu stotra. Kalasha homa at a traditional place. Avoid impulsive choices; keep discipline.",
+  },
 ];
 
 function hasCombust(a: Analysis): boolean {
@@ -110,6 +175,12 @@ function hasWeakDusthanaLord(a: Analysis): boolean {
   });
 }
 
+function isWeakPlanet(a: Analysis, id: string): boolean {
+  const g = a.grahas.find((x) => x.id === id);
+  if (!g) return false;
+  return g.dignity === "debil" || g.dignity === "enemy" || (g.combust && id !== "sun");
+}
+
 export function getRemediesFor(a: Analysis, lang: Lang): RemedyView[] {
   const triggers = new Set<string>(["general"]);
   if (a.chevvai.present && !a.chevvai.cancelled) triggers.add("chevvai");
@@ -117,6 +188,16 @@ export function getRemediesFor(a: Analysis, lang: Lang): RemedyView[] {
   if (a.kaalSarpa.present) triggers.add("kaalsarpa");
   if (hasCombust(a)) triggers.add("combust");
   if (hasWeakDusthanaLord(a)) triggers.add("dusthana");
+  if (isWeakPlanet(a, "moon")) triggers.add("weak_moon");
+  if (isWeakPlanet(a, "jupiter")) triggers.add("weak_jupiter");
+  if (isWeakPlanet(a, "venus")) triggers.add("weak_venus");
+  if (isWeakPlanet(a, "saturn")) triggers.add("weak_saturn");
+  if (isWeakPlanet(a, "mars") || (a.chevvai.present && !a.chevvai.cancelled)) triggers.add("weak_mars");
+  const rahu = a.grahas.find((g) => g.id === "rahu");
+  const ketu = a.grahas.find((g) => g.id === "ketu");
+  if (a.kaalSarpa.present || (rahu && DUSTHANA.includes(rahu.house)) || (ketu && DUSTHANA.includes(ketu.house))) {
+    triggers.add("rahu_ketu");
+  }
 
   const out: RemedyView[] = [];
   for (const r of REMEDIES) {

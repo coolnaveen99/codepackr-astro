@@ -394,11 +394,53 @@ function span(result: ChartResult, w: { start: number; end: number }) {
 function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
   const at = nowJD();
   const [open, setOpen] = useState<string | null>(null);
+  const currentPeriod = result.dasa.periods.find((p) => at >= p.startJD && at < p.endJD);
+  const currentBhukti = currentPeriod ? bhuktis(currentPeriod).find((b) => at >= b.startJD && at < b.endJD) : null;
+  const upcoming = result.dasa.periods.filter((p) => p.endJD > at).slice(0, 5);
+
   return (
     <Panel title={t(lang, "dasa")}>
       <p className="mb-4 text-sm text-muted">
         {nakName(lang, result.dasa.nak)} · {t(lang, "pada")} {result.dasa.pada}
       </p>
+
+      {currentPeriod ? (
+        <div className="mb-5 rounded-xl border-2 border-accent/30 bg-accent/5 px-4 py-4 shadow-card">
+          <p className="text-xs font-bold uppercase tracking-wide text-accent">
+            {lang === "ta" ? "தற்போதைய தசை காலம்" : "Current dasa period"}
+          </p>
+          <p className="mt-1 font-display text-xl font-semibold text-fg">
+            {planetName(currentPeriod.lord, lang)}
+            {currentBhukti ? ` – ${planetName(currentBhukti.lord, lang)}` : ""}
+          </p>
+          <p className="mt-1 text-xs tabular-nums text-muted">
+            {formatJD(currentPeriod.startJD, result.input.tz).slice(0, 10)} —{" "}
+            {formatJD(currentPeriod.endJD, result.input.tz).slice(0, 10)}
+            {currentBhukti
+              ? ` · ${t(lang, "bhukti")}: ${formatJD(currentBhukti.startJD, result.input.tz).slice(0, 10)} — ${formatJD(currentBhukti.endJD, result.input.tz).slice(0, 10)}`
+              : ""}
+          </p>
+          <p className="mt-3 text-sm leading-relaxed text-fg/90">{dasaNarrative(currentPeriod.lord, lang)}</p>
+          {upcoming.length > 1 ? (
+            <div className="mt-3 border-t border-border/60 pt-3">
+              <p className="text-xs font-semibold text-muted">
+                {lang === "ta" ? "அடுத்த மகாதசைகள்" : "Upcoming mahadasas"}
+              </p>
+              <ul className="mt-1 space-y-1 text-xs text-muted">
+                {upcoming.slice(1).map((p) => (
+                  <li key={p.lord + p.startJD} className="flex justify-between gap-2">
+                    <span>{planetName(p.lord, lang)}</span>
+                    <span className="tabular-nums">
+                      {formatJD(p.startJD, result.input.tz).slice(0, 10)} — {formatJD(p.endJD, result.input.tz).slice(0, 10)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
       <ul className="flex flex-col gap-2">
         {result.dasa.periods.map((p) => {
           const current = at >= p.startJD && at < p.endJD;
@@ -424,7 +466,7 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
               </button>
               {shown ? (
                 <div className="mt-2 space-y-2">
-                <p className="text-sm leading-relaxed text-fg/90">{dasaNarrative(p.lord, lang)}</p>
+                <p className={cn("text-sm leading-relaxed", current ? "text-accent-fg/90" : "text-fg/90")}>{dasaNarrative(p.lord, lang)}</p>
                 <ul className="space-y-1 text-xs">
                   {antars.map((b) => {
                     const on = at >= b.startJD && at < b.endJD;

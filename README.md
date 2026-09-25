@@ -1,11 +1,11 @@
-# Codepackr Astro.
+# Codepackr Astro
 
 Tamil jathagam in the [Codepackr](https://www.codepackr.com) family.
 
 **திருக்கணிதம் (Thirukanitham / Drik)** and **வாக்கியம் (Vakya Karana)** calculation. In Tamil usage, **ராசி is the Moon sign**, not lagna.
 
-
-Live: [github.com/coolnaveen99/codepackr-astro](https://github.com/coolnaveen99/codepackr-astro)  
+Live: [astro.codepackr.com](https://astro.codepackr.com)  
+Repo: [github.com/coolnaveen99/codepackr-astro](https://github.com/coolnaveen99/codepackr-astro)  
 Wiki: [CodePackr Astro Wiki](https://github.com/coolnaveen99/codepackr-astro/wiki)
 
 ## Features
@@ -33,11 +33,17 @@ npm run preview
 
 ## Calculation notes
 
-- **Thirukanitham** — geocentric ecliptic-of-date longitudes minus the Predict. Thirukanitham ayanamsa (22°50.016′ at 1900.0, ~50.016″/year).
-- **Vakya** — Kali-epoch mean motions with a simple manda equation. Temple vakya panchangams can still differ near nakshatra edges.
-- **Lahiri** — same tropical positions with Lahiri / Chitrapaksha ayanamsa, for comparison.
+Three schools share the same true-ephemeris path except where noted:
 
-Positions use [astronomy-engine](https://github.com/cosinekitty/astronomy).
+| School | Bodies | Ayanamsa |
+|--------|--------|----------|
+| **Thirukanitham** (default) | True geocentric (astronomy-engine) | Tamil linear: **22°27.6′ at 1900.0**, rate **50.016″/year** |
+| **Lahiri** | True geocentric (astronomy-engine) | **Lahiri / Chitrapaksha** polynomial (~23.85° at J2000) |
+| **Vakya** | **Mean motions** + simple manda (equation of centre), J2000-calibrated | Same Tamil linear Thirukanitham ayanamsa |
+
+- Thirukanitham and Lahiri therefore differ only by ayanamsa (typically a fraction of a degree in the modern era).
+- Vakya is intentionally a mean-motion model for temple-style comparison; Sun/Moon stay near true longitudes, but can still differ from a printed vakya panchangam near nakshatra edges.
+- Positions library: [astronomy-engine](https://github.com/cosinekitty/astronomy).
 
 Porutham follows Tamil Dasakoota (Dina, Gana, Mahendra, Stree Deergha, Yoni, Rasi, Rasi Adhipathi, Vasya, Rajju, Vedha). Rajju, Vedha, and 6–8 rasi are flagged even when the match count is high.
 
