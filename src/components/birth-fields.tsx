@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { BirthInput, City } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
 import { POPULAR_CITIES } from "@/lib/astro/samples";
+import { EXTRA_INDIA_TOWNS, mergeCityLists, searchCities } from "@/lib/astro/place-search";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -243,7 +244,6 @@ export function DateTimeFields({
   useEffect(() => {
     if (!now) return;
     if (allowFuture) {
-      // only clamp day to month length when allowing future
       const maxD = daysInMonth(safe.year, safe.month);
       if (safe.day > maxD) {
         onChange({ ...value, year: safe.year, month: safe.month, day: maxD });
@@ -377,7 +377,7 @@ export function PlaceSearch({
   id?: string;
 }) {
   const [query, setQuery] = useState(value.place);
-  const [cities, setCities] = useState<City[]>(POPULAR_CITIES);
+  const [cities, setCities] = useState<City[]>(() => mergeCityLists(POPULAR_CITIES, EXTRA_INDIA_TOWNS));
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -386,7 +386,7 @@ export function PlaceSearch({
     fetch("/data/cities.json")
       .then((r) => r.json())
       .then((list: City[]) => {
-        if (!cancelled && Array.isArray(list)) setCities(list);
+        if (!cancelled && Array.isArray(list)) setCities(mergeCityLists(list, EXTRA_INDIA_TOWNS));
       })
       .catch(() => {});
     return () => {
@@ -406,11 +406,7 @@ export function PlaceSearch({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const matches = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 1) return POPULAR_CITIES.slice(0, 8);
-    return cities.filter((c) => c.n.toLowerCase().includes(q)).slice(0, 12);
-  }, [cities, query]);
+  const matches = useMemo(() => searchCities(cities, query, 16), [cities, query]);
 
   function pickCity(c: City) {
     setQuery(c.n);
