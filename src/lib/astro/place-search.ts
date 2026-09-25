@@ -1,33 +1,77 @@
 // Codepackr Astro - Place search helpers + extra Indian towns
 import type { City } from "./engine";
 
-/** Towns missing from the bundled atlas (esp. Chittoor / Rayalaseema / TN). */
+/** Extra towns with IST coords. Focus: Chittoor / Palamaner and nearby TN. */
 export const EXTRA_INDIA_TOWNS: City[] = [
+  // Palamaner revenue division
   { n: "Palamaner (Ap)", tz: 5.5, lat: 13.1991, lon: 78.7469 },
   { n: "Palamaneru (Ap)", tz: 5.5, lat: 13.1991, lon: 78.7469 },
+  { n: "Gangavaram (Palamaner)", tz: 5.5, lat: 13.0667, lon: 78.6833 },
+  { n: "Peddapanjani (Ap)", tz: 5.5, lat: 13.1000, lon: 78.7167 },
+  { n: "Baireddipalle (Ap)", tz: 5.5, lat: 13.0833, lon: 78.6167 },
+  { n: "Venkatagirikota (Ap)", tz: 5.5, lat: 13.0012, lon: 78.4795 },
+  { n: "V Kota (Ap)", tz: 5.5, lat: 13.0012, lon: 78.4795 },
+  { n: "Pengarakunta (Ap)", tz: 5.5, lat: 13.2167, lon: 78.7500 },
+  { n: "Kolamasanapalle (Ap)", tz: 5.5, lat: 13.2500, lon: 78.8000 },
+  { n: "Kurmoi (Ap)", tz: 5.5, lat: 13.1833, lon: 78.7833 },
+  { n: "Moram (Palamaner)", tz: 5.5, lat: 13.1667, lon: 78.8000 },
+  { n: "Baippagaripalle (Ap)", tz: 5.5, lat: 13.2833, lon: 78.8000 },
+
+  // Kuppam division
+  { n: "Kuppam (Ap)", tz: 5.5, lat: 12.7493, lon: 78.3419 },
+  { n: "Santhipuram (Ap)", tz: 5.5, lat: 12.7000, lon: 78.2667 },
+  { n: "Gudupalle (Ap)", tz: 5.5, lat: 12.7000, lon: 78.4000 },
+  { n: "Ramakuppam (Ap)", tz: 5.5, lat: 12.8500, lon: 78.4500 },
+
+  // Chittoor division
+  { n: "Chittoor (Ap)", tz: 5.5, lat: 13.2170, lon: 79.1003 },
   { n: "Bangarupalem (Ap)", tz: 5.5, lat: 13.1966, lon: 78.9006 },
   { n: "Gudipala (Ap)", tz: 5.5, lat: 13.1286, lon: 79.1331 },
-  { n: "Srikalahasti (Ap)", tz: 5.5, lat: 13.7498, lon: 79.6984 },
-  { n: "Puttur (Ap)", tz: 5.5, lat: 13.4419, lon: 79.5531 },
+  { n: "Yadamari (Ap)", tz: 5.5, lat: 13.0833, lon: 79.1167 },
+  { n: "Gangadhara Nellore (Ap)", tz: 5.5, lat: 13.1500, lon: 79.0167 },
+  { n: "Puthalapattu (Ap)", tz: 5.5, lat: 13.3833, lon: 79.0833 },
+  { n: "Penumuru (Ap)", tz: 5.5, lat: 13.3667, lon: 79.1833 },
+  { n: "Thavanampalle (Ap)", tz: 5.5, lat: 13.2500, lon: 79.0167 },
+  { n: "Irala (Ap)", tz: 5.5, lat: 13.3667, lon: 79.0500 },
+  { n: "Pulicherla (Ap)", tz: 5.5, lat: 13.4000, lon: 79.0000 },
+  { n: "Rompicherla (Chittoor)", tz: 5.5, lat: 13.4333, lon: 79.1167 },
+  { n: "Srirangarajapuram (Ap)", tz: 5.5, lat: 13.2167, lon: 79.3000 },
+  { n: "Vedurukuppam (Ap)", tz: 5.5, lat: 13.2167, lon: 79.3000 },
+  { n: "Greamspet (Chittoor)", tz: 5.5, lat: 13.2170, lon: 79.1000 },
+
+  // Nagari division
   { n: "Nagari (Ap)", tz: 5.5, lat: 13.3214, lon: 79.5856 },
-  { n: "Madanapalle (Ap)", tz: 5.5, lat: 13.5503, lon: 78.5029 },
+  { n: "Karvetinagar (Ap)", tz: 5.5, lat: 13.4167, lon: 79.4500 },
+  { n: "Palasamudram (Ap)", tz: 5.5, lat: 13.1500, lon: 79.5000 },
+  { n: "Nindra (Ap)", tz: 5.5, lat: 13.3667, lon: 79.6500 },
+  { n: "Vijayapuram (Ap)", tz: 5.5, lat: 13.3167, lon: 79.6500 },
+  { n: "Puttur (Ap)", tz: 5.5, lat: 13.4419, lon: 79.5531 },
+  { n: "Narayanavanam (Ap)", tz: 5.5, lat: 13.4167, lon: 79.5833 },
+  { n: "Pitchatur (Ap)", tz: 5.5, lat: 13.2667, lon: 79.7500 },
+  { n: "Satyavedu (Ap)", tz: 5.5, lat: 13.4333, lon: 79.9500 },
+
+  // Tirupati / Annamayya side still commonly used as birth place
+  { n: "Tirupati (Ap)", tz: 5.5, lat: 13.6288, lon: 79.4192 },
+  { n: "Renigunta (Ap)", tz: 5.5, lat: 13.6511, lon: 79.5075 },
+  { n: "Srikalahasti (Ap)", tz: 5.5, lat: 13.7498, lon: 79.6984 },
+  { n: "Chandragiri (Ap)", tz: 5.5, lat: 13.5833, lon: 79.3167 },
   { n: "Pakala (Ap)", tz: 5.5, lat: 13.4493, lon: 79.1167 },
-  { n: "Sodam (Ap)", tz: 5.5, lat: 13.4833, lon: 78.9500 },
+  { n: "Punganur (Ap)", tz: 5.5, lat: 13.3667, lon: 78.5833 },
+  { n: "Madanapalle (Ap)", tz: 5.5, lat: 13.5503, lon: 78.5029 },
   { n: "Kalikiri (Ap)", tz: 5.5, lat: 13.6333, lon: 78.8000 },
   { n: "Vayalpad (Ap)", tz: 5.5, lat: 13.6500, lon: 78.6333 },
+  { n: "Valmikipuram (Ap)", tz: 5.5, lat: 13.6500, lon: 78.6333 },
   { n: "Thamballapalle (Ap)", tz: 5.5, lat: 13.8167, lon: 78.6500 },
-  { n: "Chandragiri (Ap)", tz: 5.5, lat: 13.5833, lon: 79.3167 },
-  { n: "Gangavaram (Chittoor)", tz: 5.5, lat: 13.2167, lon: 79.0667 },
-  { n: "Irala (Ap)", tz: 5.5, lat: 13.3667, lon: 79.0500 },
-  { n: "Puthalapattu (Ap)", tz: 5.5, lat: 13.3833, lon: 79.0833 },
-  { n: "Yadamari (Ap)", tz: 5.5, lat: 13.0833, lon: 79.1167 },
-  { n: "Penumuru (Ap)", tz: 5.5, lat: 13.3667, lon: 79.1833 },
-  { n: "Karvetinagar (Ap)", tz: 5.5, lat: 13.4167, lon: 79.4500 },
-  { n: "Satyavedu (Ap)", tz: 5.5, lat: 13.4333, lon: 79.9500 },
-  { n: "Pitchatur (Ap)", tz: 5.5, lat: 13.2667, lon: 79.7500 },
-  { n: "Vepagunta (Ap)", tz: 5.5, lat: 13.2167, lon: 79.0833 },
-  { n: "Greamspet (Chittoor)", tz: 5.5, lat: 13.2170, lon: 79.1000 },
-  { n: "Kuppam (Ap)", tz: 5.5, lat: 12.7493, lon: 78.3419 },
+  { n: "Sodam (Ap)", tz: 5.5, lat: 13.4833, lon: 78.9500 },
+  { n: "Piler (Ap)", tz: 5.5, lat: 13.6547, lon: 78.9475 },
+  { n: "Chowdepalle (Ap)", tz: 5.5, lat: 13.4500, lon: 78.7000 },
+  { n: "Ramasamudram (Ap)", tz: 5.5, lat: 13.3667, lon: 78.4333 },
+  { n: "Somala (Ap)", tz: 5.5, lat: 13.4667, lon: 78.8167 },
+  { n: "B Kothakota (Ap)", tz: 5.5, lat: 13.6167, lon: 78.2833 },
+  { n: "Kurabalakota (Ap)", tz: 5.5, lat: 13.6500, lon: 78.4833 },
+  { n: "Mulakalacheruvu (Ap)", tz: 5.5, lat: 13.8333, lon: 78.3167 },
+
+  // Nearby Tamil Nadu towns used as birth places
   { n: "Sholinghur (Tn)", tz: 5.5, lat: 13.1167, lon: 79.4167 },
   { n: "Ambur (Tn)", tz: 5.5, lat: 12.7904, lon: 78.7166 },
   { n: "Gudiyattam (Tn)", tz: 5.5, lat: 12.9459, lon: 78.8646 },
@@ -37,15 +81,21 @@ export const EXTRA_INDIA_TOWNS: City[] = [
   { n: "Tiruttani (Tn)", tz: 5.5, lat: 13.1750, lon: 79.6110 },
   { n: "Pallipattu (Tn)", tz: 5.5, lat: 13.3333, lon: 79.4500 },
   { n: "Uthukottai (Tn)", tz: 5.5, lat: 13.3333, lon: 79.9000 },
+  { n: "Vaniyambadi (Tn)", tz: 5.5, lat: 12.6825, lon: 78.6189 },
+  { n: "Pernambut (Tn)", tz: 5.5, lat: 12.9333, lon: 78.7167 },
 ];
 
 const ALIASES: Record<string, string[]> = {
-  palamaner: ["palamaneer", "palamaneru", "palamaneri", "palamanair"],
+  palamaner: ["palamaneer", "palamaneru", "palamaneri", "palamanair", "palamaner"],
   chittoor: ["chitoor", "chittor", "chittore", "chittoore"],
-  madanapalle: ["madanapalli", "madanapally", "madanapalle"],
+  venkatagirikota: ["vkota", "v kota", "venkatagiri kota", "venkatagirikote"],
+  madanapalle: ["madanapalli", "madanapally"],
   punganur: ["punganure", "punganuru"],
   srikalahasti: ["srikalahasthi", "kalahasti"],
   tirupati: ["thirupathi", "tirupathi", "thirupati"],
+  vayalpad: ["valmikipuram", "vayalpadu"],
+  baireddipalle: ["baireddypalle", "baireddipalli"],
+  bangarupalem: ["bangarupalem", "bangarupalem"],
   chennai: ["madras"],
   bengaluru: ["bangalore"],
   mumbai: ["bombay"],
@@ -63,7 +113,6 @@ export function foldPlace(s: string): string {
     .replace(/[^a-z0-9\u0b80-\u0bff]+/g, "");
 }
 
-/** Collapse repeated letters so palamaneer ≈ palamaner and chittoor ≈ chitoor. */
 export function squashLetters(s: string): string {
   return foldPlace(s).replace(/(.)\1+/g, "$1");
 }
