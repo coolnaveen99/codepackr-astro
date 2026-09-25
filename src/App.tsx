@@ -6,6 +6,7 @@ import { JathagamDashboard } from "@/components/jathagam-dashboard";
 import { ChartViews } from "@/components/chart-views";
 import { ContactForm } from "@/components/contact-form";
 import { DisclaimerPage } from "@/components/disclaimer-page";
+import { LegalTrustPage } from "@/components/legal-trust-page";
 import { PoruthamView } from "@/components/porutham-view";
 import { PanchangamView } from "@/components/panchangam-view";
 import { DailyRasiView } from "@/components/daily-rasi";
@@ -18,7 +19,6 @@ import { NakshatraView } from "@/components/nakshatra-view";
 import { BabyNamesView } from "@/components/baby-names-view";
 import { NazhigaiView } from "@/components/nazhigai-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
-import { t } from "@/lib/astro/i18n";
 import { LangProvider, useLang } from "@/lib/lang";
 import { NavProvider, useNav } from "@/lib/nav";
 import { usePageSeo } from "@/lib/seo";
@@ -120,6 +120,10 @@ function Shell() {
         <ContactForm />
       ) : page === "disclaimer" ? (
         <DisclaimerPage />
+      ) : page === "privacy" ? (
+        <LegalTrustPage page="privacy" />
+      ) : page === "about" ? (
+        <LegalTrustPage page="about" />
       ) : (
         <>
           <JathagamDashboard
