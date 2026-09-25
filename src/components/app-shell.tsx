@@ -140,7 +140,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const moreMenuRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
@@ -151,6 +150,30 @@ export function AppShell({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    function onResize() {
+      if (window.matchMedia("(min-width: 1024px)").matches) {
+        setMobileMenuOpen(false);
+      }
+    }
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMobileMenuOpen(false);
+    }
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [mobileMenuOpen]);
+
   const isMoreActive = MORE_NAV.some((m) => m.id === page);
 
   return (
@@ -158,8 +181,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       <CodepackrFamilyBar language={lang} className="no-print" />
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
-          <button type="button" id="sidebar-toggle-btn" onClick={() => setMobileMenuOpen((o) => !o)} className="lg:hidden flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-fg hover:bg-elevated cursor-pointer shrink-0 shadow-sm" aria-label="Toggle menu" aria-expanded={mobileMenuOpen}>{mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}</button>
-          {/* Logo & Brand */}
+          <button
+            type="button"
+            id="sidebar-toggle-btn"
+            onClick={() => setMobileMenuOpen((o) => !o)}
+            className="lg:hidden relative z-[110] flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-fg hover:bg-elevated cursor-pointer shrink-0 shadow-sm"
+            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-drawer"
+          >
+            {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
           <a
             href={getUrl("jathagam")}
             onClick={(e) => {
@@ -189,7 +221,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </a>
 
-          {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-1.5" aria-label="Main Navigation">
             {PRIMARY_NAV.map((n) => {
               const Icon = n.icon;
@@ -219,7 +250,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               );
             })}
 
-            {/* "More" Dropdown Menu */}
             <div className="relative" ref={moreMenuRef}>
               <button
                 type="button"
@@ -281,7 +311,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </nav>
 
-          {/* Language Switch */}
           <div className="flex items-center gap-2">
             <div className="flex rounded-full bg-elevated p-0.5 border border-border/60">
               {(["ta", "en"] as const).map((l) => (
@@ -302,13 +331,27 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Left slide-out drawer (Tools/Finance pattern) */}
-        {mobileMenuOpen && (
-          <>
-          <div className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} aria-hidden />
-          <nav className="lg:hidden fixed left-0 top-16 bottom-0 z-50 w-72 max-w-[85vw] border-r border-border/80 bg-surface px-4 py-3.5 shadow-xl overflow-y-auto" aria-label="Mobile Navigation">
-            {/* Core Services Section */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 z-[100]">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} aria-hidden />
+          <nav
+            id="mobile-nav-drawer"
+            className="absolute left-0 top-0 bottom-0 z-[101] w-72 max-w-[85vw] border-r border-border/80 bg-surface px-4 py-3.5 shadow-xl overflow-y-auto"
+            aria-label="Mobile Navigation"
+          >
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-ink">{lang === "ta" ? "பட்டி" : "Menu"}</p>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex size-9 items-center justify-center rounded-lg border border-border bg-elevated/50 text-fg"
+                aria-label="Close menu"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
             <div>
               <p className="text-[10.5px] font-bold uppercase tracking-wider text-accent mb-2 px-1">
                 {lang === "ta" ? "முக்கிய ஜோதிட சேவைகள்" : "Core Astrological Services"}
@@ -343,7 +386,6 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            {/* Additional Tools Section */}
             <div className="mt-4 pt-3 border-t border-border/60">
               <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted mb-2 px-1">
                 {lang === "ta" ? "கூடுதல் கருவிகள் & தகவல்" : "More Tools & Information"}
@@ -386,15 +428,13 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
           </nav>
-          </>
-        )}
-      </header>
+        </div>
+      )}
 
       <div className="flex-1">
         {children}
       </div>
 
-      {/* Footer */}
       <footer className="no-print border-t border-border/80 bg-surface/70 mt-12">
         <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
           <RotatingQuote lang={lang} variant="compact" className="mb-6 shadow-xs" />
@@ -449,7 +489,6 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
           </div>
 
-          {/* SEO Astrological Tools Directory */}
           <div className="py-6 border-b border-border/60">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display text-xs sm:text-sm font-bold text-ink flex items-center gap-2">
