@@ -59,6 +59,7 @@ export function HomeHeroPreview({ lang }: { lang: Lang }) {
                   <div className="mt-1 text-[11px] font-bold text-accent">{SAMPLE[sign]}</div>
                 ) : null}
               </div>
+              </div>
             ),
           )}
         </div>
@@ -67,6 +68,9 @@ export function HomeHeroPreview({ lang }: { lang: Lang }) {
           onClick={() => go("jathagam")}
           className="mt-3 inline-flex items-center gap-1 text-xs font-bold text-accent hover:underline"
         >
+          {isTa ? "உங்கள் ஜாதகம் பார்க்க" : "Open your chart"}
+          <ArrowRight className="size-3" />
+        </button>
           {isTa ? "உங்கள் ஜாதகம் பார்க்க" : "Open your chart"}
           <ArrowRight className="size-3" />
         </button>
@@ -98,6 +102,9 @@ export function HomeHeroPreview({ lang }: { lang: Lang }) {
           {isTa ? "தமிழ் காலண்டர் திறக்க" : "Open Tamil calendar"}
           <ArrowRight className="size-3" />
         </button>
+          {isTa ? "தமிழ் காலண்டர் திறக்க" : "Open Tamil calendar"}
+          <ArrowRight className="size-3" />
+        </button>
       </div>
 
       <div className="rounded-2xl border border-accent/20 bg-surface px-4 py-3 shadow-card">
@@ -109,6 +116,9 @@ export function HomeHeroPreview({ lang }: { lang: Lang }) {
           <span className="flex items-center gap-2 text-sm font-bold text-ink">
             <HeartHandshake className="size-4 text-accent" />
             {isTa ? "10 பொருத்தம் — உத்தமம் / மத்தியமம் / அதமம்" : "10 Poruthams — Uthamam / Madhimam / Athamam"}
+          </span>
+          <ArrowRight className="size-4 text-accent" />
+        </button>
           </span>
           <ArrowRight className="size-4 text-accent" />
         </button>
