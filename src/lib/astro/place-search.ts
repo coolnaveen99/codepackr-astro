@@ -105,7 +105,6 @@ const ALIASES: Record<string, string[]> = {
 export function foldPlace(s: string): string {
   return s.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9\u0b80-\u0bff]+/g, "");
 }
-
 export function squashLetters(s: string): string {
   return foldPlace(s).replace(/(.)\1+/g, "$1");
 }
@@ -114,26 +113,18 @@ type AliasRule = { fold: string; squash: string };
 const ALIAS_RULES: { keys: AliasRule[] }[] = Object.entries(ALIASES).map(([canon, list]) => ({
   keys: [canon, ...list].map((a) => ({ fold: foldPlace(a), squash: squashLetters(a) })),
 }));
-
 function matchingAliasGroups(foldedQuery: string, squashedQuery: string): AliasRule[][] {
   return ALIAS_RULES.filter((rule) =>
     rule.keys.some((k) => foldedQuery.includes(k.fold) || squashedQuery.includes(k.squash)),
   ).map((rule) => rule.keys);
 }
-
 type IndexedCity = { city: City; fold: string; squash: string; pop: number };
 type CityIndex = { rows: IndexedCity[]; prefix: Map<string, IndexedCity[]> };
 const INDEX_CACHE = new WeakMap<City[], CityIndex>();
-
-function prefixKey(fold: string): string {
-  return fold.slice(0, 2);
-}
-
+function prefixKey(fold: string): string { return fold.slice(0, 2); }
 function buildCityIndex(cities: City[]): CityIndex {
   const rows: IndexedCity[] = cities.map((city) => ({
-    city,
-    fold: foldPlace(city.n),
-    squash: squashLetters(city.n),
+    city, fold: foldPlace(city.n), squash: squashLetters(city.n),
     pop: Number((city as City & { p?: number }).p) || 0,
   }));
   const prefix = new Map<string, IndexedCity[]>();
@@ -141,42 +132,40 @@ function buildCityIndex(cities: City[]): CityIndex {
     const key = prefixKey(row.fold);
     if (!key) continue;
     const bucket = prefix.get(key);
-    if (bucket) bucket.push(row);
-    else prefix.set(key, [row]);
+    if (bucket) bucket.push(row); else prefix.set(key, [row]);
   }
   return { rows, prefix };
 }
-
 function getCityIndex(cities: City[]): CityIndex {
   let idx = INDEX_CACHE.get(cities);
-  if (!idx) {
-    idx = buildCityIndex(cities);
-    INDEX_CACHE.set(cities, idx);
-  }
+  if (!idx) { idx = buildCityIndex(cities); INDEX_CACHE.set(cities, idx); }
   return idx;
 }
-
 export function mergeCityLists(base: City[], extra: City[] = EXTRA_INDIA_TOWNS): City[] {
   const seen = new Set<string>();
   const out: City[] = [];
   for (const city of [...extra, ...base]) {
     const key = `${squashLetters(city.n)}:${city.lat.toFixed(2)}:${city.lon.toFixed(2)}`;
     if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(city);
+    seen.add(key); out.push(city);
   }
   return out;
 }
 
 let worldCitiesPromise: Promise<City[]> | null = null;
-
-/** Fetch the 17k-city dump once per page load. */
+const PLACE_FILES = [
+  "/data/places-tn.json",
+  "/data/places-ka-kl-ap.json",
+  "/data/places-districts.json",
+  "/data/places-countries.json",
+];
 export function loadWorldCities(): Promise<City[]> {
   if (!worldCitiesPromise) {
-    worldCitiesPromise = fetch("/data/cities.json")
-      .then((r) => r.json())
-      .then((list: City[]) => (Array.isArray(list) ? list : []))
-      .catch(() => []);
+    worldCitiesPromise = Promise.all(
+      PLACE_FILES.map((url) =>
+        fetch(url).then((r) => (r.ok ? r.json() : [])).then((list: City[]) => (Array.isArray(list) ? list : [])).catch(() => [] as City[]),
+      ),
+    ).then((chunks) => chunks.flat());
   }
   return worldCitiesPromise;
 }
@@ -187,12 +176,10 @@ export function searchCities(cities: City[], query: string, limit = 16): City[] 
   const folded = foldPlace(q);
   const squashed = squashLetters(q);
   if (!folded) return cities.slice(0, 8);
-
   const { rows, prefix } = getCityIndex(cities);
   const bucket = prefix.get(prefixKey(folded));
   const aliasGroups = matchingAliasGroups(folded, squashed);
   const pool = aliasGroups.length || folded.length < 2 ? rows : bucket && bucket.length ? bucket : rows;
-
   const scored: { city: City; score: number; pop: number }[] = [];
   for (const row of pool) {
     let score = 0;
