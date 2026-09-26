@@ -27,6 +27,7 @@ import {
 } from "lucide-react";
 import type { Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
+import { HomeHeroPreview } from "@/components/home-hero-preview";
 import {
   ASTRO_TOOLS,
   TOOL_CATEGORIES,
@@ -86,8 +87,9 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
   return (
     <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 space-y-12">
       {/* 1. Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-accent/25 bg-gradient-to-br from-amber-50/70 via-white to-amber-100/40 p-6 sm:p-10 lg:p-14 shadow-sm">
-        <div className="relative z-10 max-w-3xl space-y-4">
+      <section className="relative overflow-hidden rounded-3xl border border-accent/25 bg-gradient-to-br from-amber-50/80 via-surface to-orange-50/50 p-6 sm:p-10 lg:p-12 shadow-card">
+        <div className="relative z-10 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <div className="space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-bold tracking-wide text-accent">
             <Sparkles className="size-3.5" />
             <span>
@@ -163,9 +165,12 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
             </button>
           </div>
         </div>
+        <HomeHeroPreview lang={lang} />
+        </div>
 
         {/* Decorative background glow */}
-        <div className="pointer-events-none absolute -right-20 -bottom-20 size-80 rounded-full bg-accent/10 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 -bottom-20 size-80 rounded-full bg-accent/15 blur-3xl" />
+        <div className="pointer-events-none absolute -left-16 -top-16 size-56 rounded-full bg-gold/10 blur-3xl" />
       </section>
 
       {/* 2. Featured Jathagam Highlight Card */}
@@ -463,9 +468,9 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
       </section>
 
       {/* 6. Calculation Transparency Teaser */}
-      <section className="rounded-2xl border border-slate-200 bg-slate-900 text-white p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm">
+      <section className="rounded-2xl border border-accent/30 bg-accent text-accent-fg p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-card">
         <div className="space-y-2 max-w-2xl">
-          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-400">
+          <div className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-200">
             <ShieldCheck className="size-4" />
             <span>{isTa ? "வெளிப்படையான வானியல் தரம்" : "Audited Calculation Standards"}</span>
           </div>
@@ -474,7 +479,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
               ? "எங்கள் வானியல் கணக்கீட்டு முறையை விரிவாக அறியுங்கள்"
               : "Inspect Our Ephemeris & Astronomical Calculation Methods"}
           </h3>
-          <p className="text-xs sm:text-sm text-slate-300">
+          <p className="text-xs sm:text-sm text-amber-50/85">
             {isTa
               ? "நிரயன ராசி மண்டலம், நாசா JPL DE440 பெஞ்ச்மார்க் மற்றும் 16 வர்க்க கட்டங்களின் கணித அடிப்படைகளை ஆவணப் பக்கத்தில் வாசிக்கலாம்."
               : "Read the technical methodology behind our Sidereal zodiac, IAU 2000 precession polynomial, Chitrapaksha Lahiri, and Whole Sign houses."}
@@ -484,7 +489,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
           <button
             type="button"
             onClick={() => go("calculation-method")}
-            className="inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-xs sm:text-sm font-bold text-slate-900 hover:bg-slate-100 active:scale-95 transition-all shadow-sm"
+            className="inline-flex items-center gap-2 rounded-xl bg-surface px-5 py-3 text-xs sm:text-sm font-bold text-ink hover:bg-elevated active:scale-95 transition-all shadow-sm"
           >
             <span>{isTa ? "கணக்கீட்டு முறை படிக்க →" : "View Calculation Methods →"}</span>
           </button>
