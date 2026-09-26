@@ -26,6 +26,7 @@ export function generateCalculationReceipt(
     utcOffset?: string;
     offsetAtBirth?: string;
     panchangaSchool?: string;
+    ayanamsa?: ProductionCalculationProfile["ayanamsa"];
   }
 ): { receipt: CalculationReceipt; metadata: CalculationMetadata } {
   const hash = buildCalculationProvenanceHash(
@@ -64,7 +65,7 @@ export function generateCalculationReceipt(
     utcOffset: details?.utcOffset,
     offsetAtBirth: details?.offsetAtBirth || details?.utcOffset,
     zodiac: profile.zodiac,
-    ayanamsa: profile.ayanamsa,
+    ayanamsa: details?.ayanamsa || profile.ayanamsa,
     nodeMode: profile.nodeMode,
     houseSystem: profile.houseSystem,
     panchangaSchool: details?.panchangaSchool || profile.panchangaMethod,
@@ -81,8 +82,8 @@ export function generateCalculationReceipt(
     ephemerisSource: ASTRO_EPHEMERIS_SOURCE,
     ephemerisVersion: ASTRO_EPHEMERIS_VERSION,
     zodiac: profile.zodiac,
-    ayanamsa: profile.ayanamsa,
-    ayanamsaValue: 24.11, // Standard nominal value
+    ayanamsa: details?.ayanamsa || profile.ayanamsa,
+    ayanamsaValue: 24.11,
     houseSystem: profile.houseSystem,
     nodeMode: profile.nodeMode,
     timezone,
