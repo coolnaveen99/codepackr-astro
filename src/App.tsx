@@ -43,7 +43,7 @@ export default function App() {
 
 function Shell() {
   const { lang } = useLang();
-  const { page } = useNav();
+  const { page, go } = useNav();
   usePageSeo(page, lang);
   const [draft, setDraft] = useState<BirthInput>(() => {
     if (typeof window !== "undefined") {
@@ -107,7 +107,7 @@ function Shell() {
       ) : page === "gochara" ? (
         <GocharaView lang={lang} />
       ) : page === "nakshatra" ? (
-        <NakshatraView lang={lang} onNavigateToBabyNames={() => window.location.href = "/babynames"} />
+        <NakshatraView lang={lang} onNavigateToBabyNames={() => go("babynames")} />
       ) : page === "babynames" ? (
         <BabyNamesView lang={lang} />
       ) : page === "nazhigai" ? (

@@ -223,10 +223,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
           <a
-            href={getUrl("jathagam")}
+            href={getUrl("home")}
             onClick={(e) => {
               e.preventDefault();
-              go("jathagam");
+              go("home");
               setMobileMenuOpen(false);
               setMoreMenuOpen(false);
             }}
@@ -471,10 +471,10 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 items-center border-b border-border/60 pb-6">
             <div>
               <a
-                href={getUrl("jathagam")}
+                href={getUrl("home")}
                 onClick={(e) => {
                   e.preventDefault();
-                  go("jathagam");
+                  go("home");
                 }}
                 className="font-display text-lg font-bold text-accent hover:underline flex items-center gap-1.5"
               >

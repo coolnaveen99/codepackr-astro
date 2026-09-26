@@ -118,10 +118,50 @@
     <priority>0.5</priority>
   </url>
 
-  <!-- Astrology Disclaimer & Privacy -->
+  <!-- Tamil Calendar & Daily Panchangam Canonical -->
+  <url>
+    <loc>https://astro.codepackr.com/tamil-calendar</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Multi-Horizon Forecast -->
+  <url>
+    <loc>https://astro.codepackr.com/forecast</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Calculation Method & Transparency -->
+  <url>
+    <loc>https://astro.codepackr.com/calculation-method</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- About Us -->
+  <url>
+    <loc>https://astro.codepackr.com/about</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://astro.codepackr.com/privacy</loc>
+    <lastmod>2026-09-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Astrology Disclaimer -->
   <url>
     <loc>https://astro.codepackr.com/disclaimer</loc>
-    <lastmod>2026-09-22</lastmod>
+    <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
   </url>
