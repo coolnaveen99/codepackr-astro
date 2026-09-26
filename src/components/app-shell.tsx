@@ -32,8 +32,7 @@ import { CodepackrFamilyBar } from "@/components/CodepackrFamilyBar";
 const PRIMARY_NAV: { id: Page; labelKey: string; shortTa: string; shortEn: string; icon: typeof Compass }[] = [
   { id: "home", labelKey: "navHome", shortTa: "முகப்பு", shortEn: "Home", icon: Compass },
   { id: "jathagam", labelKey: "navChart", shortTa: "ஜாதகம்", shortEn: "Horoscope", icon: FileText },
-  { id: "tamil-calendar", labelKey: "navCalendar", shortTa: "தமிழ் காலண்டர்", shortEn: "Tamil Calendar", icon: CalendarDays },
-  { id: "panchangam", labelKey: "navPanchang", shortTa: "பஞ்சாங்கம்", shortEn: "Panchangam", icon: Clock },
+  { id: "tamil-calendar", labelKey: "navCalendar", shortTa: "காலண்டர் & பஞ்சாங்கம்", shortEn: "Calendar & Panchangam", icon: CalendarDays },
   { id: "forecast", labelKey: "navForecast", shortTa: "பலன்கள்", shortEn: "Forecast", icon: TrendingUp },
   { id: "porutham", labelKey: "navPorutham", shortTa: "திருமணம்", shortEn: "Porutham", icon: HeartHandshake },
 ];
@@ -49,10 +48,10 @@ const MORE_NAV: {
 }[] = [
   {
     id: "biodata",
-    titleTa: "ஜோதிட பயோடேட்டா",
-    titleEn: "Astro Biodata Maker",
-    descTa: "திருமண வரன் பயோடேட்டா & PDF ஏற்றுமதி",
-    descEn: "Matrimonial horoscope biodata maker with PDF",
+    titleTa: "ஜாதக வரன் குறிப்பு (Biodata)",
+    titleEn: "Matrimonial Astro Biodata",
+    descTa: "திருமண வரன் ஜாதக விவரம் & PDF தயாரிப்பு",
+    descEn: "Matrimonial horoscope biodata maker with PDF export",
     icon: FileText,
   },
   {
@@ -131,8 +130,8 @@ const MORE_NAV: {
     id: "calculation-method",
     titleTa: "கணித முறை விளக்கம்",
     titleEn: "Calculation Method",
-    descTa: "லஹிரி அயனாம்சம், DE440 எஃபிமெரிஸ் & முறைமை",
-    descEn: "Lahiri Ayanamsa, DE440 ephemeris & methodology",
+    descTa: "திருக்கணிதம் & லஹிரி அயனாம்சம், DE440 எஃபிமெரிஸ் & முறைமை",
+    descEn: "Thirukanitham & Lahiri Ayanamsa, DE440 ephemeris & methodology",
     icon: BookOpen,
   },
   {
@@ -181,16 +180,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    function onResize() {
-      if (window.matchMedia("(min-width: 1024px)").matches) {
-        setMobileMenuOpen(false);
-      }
-    }
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, []);
-
-  useEffect(() => {
     if (!mobileMenuOpen) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") setMobileMenuOpen(false);
@@ -215,10 +204,11 @@ export function AppShell({ children }: { children: ReactNode }) {
             type="button"
             id="sidebar-toggle-btn"
             onClick={() => setMobileMenuOpen((o) => !o)}
-            className="lg:hidden relative z-[110] flex size-10 items-center justify-center rounded-xl border border-border bg-surface text-fg hover:bg-elevated cursor-pointer shrink-0 shadow-sm"
+            className="relative z-[110] flex size-9 sm:size-10 items-center justify-center rounded-xl border border-border bg-surface text-fg hover:bg-elevated cursor-pointer shrink-0 shadow-sm transition-colors"
             aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-drawer"
+            title={lang === "ta" ? "பட்டி (மெனு)" : "Navigation Menu"}
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -364,19 +354,27 @@ export function AppShell({ children }: { children: ReactNode }) {
       </header>
 
       {mobileMenuOpen && (
-        <div className="lg:hidden fixed inset-0 z-[100]">
+        <div className="fixed inset-0 z-[100]">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} aria-hidden />
           <nav
             id="mobile-nav-drawer"
-            className="absolute left-0 top-0 bottom-0 z-[101] w-72 max-w-[85vw] border-r border-border/80 bg-surface px-4 py-3.5 shadow-xl overflow-y-auto"
-            aria-label="Mobile Navigation"
+            className="absolute left-0 top-0 bottom-0 z-[101] w-80 max-w-[85vw] border-r border-border/80 bg-surface px-4 py-3.5 shadow-2xl overflow-y-auto"
+            aria-label="Navigation Drawer"
           >
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-ink">{lang === "ta" ? "பட்டி" : "Menu"}</p>
+            <div className="mb-3 flex items-center justify-between gap-2 border-b border-border/60 pb-2.5">
+              <div className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-accent text-accent-fg shadow-2xs">
+                  <img src="/favicon.svg" alt="" className="size-5 object-contain" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-ink leading-tight">{t(lang, "brand")}</p>
+                  <p className="text-[10px] text-muted leading-none mt-0.5">{lang === "ta" ? "பட்டி (மெனு)" : "Navigation Menu"}</p>
+                </div>
+              </div>
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex size-9 items-center justify-center rounded-lg border border-border bg-elevated/50 text-fg"
+                className="flex size-8 items-center justify-center rounded-lg border border-border bg-elevated/50 text-fg hover:bg-elevated cursor-pointer transition-colors"
                 aria-label="Close menu"
               >
                 <X className="size-4" />

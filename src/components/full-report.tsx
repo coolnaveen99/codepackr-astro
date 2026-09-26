@@ -1254,7 +1254,7 @@ export function FullReport({
               <div className="grid grid-cols-2 gap-1 text-[9.5px]">
                 <div>
                   <span className="font-semibold text-ink">{lang === "ta" ? "அயனாம்சம்: " : "Ayanamsa: "}</span>
-                  Chitrapaksha / Lahiri
+                  {result.school === "lahiri" ? "Chitrapaksha / Lahiri" : result.school === "vakya" ? "Vakya Karana" : "Tamil Thirukanitham"}
                 </div>
                 <div>
                   <span className="font-semibold text-ink">{lang === "ta" ? "பாவ முறை: " : "Houses: "}</span>

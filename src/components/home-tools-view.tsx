@@ -85,83 +85,83 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 space-y-12">
-      {/* 1. Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl border border-accent/25 bg-gradient-to-br from-amber-50/80 via-surface to-orange-50/50 p-6 sm:p-10 lg:p-12 shadow-card">
-        <div className="relative z-10 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-xs font-bold tracking-wide text-accent">
+    <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+      {/* 1. Hero Section - Compact & Modern High-Tech */}
+      <section className="relative overflow-hidden rounded-3xl border border-accent/25 bg-gradient-to-br from-amber-50/80 via-surface to-orange-50/50 p-5 sm:p-7 lg:p-8 shadow-card">
+        <div className="relative z-10 grid gap-6 lg:grid-cols-[1.18fr_0.82fr] lg:items-center">
+        <div className="space-y-3.5 sm:space-y-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-bold tracking-wide text-accent">
             <Sparkles className="size-3.5" />
             <span>
               {isTa
-                ? "✦ இலவச தமிழ் ஜோதிடம் & துல்லிய வானியல் கணக்கீடுகள்"
-                : "✦ Free Tamil Astrology & Precision Ephemeris Tools"}
+                ? "⚡ Next-Gen தமிழ் வேத ஜோதிடம் · விண்வெளி அறிவியல் துல்லியம்"
+                : "⚡ Next-Gen Vedic Technology · Precision Planetary Ephemeris"}
             </span>
           </div>
 
-          <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+          <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.65rem] font-black tracking-tight text-slate-900 leading-tight">
             {isTa ? (
               <>
                 கோட்பேக்ர் ஆஸ்ட்ரோ
-                <span className="block text-accent text-2xl sm:text-4xl lg:text-5xl mt-2 font-bold">
-                  ஜாதகம், பஞ்சாங்கம் & ஜோதிடக் கருவிகள்
+                <span className="block text-accent text-xl sm:text-3xl lg:text-[2.1rem] mt-1 font-bold">
+                  நவீன தலைமுறை ஜாதகம், பஞ்சாங்கம் & ஜோதிடக் கருவிகள்
                 </span>
               </>
             ) : (
               <>
                 CodePackr Astro
-                <span className="block text-accent text-2xl sm:text-4xl lg:text-5xl mt-2 font-bold">
-                  Tamil Horoscope & Precision Vedic Tools
+                <span className="block text-accent text-xl sm:text-3xl lg:text-[2.1rem] mt-1 font-bold">
+                  Next-Gen Vedic Astrology & Ephemeris Tech
                 </span>
               </>
             )}
           </h1>
 
-          <p className="text-sm sm:text-lg text-slate-600 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
             {isTa
-              ? "தமிழில் முழுமையான ஜாதகம் கணித்தல், திருக்கணித பஞ்சாங்கம், திருமணப் பொருத்தம், கோச்சாரம் மற்றும் பலன்கள். உண்மையான வானியல் மாதிரிகள் (VSOP87 / JPL DE440) அடிப்படையில் உருவாக்கப்பட்ட 20+ இலவச கருவிகள்."
-              : "Complete Tamil birth chart calculations, daily event-based Panchangam, 10-factor Porutham, transits, and multi-horizon forecasts. 20+ free tools built on analytical planetary theories."}
+              ? "பழைய மெதுவான முறைகளுக்கு குட்பை! நாசா JPL DE440 & VSOP87 விண்வெளி கணித மாதிரிகள், மைக்ரோ-செகண்ட் திருக்கணிதத் துல்லியம். உடனடி HD ஜாதகக் கட்டம், தினசரி பஞ்சாங்கம், திருமணப் பொருத்தம் & பலன்கள். 100% இலவசம் · Zero Data Tracking · அதிவேக நவீன தொழில்நுட்பம்."
+              : "Astrology rebuilt for the modern generation. Powered by real NASA JPL DE440 & VSOP87 orbital physics, millisecond precision Thirukanitham charts, dynamic Panchangam & AI-free transparent rules. 100% Free · Client-Side Private · Zero Data Leak."}
           </p>
 
           {/* Value Props Strip */}
-          <div className="flex flex-wrap items-center gap-3 sm:gap-4 pt-2 text-xs sm:text-sm font-semibold text-slate-700">
-            <div className="flex items-center gap-1.5 rounded-lg bg-white/80 border border-slate-200 px-3 py-1.5 shadow-2xs">
-              <CheckCircle2 className="size-4 text-emerald-600" />
-              <span>{isTa ? "தமிழ் முதன்மை இடைமுகம்" : "Tamil-First Interface"}</span>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-1 text-[11px] sm:text-xs font-semibold text-slate-700">
+            <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1 shadow-2xs">
+              <CheckCircle2 className="size-3.5 text-emerald-600" />
+              <span>{isTa ? "🚀 உடனடி HD Chart & PDF" : "🚀 Instant HD PDF & Chart"}</span>
             </div>
-            <div className="flex items-center gap-1.5 rounded-lg bg-white/80 border border-slate-200 px-3 py-1.5 shadow-2xs">
-              <CheckCircle2 className="size-4 text-emerald-600" />
-              <span>{isTa ? "இடம் சார்ந்த உண்மை உதயங்கள்" : "Location-Specific Sunrise"}</span>
+            <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1 shadow-2xs">
+              <CheckCircle2 className="size-3.5 text-emerald-600" />
+              <span>{isTa ? "🛰️ நாசா JPL DE440 துல்லியம்" : "🛰️ Real JPL DE440 Physics"}</span>
             </div>
-            <div className="flex items-center gap-1.5 rounded-lg bg-white/80 border border-slate-200 px-3 py-1.5 shadow-2xs">
-              <CheckCircle2 className="size-4 text-emerald-600" />
-              <span>{isTa ? "வெளிப்படையான கணித முறை" : "Transparent Methodology"}</span>
+            <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1 shadow-2xs">
+              <CheckCircle2 className="size-3.5 text-emerald-600" />
+              <span>{isTa ? "🔒 100% தனிநபர் பாதுகாப்பு" : "🔒 100% Client-Side Privacy"}</span>
             </div>
-            <div className="flex items-center gap-1.5 rounded-lg bg-white/80 border border-slate-200 px-3 py-1.5 shadow-2xs">
-              <CheckCircle2 className="size-4 text-emerald-600" />
-              <span>{isTa ? "அச்சு & PDF ஆதரவு" : "Print & PDF Ready"}</span>
+            <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1 shadow-2xs">
+              <CheckCircle2 className="size-3.5 text-emerald-600" />
+              <span>{isTa ? "⚡ 20+ இலவசக் கருவிகள்" : "⚡ 20+ Free Tech Tools"}</span>
             </div>
           </div>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap items-center gap-4 pt-4">
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               type="button"
               onClick={() => go("jathagam")}
-              className="inline-flex items-center gap-2.5 rounded-xl bg-accent px-6 py-3.5 text-base font-bold text-white shadow-md transition-all hover:bg-accent/90 hover:shadow-lg active:scale-95"
+              className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-accent/90 hover:shadow-lg active:scale-95 cursor-pointer"
             >
-              <ScrollText className="size-5" />
-              <span>{isTa ? "ஜாதகம் உருவாக்க" : "Generate Jathagam"}</span>
+              <ScrollText className="size-4" />
+              <span>{isTa ? "ஜாதகம் உருவாக்க (Free)" : "Generate Free Horoscope"}</span>
               <ArrowRight className="size-4" />
             </button>
 
             <button
               type="button"
               onClick={scrollToTools}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-5 py-3.5 text-sm sm:text-base font-bold text-slate-800 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-400 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 shadow-2xs transition-all hover:bg-slate-50 hover:border-slate-400 active:scale-95 cursor-pointer"
             >
-              <span>{isTa ? "அனைத்து கருவிகளையும் பார்க்க" : "Explore All Tools"}</span>
-              <span className="text-xs bg-accent/15 text-accent px-2 py-0.5 rounded-full font-extrabold">20+</span>
+              <span>{isTa ? "அனைத்து கருவிகள்" : "Explore All Tools"}</span>
+              <span className="text-[11px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-extrabold">20+</span>
             </button>
           </div>
         </div>
@@ -424,8 +424,8 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
               {isTa
-                ? "சித்திரபக்ஷ லஹிரி அயனாம்சம், VSOP87 வானியல் மாதிரிகள் மற்றும் பாவ கணித சூத்திரங்கள் முழுமையாக வெளிப்படுத்தப்பட்டுள்ளன."
-                : "Chitrapaksha Lahiri Ayanamsa, VSOP87 analytical ephemeris, and Whole Sign rules documented openly in our Method section."}
+                ? "திருக்கணித அயனாம்சம் (இயல்புநிலை), சித்திரபக்ஷ லஹிரி, VSOP87 வானியல் மாதிரிகள் மற்றும் பாவ கணித சூத்திரங்கள் முழுமையாக வெளிப்படுத்தப்பட்டுள்ளன."
+                : "Thirukanitham (Default) & Chitrapaksha Lahiri Ayanamsa, VSOP87 analytical ephemeris, and Whole Sign rules documented openly in our Method section."}
             </p>
           </div>
 
@@ -481,8 +481,8 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
           </h3>
           <p className="text-xs sm:text-sm text-amber-50/85">
             {isTa
-              ? "நிரயன ராசி மண்டலம், நாசா JPL DE440 பெஞ்ச்மார்க் மற்றும் 16 வர்க்க கட்டங்களின் கணித அடிப்படைகளை ஆவணப் பக்கத்தில் வாசிக்கலாம்."
-              : "Read the technical methodology behind our Sidereal zodiac, IAU 2000 precession polynomial, Chitrapaksha Lahiri, and Whole Sign houses."}
+              ? "நிரயன ராசி மண்டலம், நாசா JPL DE440 பெஞ்ச்மார்க், திருக்கணிதம் மற்றும் லஹிரி அயனாம்ச கணித அடிப்படைகளை ஆவணப் பக்கத்தில் வாசிக்கலாம்."
+              : "Read the technical methodology behind our Sidereal zodiac, Thirukanitham & Chitrapaksha Lahiri, and Whole Sign houses."}
           </p>
         </div>
         <div className="shrink-0">

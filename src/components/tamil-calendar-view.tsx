@@ -945,7 +945,7 @@ export function TamilCalendarView({ lang }: TamilCalendarViewProps) {
                 {isTa ? "வானியல் கிரக நிலைகள் (நண்பகல் 12:00 நிருபணம்)" : "Astronomical Planetary Positions (Noon Ephemeris)"}
               </h2>
               <span className="text-xs font-mono text-slate-500">
-                Lahiri Ayanamsa: 23° 51' · DE440
+                {isTa ? "திருக்கணிதம்" : "Thirukanitham"} · DE440
               </span>
             </div>
 

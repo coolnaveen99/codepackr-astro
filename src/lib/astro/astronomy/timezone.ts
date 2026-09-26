@@ -1,7 +1,8 @@
 // Codepackr Astro — IANA timezone resolution & historical UTC offset
-// Zone *identity* is resolved from place name, country, and geographic regions.
+// Zone *identity* is resolved from geographic database (tz-lookup), place name, and region.
 // Zone *offset at a civil instant* always comes from Intl (IANA tzdb).
 // longitude/15 is never treated as an authoritative IANA zone.
+import tzLookup from "tz-lookup";
 
 export type TimezoneSource =
   | "IANA tzdb"
@@ -12,7 +13,26 @@ export type TimezoneSource =
 export type ResolvedTimezone = {
   iana: string;
   source: TimezoneSource;
+  isEstimated?: boolean;
 };
+
+export function validateCoordinates(lat: unknown, lon: unknown): { valid: boolean; reason?: string } {
+  if (lat === null || lat === undefined || lon === null || lon === undefined) {
+    return { valid: false, reason: "Missing latitude or longitude coordinates." };
+  }
+  const nLat = Number(lat);
+  const nLon = Number(lon);
+  if (!Number.isFinite(nLat) || !Number.isFinite(nLon)) {
+    return { valid: false, reason: "Latitude and longitude coordinates must be finite numbers." };
+  }
+  if (nLat < -90 || nLat > 90) {
+    return { valid: false, reason: `Latitude ${nLat} is out of range [-90, +90].` };
+  }
+  if (nLon < -180 || nLon > 180) {
+    return { valid: false, reason: `Longitude ${nLon} is out of range [-180, +180].` };
+  }
+  return { valid: true };
+}
 
 const COUNTRY_TO_IANA: Record<string, string> = {
   india: "Asia/Kolkata",
@@ -195,13 +215,29 @@ function longitudeEstimateZone(lon: number): string {
 }
 
 export function resolveIanaTimezoneAssignment(lat: number, lon: number, place?: string): ResolvedTimezone {
+  const coordCheck = validateCoordinates(lat, lon);
+  if (coordCheck.valid) {
+    try {
+      const geoZone = tzLookup(lat, lon);
+      if (geoZone && !geoZone.startsWith("Etc/GMT")) {
+        return { iana: geoZone, source: "geographic-region", isEstimated: false };
+      }
+    } catch {
+      // tzLookup failed or polar/ocean coordinates
+    }
+  }
+
   const fromPlace = ianaFromPlace(place);
-  if (fromPlace) return { iana: fromPlace, source: "place-name" };
+  if (fromPlace) return { iana: fromPlace, source: "place-name", isEstimated: false };
 
-  const fromGeo = ianaFromCoordinates(lat, lon);
-  if (fromGeo) return { iana: fromGeo, source: "geographic-region" };
+  if (coordCheck.valid) {
+    const fromGeo = ianaFromCoordinates(lat, lon);
+    if (fromGeo) return { iana: fromGeo, source: "geographic-region", isEstimated: false };
 
-  return { iana: longitudeEstimateZone(lon), source: "longitude-estimate" };
+    return { iana: longitudeEstimateZone(lon), source: "longitude-estimate", isEstimated: true };
+  }
+
+  return { iana: "UTC", source: "longitude-estimate", isEstimated: true };
 }
 
 export function resolveIanaTimezone(lat: number, lon: number, place?: string): string {
@@ -216,7 +252,7 @@ export function resolveHistoricalUtcOffset(
   hour: number = 12,
   minute: number = 0,
   zoneSource?: TimezoneSource
-): { offsetHours: number; offsetString: string; timezoneSource: string } {
+): { offsetHours: number; offsetString: string; timezoneSource: string; isEstimated: boolean } {
   const getOffsetAtInstant = (dateObj: Date): { offsetHours: number; offsetString: string } => {
     try {
       const formatter = new Intl.DateTimeFormat("en-US", {
@@ -252,11 +288,12 @@ export function resolveHistoricalUtcOffset(
   const refinedTime = initialTime - firstPass.offsetHours * 3600000;
   const secondPass = getOffsetAtInstant(new Date(refinedTime));
 
-  const estimated = ianaTimezone.startsWith("Etc/GMT") || ianaTimezone === "UTC";
+  const estimated = ianaTimezone.startsWith("Etc/GMT") || ianaTimezone === "UTC" || zoneSource === "longitude-estimate";
   return {
     offsetHours: secondPass.offsetHours,
     offsetString: secondPass.offsetString,
-    timezoneSource: estimated ? "longitude-estimate" : zoneSource === "longitude-estimate" ? "longitude-estimate" : "IANA tzdb",
+    timezoneSource: estimated ? "longitude-estimate" : "IANA tzdb",
+    isEstimated: estimated,
   };
 }
 

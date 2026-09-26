@@ -28,7 +28,7 @@ import { DEFAULT_PRODUCTION_PROFILE } from "./provenance/profile";
 import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
 import { getTamilDate } from "./calendar/tamil-calendar";
 import { calculateSunTimes } from "./astronomy/sunrise";
-import { resolveIanaTimezoneAssignment, resolveHistoricalUtcOffset, isLocationVerified } from "./astronomy/timezone";
+import { resolveIanaTimezoneAssignment, resolveHistoricalUtcOffset, isLocationVerified, validateCoordinates } from "./astronomy/timezone";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -809,8 +809,9 @@ export function siderealGrahas(jd: number, school: School) {
 }
 
 export function compute(input: BirthInput): ChartResult {
-  if (!input || !Number.isFinite(input.lat) || !Number.isFinite(input.lon)) {
-    throw new Error("Invalid or unverified birth coordinates. Latitude and longitude must be finite numbers.");
+  const coordVal = validateCoordinates(input?.lat, input?.lon);
+  if (!coordVal.valid) {
+    throw new Error(`Invalid or unverified birth coordinates: ${coordVal.reason}`);
   }
   const hourUT = input.hour + input.minute / 60 - input.tz;
   const jd = julianDay(input.year, input.month, input.day, hourUT);
@@ -979,6 +980,8 @@ export function compute(input: BirthInput): ChartResult {
       offsetAtBirth: histOffset.offsetString,
       panchangaSchool: school,
       ayanamsa: school === "lahiri" ? "lahiri" : "thirukanitham",
+      locationStatus: isLocVerified ? "verified" : "user-supplied",
+      birthTimeQuality: input.birthTimeQuality,
     }
   );
 

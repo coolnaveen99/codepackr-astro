@@ -1,12 +1,19 @@
 ### CodePackr Astro Wiki
 
-- [Home](Home)
-- [Jathagam Report Design](Jathagam-Report-Design)
-- [Calculation Methodology](Calculation-Methodology)
-- [Tamil Astrology Terminology](Tamil-Astrology-Terminology)
-- [Development Roadmap](Development-Roadmap)
+- **[Home](Home)**
+- **[Calculation Methodology](Calculation-Methodology)**
+- **[Tamil Calendar & Panchangam](Tamil-Calendar-and-Panchangam)**
+- **[Jathagam Report Design](Jathagam-Report-Design)**
+- **[Tools Directory & Features](Tools-Directory-and-Features)**
+- **[Forecast & Rule Engine](Forecast-and-Rule-Engine)**
+- **[Tamil Astrology Terminology](Tamil-Astrology-Terminology)**
+- **[Validation & Testing Suite](Validation-and-Testing-Suite)**
+- **[Development Roadmap](Development-Roadmap)**
 
 ---
 
-[Open Astro](https://astro.codepackr.com)  
-[Source Repository](https://github.com/coolnaveen99/codepackr-astro)
+### Resources
+
+- [Live Platform (astro.codepackr.com)](https://astro.codepackr.com)
+- [Source Code (GitHub)](https://github.com/coolnaveen99/codepackr-astro)
+- [Issue Tracker](https://github.com/coolnaveen99/codepackr-astro/issues)

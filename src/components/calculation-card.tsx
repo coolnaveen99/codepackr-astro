@@ -62,7 +62,11 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
         </div>
         <div className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white/80 p-2 text-xs text-slate-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>{isTa ? "இருப்பிடம் உறுதி" : "Location Verified"}</span>
+          <span>
+            {result.receipt?.locationStatus === "user-supplied"
+              ? (isTa ? "பயனர் அளித்த ஆயத்தொலைவுகள்" : "User-Supplied Coords")
+              : (isTa ? "இருப்பிடம் உறுதி" : "Location Verified")}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white/80 p-2 text-xs text-slate-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
@@ -70,7 +74,13 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
         </div>
         <div className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white/80 p-2 text-xs text-slate-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>{isTa ? "லாஹிரி அயனாம்சம்" : "Lahiri Ayanamsa"}</span>
+          <span>
+            {result.school === "lahiri"
+              ? (isTa ? "லாஹிரி அயனாம்சம்" : "Lahiri Ayanamsa")
+              : result.school === "vakya"
+              ? (isTa ? "வாக்கிய முறை" : "Vakya Karana")
+              : (isTa ? "திருக்கணித அயனாம்சம்" : "Thirukanitham Ayanamsa")}
+          </span>
         </div>
         <div className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white/80 p-2 text-xs text-slate-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />

@@ -27,6 +27,8 @@ export function generateCalculationReceipt(
     offsetAtBirth?: string;
     panchangaSchool?: string;
     ayanamsa?: ProductionCalculationProfile["ayanamsa"];
+    locationStatus?: "verified" | "user-supplied" | "invalid";
+    birthTimeQuality?: string;
   }
 ): { receipt: CalculationReceipt; metadata: CalculationMetadata } {
   const hash = buildCalculationProvenanceHash(
@@ -45,6 +47,7 @@ export function generateCalculationReceipt(
   const receipt: CalculationReceipt = {
     inputVerified: true,
     locationVerified,
+    locationStatus: details?.locationStatus ?? (locationVerified ? "verified" : "user-supplied"),
     historicalTimezoneResolved: true,
     ephemerisLoaded: true,
     ayanamsaApplied: true,

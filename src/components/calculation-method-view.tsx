@@ -32,20 +32,19 @@ export function CalculationMethodView({ lang }: CalculationMethodViewProps) {
   const sections = [
     {
       id: "zodiac",
-      titleTa: "1. நிரயன ராசி மண்டலம் & சித்திரபக்ஷ / லஹிரி அயனாம்சம்",
-      titleEn: "1. Sidereal Zodiac (Nirayana) & Chitrapaksha / Lahiri Ayanamsa",
+      titleTa: "1. நிரயன ராசி மண்டலம் & திருக்கணித / லஹிரி அயனாம்சம்",
+      titleEn: "1. Sidereal Zodiac (Nirayana) & Thirukanitham / Lahiri Ayanamsa",
       icon: Compass,
-      contentTa: `கோடேபேக்கர் அஸ்ட்ரோ (CodePackr Astro) பாரம்பரிய தமிழ் மற்றும் இந்திய வேத ஜோதிடத்தின் மிக அடிப்படையான 'நிரயன' (Sidereal) ராசி மண்டலத்தைப் பயன்படுத்துகிறது. 
-மேற்கத்திய அயன ராசி மண்டலத்தைப் போல் அல்லாமல், விண்மீன்களின் உண்மையான பின்னணியில் கிரகங்களின் நிலை கணக்கிடப்படுகிறது.
+      contentTa: `கோடேபேக்கர் அஸ்ட்ரோ (CodePackr Astro) பாரம்பரிய தமிழ் மற்றும் இந்திய வேத ஜோதிடத்தின் மிக அடிப்படையான 'நிரயன' (Sidereal) ராசி மண்டலத்தைப் பயன்படுத்துகிறது. மேற்கத்திய அயன ராசி மண்டலத்தைப் போல் அல்லாமல், விண்மீன்களின் உண்மையான பின்னணியில் கிரகங்களின் நிலை கணக்கிடப்படுகிறது.
 
-• அயனாம்ச முறை: சித்திரபக்ஷ (லஹிரி) அயனாம்சம் (Chitrapaksha / Lahiri Ayanamsa).
-• J2000.0 திட்ட அளவு: 23° 51' 11.2" (IAU 2000 precession polynomial அடிப்படையில் துல்லியமாக கணக்கிடப்படுகிறது).
-• பிற முறைகளுடனான வேறுபாடு: பி.வி. ராமன் முறை (+1° 26' அதிகம்), கிருஷ்ணமூர்த்தி (KP) முறை (-0° 06' குறைவு). எங்கள் முறை இந்திய அரசு பஞ்சாங்கக் குழு (Calendar Reform Committee 1952) மற்றும் திருக்கணித மரபோடு முழுமையாக ஒத்திருக்கிறது.`,
+• இயல்புநிலை அயனாம்சம் (Default): திருக்கணித அயனாம்சம் (Tamil Thirukanitham Linear Ayanamsa — 1900-ல் 22° 27.6′, ஆண்டுக்கு 50.016″).
+• கூடுதல் தேர்வுகள் (Selectable): சித்திரபக்ஷ லஹிரி அயனாம்சம் (Chitrapaksha / Lahiri Ayanamsa — J2000-ல் 23° 51′ 11.2″) மற்றும் வாக்கிய கரணம் (Vakya Karana).
+• பிற முறைகளுடனான ஒப்பீடு: பி.வி. ராமன் முறை (+1° 26′ அதிகம்), கிருஷ்ணமூர்த்தி (KP) முறை (-0° 06′ குறைவு). எங்கள் இயல்புநிலை தமிழ் பஞ்சாங்க திருக்கணித மரபோடும், தேசிய லஹிரி தெரிவு இந்திய அரசு பஞ்சாங்கக் குழு (1952) பரிந்துரையோடும் முழுமையாக ஒத்திருக்கிறது.`,
       contentEn: `CodePackr Astro strictly adheres to the Sidereal (Nirayana) zodiac system, which aligns astronomical planetary longitudes directly against the fixed stellar backdrop.
 
-• Ayanamsa Model: Chitrapaksha / Lahiri Ayanamsa.
-• J2000.0 Epoch Value: 23° 51' 11.2" (continuously evaluated via IAU 2000 precession polynomial).
-• Distinction from other systems: Raman (+1°26') and KP (-0°06'). Our model directly matches the Government of India Calendar Reform Committee (1952) and traditional Thirukanitham Panchangams.`,
+• Production Default: Tamil Thirukanitham Linear Ayanamsa (22° 27.6′ at 1900 with 50.016″/yr precession rate).
+• Explicit Selectable Schools: Chitrapaksha / Lahiri Ayanamsa (23° 51′ 11.2″ at J2000 evaluated via IAU 2000 precession polynomial) and traditional Vakya Karana.
+• Comparison with other systems: B.V. Raman (+1° 26′) and Krishnamurti KP (-0° 06′). Our production default matches traditional Tamil Thirukanitham panchangams, and our selectable Lahiri option matches the Indian National Ephemeris standard (Calendar Reform Committee 1952).`,
     },
     {
       id: "ephemeris",
@@ -183,8 +182,8 @@ export function CalculationMethodView({ lang }: CalculationMethodViewProps) {
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
               {isTa
-                ? "கோடேபேக்கர் அஸ்ட்ரோவின் அனைத்து கணிப்புகளும் துல்லியமான வானியல் மாதிரிகள், சித்திரபக்ஷ அயனாம்சம் மற்றும் பராசர பாரம்பரிய விதிகளின்படி எவ்வாறு செயல்படுகின்றன என்பதை வெளிப்படையாக விளக்கும் ஆவணம்."
-                : "A complete technical specification of our astronomical ephemeris, Lahiri Ayanamsa, Whole Sign houses, Vimshottari Dasa mathematics, and classical rule-driven prediction engine."}
+                ? "கோடேபேக்கர் அஸ்ட்ரோவின் அனைத்து கணிப்புகளும் துல்லியமான வானியல் மாதிரிகள், திருக்கணித & லஹிரி அயனாம்சம் மற்றும் பராசர பாரம்பரிய விதிகளின்படி எவ்வாறு செயல்படுகின்றன என்பதை வெளிப்படையாக விளக்கும் ஆவணம்."
+                : "A complete technical specification of our astronomical ephemeris, Thirukanitham (Default) & Lahiri Ayanamsa, Whole Sign houses, Vimshottari Dasa mathematics, and classical rule-driven prediction engine."}
             </p>
           </div>
 

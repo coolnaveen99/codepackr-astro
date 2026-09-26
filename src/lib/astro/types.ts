@@ -79,9 +79,12 @@ export type BirthTimeSensitivity = {
   d60AtPlus5: string;
 };
 
+export type LocationStatus = "verified" | "user-supplied" | "invalid";
+
 export type CalculationReceipt = {
   inputVerified: boolean;
   locationVerified: boolean;
+  locationStatus?: LocationStatus;
   historicalTimezoneResolved: boolean;
   ephemerisLoaded: boolean;
   ayanamsaApplied: boolean;

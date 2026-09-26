@@ -63,8 +63,8 @@ export const SEO_DATA: Partial<Record<Page, ToolSeoConfig>> & { home: ToolSeoCon
   "calculation-method": {
     titleTa: "வானியல் கணித முறை & வெளிப்படைத்தன்மை | Codepackr Astro",
     titleEn: "Astronomical Calculation Method & Transparency | Codepackr Astro",
-    descTa: "சித்திரபக்ஷ லஹிரி அயனாம்சம், நாசா JPL DE440 எஃபிமெரிஸ், முழு ராசி பாவ முறை மற்றும் விம்சோத்தரி தசா கணித விளக்கம்.",
-    descEn: "Detailed technical specification of Lahiri Ayanamsa, NASA JPL DE440 ephemeris, Whole Sign houses, and Vimshottari Dasa calculation methods.",
+    descTa: "திருக்கணித அயனாம்சம் (இயல்புநிலை), சித்திரபக்ஷ லஹிரி, நாசா JPL DE440 எஃபிமெரிஸ், முழு ராசி பாவ முறை மற்றும் விம்சோத்தரி தசா கணித விளக்கம்.",
+    descEn: "Detailed technical specification of Thirukanitham & Lahiri Ayanamsa, NASA JPL DE440 ephemeris, Whole Sign houses, and Vimshottari Dasa calculation methods.",
     keywordsTa: "calculation method, lahiri ayanamsa, de440 ephemeris, whole sign houses, thirukanitham",
     keywordsEn: "calculation method, lahiri ayanamsa, de440 ephemeris, whole sign houses, thirukanitham",
     category: "TechnicalDocumentation",

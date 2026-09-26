@@ -40,7 +40,7 @@ All calculations across the platform are driven by an authoritative, immutable p
 
 ```text
 zodiac:           Sidereal (Nirayana)
-ayanamsa:         Chitrapaksha / Lahiri (Base 23° 51' 11.2" at J2000, IAU 2000 precession polynomial)
+ayanamsa:         Thirukanitham (Default; Tamil linear ayanamsa. Lahiri/Chitrapaksha & Vakya Karana selectable)
 ephemeris:        Astronomy Engine (VSOP87 / ELP2000 analytical theories, benchmarked against NASA JPL DE440)
 houseSystem:      Whole Sign (Rasi = Bhava)
 nodeMode:         Mean Node (Rahu / Ketu; Ketu locked at (Rahu + 180°) % 360°)

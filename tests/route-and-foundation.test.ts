@@ -151,7 +151,8 @@ describe("Location & Timezone Validation (Sections 4 & 5)", () => {
     expect(resolveIanaTimezone(1.35, 103.82, "Singapore")).toBe("Asia/Singapore");
     expect(resolveIanaTimezone(40.71, -74.0, "New York")).toBe("America/New_York");
     expect(resolveIanaTimezone(51.5, -0.12, "London")).toBe("Europe/London");
-    expect(resolveIanaTimezone(0, -150)).toMatch(/^Etc\/GMT/);
+    expect(resolveIanaTimezone(0, 0)).toBe("UTC");
+    expect(resolveIanaTimezone(-50, 165)).toMatch(/^Etc\/GMT/);
   });
 
   it("handles birth-time quality parameters (Section 23)", () => {
@@ -167,10 +168,60 @@ describe("Location & Timezone Validation (Sections 4 & 5)", () => {
 
   it("rejects invalid or missing coordinates without silent fallback", () => {
     expect(() => compute({ ...validInput, lat: NaN, lon: NaN } as any)).toThrowError(/Invalid or unverified birth coordinates/);
+    expect(() => compute({ ...validInput, lat: 95.0, lon: 80.0 } as any)).toThrowError(/Latitude 95 is out of range/);
+    expect(() => compute({ ...validInput, lat: -95.0, lon: 80.0 } as any)).toThrowError(/Latitude -95 is out of range/);
+    expect(() => compute({ ...validInput, lat: 13.0, lon: 195.0 } as any)).toThrowError(/Longitude 195 is out of range/);
+    expect(() => compute({ ...validInput, lat: 13.0, lon: -195.0 } as any)).toThrowError(/Longitude -195 is out of range/);
   });
 
-  it("does not assume Chennai when daily Panchangam location is missing", () => {
+  it("distinguishes verified locations from manual user-supplied coordinates in receipt", () => {
+    const verifiedRes = compute({ ...validInput, locationVerified: true });
+    expect(verifiedRes.receipt?.locationVerified).toBe(true);
+    expect(verifiedRes.receipt?.locationStatus).toBe("verified");
+
+    const manualRes = compute({ ...validInput, locationVerified: false });
+    expect(manualRes.receipt?.locationVerified).toBe(false);
+    expect(manualRes.receipt?.locationStatus).toBe("user-supplied");
+  });
+
+  it("does not assume Chennai when daily Panchangam location is missing or invalid", () => {
     expect(() => requirePanchangamLocation({})).toThrowError(/requires explicit latitude/);
+    expect(() => requirePanchangamLocation({ lat: 95, lon: 80, tz: 5.5 })).toThrowError(/valid coordinates/);
+    expect(() => requirePanchangamLocation({ lat: 13, lon: 200, tz: 5.5 })).toThrowError(/valid coordinates/);
+  });
+});
+
+describe("Production Calculation Profile Authoritative Definition (Task A)", () => {
+  it("proves default zodiac is sidereal", () => {
+    expect(PRODUCTION_PROFILE.zodiac).toBe("sidereal");
+  });
+
+  it("proves default ayanamsa is Thirukanitham", () => {
+    expect(PRODUCTION_PROFILE.ayanamsa).toBe("thirukanitham");
+  });
+
+  it("proves default nodes are mean", () => {
+    expect(PRODUCTION_PROFILE.nodeMode).toBe("mean");
+  });
+
+  it("proves default house system is Whole Sign", () => {
+    expect(PRODUCTION_PROFILE.houseSystem).toBe("whole-sign");
+  });
+
+  it("proves default Dasa system is Vimshottari", () => {
+    expect(PRODUCTION_PROFILE.dashaSystem).toBe("vimshottari");
+  });
+
+  it("proves default ephemeris is Astronomy Engine", () => {
+    expect(PRODUCTION_PROFILE.ephemeris).toBe("astronomy-engine");
+  });
+
+  it("proves default Panchangam profile is Thirukanitham-oriented", () => {
+    expect(PRODUCTION_PROFILE.panchangaMethod).toBe("thirukanitham-oriented");
+  });
+
+  it("proves default timezone source is IANA tzdb", () => {
+    expect(PRODUCTION_PROFILE.timezoneSource).toBe("iana-tzdb");
   });
 });
 
@@ -224,3 +275,101 @@ describe("Forecast Horizon Engine & Non-Static Evidence (Sections 30 & 31)", () 
     expect(fc.periods[0]?.tamilYear).toBeTruthy();
   });
 });
+
+describe("Golden Regression Fixtures (Task Q)", () => {
+  it("Golden Case 1: Chennai 1990 — Thirukanitham chart deterministic benchmark", () => {
+    const chart = compute({
+      name: "Golden Chennai",
+      sex: "M",
+      year: 1990,
+      month: 5,
+      day: 15,
+      hour: 10,
+      minute: 30,
+      tz: 5.5,
+      lat: 13.0827,
+      lon: 80.2707,
+      place: "Chennai",
+      school: "thirukanitham",
+      locationVerified: true,
+    });
+    // Lagna in Cancer (3), Sun in Taurus (1), Moon in Sagittarius (8)
+    expect(chart.list.find((b) => b.id === "lagna")?.sign).toBe(3); // Cancer
+    expect(chart.list.find((b) => b.id === "sun")?.sign).toBe(1);   // Taurus
+    expect(chart.list.find((b) => b.id === "moon")?.sign).toBe(8);  // Sagittarius (Uttarashadha Pada 1)
+    expect(chart.school).toBe("thirukanitham");
+    expect(chart.receipt?.locationStatus).toBe("verified");
+  });
+
+  it("Golden Case 2: New Delhi 2000 — Millennial J2000 fixture", () => {
+    const chart = compute({
+      name: "Golden Delhi",
+      sex: "M",
+      year: 2000,
+      month: 1,
+      day: 1,
+      hour: 12,
+      minute: 0,
+      tz: 5.5,
+      lat: 28.6139,
+      lon: 77.2090,
+      place: "New Delhi",
+      school: "thirukanitham",
+      locationVerified: true,
+    });
+    expect(chart.list.find((b) => b.id === "lagna")?.sign).toBe(11); // Pisces
+    expect(chart.list.find((b) => b.id === "sun")?.sign).toBe(8);    // Sagittarius
+    expect(chart.list.find((b) => b.id === "moon")?.sign).toBe(6);   // Libra
+  });
+
+  it("Golden Case 3: London 2023 — British Summer Time (BST) offset validation", () => {
+    const chart = compute({
+      name: "Golden London",
+      sex: "F",
+      year: 2023,
+      month: 7,
+      day: 1,
+      hour: 14,
+      minute: 0,
+      tz: 1.0,
+      lat: 51.5074,
+      lon: -0.1278,
+      place: "London",
+      school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "Europe/London",
+    });
+    expect(chart.receipt?.ianaTimezone).toBe("Europe/London");
+    expect(chart.receipt?.offsetAtBirth).toBe("+01:00");
+    expect(chart.list.find((b) => b.id === "sun")?.sign).toBe(2); // Gemini
+  });
+
+  it("Golden Case 4: New York 1995 — Historical Daylight Saving Time validation", () => {
+    const chart = compute({
+      name: "Golden NY",
+      sex: "F",
+      year: 1995,
+      month: 8,
+      day: 15,
+      hour: 8,
+      minute: 30,
+      tz: -4.0,
+      lat: 40.7128,
+      lon: -74.0060,
+      place: "New York",
+      school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "America/New_York",
+    });
+    expect(chart.receipt?.offsetAtBirth).toBe("-04:00");
+    expect(chart.list.find((b) => b.id === "sun")?.sign).toBe(3); // Cancer
+  });
+
+  it("Golden Case 5: Polar extreme (85°N, 0°E) on Winter Solstice — Solar events unavailable", () => {
+    const sunTimes = calculateSunTimes(2026, 12, 21, 85.0, 0.0, 0);
+    expect(sunTimes.status).toBe("unavailable");
+    expect(sunTimes.sunriseJD).toBeNull();
+    expect(sunTimes.sunsetJD).toBeNull();
+  });
+});
+
