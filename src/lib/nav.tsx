@@ -18,7 +18,11 @@ export type Page =
   | "contact"
   | "disclaimer"
   | "privacy"
-  | "about";
+  | "about"
+  | "tamil-calendar"
+  | "forecast"
+  | "calculation-method"
+  | "astro-validation";
 
 export const PAGE_SET = new Set<string>([
   "jathagam",
@@ -38,6 +42,10 @@ export const PAGE_SET = new Set<string>([
   "disclaimer",
   "privacy",
   "about",
+  "tamil-calendar",
+  "forecast",
+  "calculation-method",
+  "astro-validation",
 ]);
 
 export const PAGE_PATHS: Record<Page, string> = {
@@ -58,6 +66,10 @@ export const PAGE_PATHS: Record<Page, string> = {
   disclaimer: "/disclaimer",
   privacy: "/privacy",
   about: "/about",
+  "tamil-calendar": "/tamil-calendar",
+  forecast: "/forecast",
+  "calculation-method": "/calculation-method",
+  "astro-validation": "/dev/astro-validation",
 };
 
 export function getPageUrl(p: Page): string {
@@ -82,6 +94,9 @@ export function resolvePageFromUrl(): Page {
   }
   if (rawPath === "jathagam" || rawPath === "horoscope") {
     return "jathagam";
+  }
+  if (rawPath === "dev/astro-validation" || rawPath === "astro-validation") {
+    return "astro-validation";
   }
 
   return "jathagam";

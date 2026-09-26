@@ -22,6 +22,11 @@ import {
   type School,
 } from "./constants";
 import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, YONI_ENEMY, NAT_FRIEND, NAT_ENEMY, SIGN_LORD, type BavPlanet } from "./tables";
+import type { CalculationMetadata, CalculationReceipt, BirthTimeSensitivity, TamilDateResult } from "./types";
+import { generateCalculationReceipt } from "./provenance/receipt";
+import { DEFAULT_PRODUCTION_PROFILE } from "./provenance/profile";
+import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
+import { getTamilDate } from "./calendar/tamil-calendar";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -92,6 +97,10 @@ export type ChartResult = {
   bav: Record<BavPlanet, number[]>;
   upagrahas: UpagrahaPos[];
   specialLagnas: SpecialLagnaPos[];
+  metadata?: CalculationMetadata;
+  receipt?: CalculationReceipt;
+  sensitivity?: BirthTimeSensitivity;
+  tamilDate?: TamilDateResult;
 };
 
 export type UpagrahaPos = {
@@ -923,6 +932,39 @@ export function compute(input: BirthInput): ChartResult {
     makeSpecialLagna("sl", "ஸ்ரீ லக்னம் (SL)", "Sree Lagna (SL)", sreeLagnaLon),
   ];
 
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const birthDateStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
+  const birthTimeStr = `${pad(input.hour)}:${pad(input.minute)}`;
+  const { receipt, metadata } = generateCalculationReceipt(
+    birthDateStr,
+    birthTimeStr,
+    input.lat,
+    input.lon,
+    `UTC${input.tz >= 0 ? "+" : ""}${input.tz}`,
+    DEFAULT_PRODUCTION_PROFILE
+  );
+
+  const sensitivity = analyzeBirthTimeSensitivity({
+    year: input.year,
+    month: input.month,
+    day: input.day,
+    hour: input.hour,
+    minute: input.minute,
+    tz: input.tz,
+    lat: input.lat,
+    lon: input.lon,
+  });
+
+  const tDate = getTamilDate(
+    input.year,
+    input.month,
+    input.day,
+    input.lat,
+    input.lon,
+    input.tz,
+    school === "lahiri" ? "lahiri" : "thirukanitham"
+  );
+
   return {
     input,
     jd,
@@ -941,6 +983,10 @@ export function compute(input: BirthInput): ChartResult {
     bav,
     upagrahas,
     specialLagnas,
+    metadata,
+    receipt,
+    sensitivity,
+    tamilDate: tDate,
   };
 }
 
@@ -1051,3 +1097,47 @@ export function computeDailyPanchang(input: {
     moonLon: grahas.bodies.moon,
   };
 }
+
+// Re-exports of specialized accuracy modules
+export * from "./types";
+export * from "./astronomy/coordinates";
+export * from "./astronomy/time";
+export * from "./astronomy/sidereal";
+export * from "./astronomy/ephemeris";
+export * from "./astronomy/sunrise";
+export * from "./astronomy/validation";
+export * from "./calendar/samvatsara";
+export * from "./calendar/tamil-calendar";
+export * from "./calendar/tithi";
+export * from "./calendar/nakshatra";
+export * from "./calendar/yoga";
+export * from "./calendar/karana";
+export * from "./calendar/muhurtha";
+export * from "./calendar/panchangam";
+export * from "./chart/lagna";
+export * from "./chart/houses";
+export * from "./chart/dignity";
+export * from "./chart/aspects";
+export * from "./chart/varga";
+export * from "./chart/grahas";
+export * from "./dasha/vimshottari";
+export * from "./dasha/timeline";
+export * from "./dasha/sensitivity";
+export * from "./gochara/transits";
+export * from "./gochara/sadesati";
+export * from "./rules/registry";
+export * from "./rules/yogas";
+export * from "./rules/doshas";
+export * from "./porutham/dasakoota";
+export * from "./prediction/evidence";
+export * from "./prediction/conflicts";
+export * from "./prediction/domains";
+export * from "./prediction/horizons";
+export * from "./provenance/version";
+export * from "./provenance/profile";
+export * from "./provenance/hash";
+export * from "./provenance/receipt";
+export * from "./validation/golden-cases";
+export * from "./validation/boundaries";
+export * from "./validation/runner";
+

@@ -18,6 +18,10 @@ import { GocharaView } from "@/components/gochara-view";
 import { NakshatraView } from "@/components/nakshatra-view";
 import { BabyNamesView } from "@/components/baby-names-view";
 import { NazhigaiView } from "@/components/nazhigai-view";
+import { TamilCalendarView } from "@/components/tamil-calendar-view";
+import { ForecastView } from "@/components/forecast-view";
+import { CalculationMethodView } from "@/components/calculation-method-view";
+import { AstroValidationView } from "@/components/astro-validation-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { LangProvider, useLang } from "@/lib/lang";
 import { NavProvider, useNav } from "@/lib/nav";
@@ -124,6 +128,14 @@ function Shell() {
         <LegalTrustPage page="privacy" />
       ) : page === "about" ? (
         <LegalTrustPage page="about" />
+      ) : page === "tamil-calendar" ? (
+        <TamilCalendarView lang={lang} />
+      ) : page === "forecast" ? (
+        <ForecastView lang={lang} result={result} />
+      ) : page === "calculation-method" ? (
+        <CalculationMethodView lang={lang} />
+      ) : page === "astro-validation" ? (
+        <AstroValidationView lang={lang} />
       ) : (
         <>
           <JathagamDashboard

@@ -1243,6 +1243,34 @@ export function FullReport({
               ))}
             </div>
 
+            {/* Calculation Provenance & Receipt for Official Booklet */}
+            <div className="mt-3 rounded border border-accent/20 bg-surface p-2 text-[10px] text-muted">
+              <div className="flex items-center justify-between font-mono font-bold text-accent text-[10.5px] border-b border-border/60 pb-1 mb-1">
+                <span>{lang === "ta" ? "வானியல் கணக்கீட்டுச் சான்றளிப்பு" : "Astronomical Calculation Receipt"}</span>
+                {result.metadata?.reportCalculationHash && (
+                  <span>#{result.metadata.reportCalculationHash}</span>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-1 text-[9.5px]">
+                <div>
+                  <span className="font-semibold text-ink">{lang === "ta" ? "அயனாம்சம்: " : "Ayanamsa: "}</span>
+                  Chitrapaksha / Lahiri
+                </div>
+                <div>
+                  <span className="font-semibold text-ink">{lang === "ta" ? "பாவ முறை: " : "Houses: "}</span>
+                  Whole Sign (Rasi=Bhava)
+                </div>
+                <div>
+                  <span className="font-semibold text-ink">{lang === "ta" ? "எஃபிமெரிஸ்: " : "Ephemeris: "}</span>
+                  JPL DE440 Analytical (&lt;60")
+                </div>
+                <div>
+                  <span className="font-semibold text-ink">{lang === "ta" ? "தசா முறை: " : "Dasa: "}</span>
+                  Vimshottari (365.25d)
+                </div>
+              </div>
+            </div>
+
             {/* Hyperlinked Official Disclaimer */}
             <div className="mt-4 rounded-lg border-2 border-accent/30 bg-elevated/30 p-3 text-xs">
               <h3 className="font-display font-bold text-accent text-xs mb-1.5">

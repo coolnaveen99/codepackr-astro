@@ -176,6 +176,10 @@ const COPY = {
   navChart: { ta: "ஜாதகம்", en: "Jathagam" },
   navPorutham: { ta: "பொருத்தம்", en: "Porutham" },
   navPanchang: { ta: "பஞ்சாங்கம்", en: "Panchangam" },
+  navTamilCalendar: { ta: "தமிழ் நாட்காட்டி", en: "Tamil Calendar" },
+  navForecast: { ta: "வருட பலன்கள்", en: "Forecast" },
+  navCalculationMethod: { ta: "கணித முறை விளக்கம்", en: "Calculation Method" },
+  navAstroValidation: { ta: "வானியல் சரிபார்ப்பு", en: "Astro Validation" },
   navBiodata: { ta: "பயோடேட்டா", en: "Biodata" },
   navRasiPalan: { ta: "ராசி பலன்", en: "Rasi palan" },
   rasiPalanLead: {

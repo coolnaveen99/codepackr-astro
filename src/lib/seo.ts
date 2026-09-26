@@ -26,6 +26,50 @@ export const SEO_DATA: Partial<Record<Page, ToolSeoConfig>> & { jathagam: ToolSe
     category: "AstrologyApplication",
     featureListTa: ["Jathagam"],
     featureListEn: ["Jathagam"]
+  },
+  "tamil-calendar": {
+    titleTa: "தமிழ் நாட்காட்டி & 60 வருட சம்வத்ஸர அட்டவணை | Codepackr Astro",
+    titleEn: "Tamil Solar Calendar & 60-Year Samvatsara Cycle | Codepackr Astro",
+    descTa: "துல்லியமான தமிழ் சூரிய நாட்காட்டி, மாத சங்கிராந்தி, 60 வருட சம்வத்ஸர சுழற்சி மற்றும் கிரிகோரியன் - தமிழ் தேதி மாற்றி.",
+    descEn: "Accurate event-based Tamil solar calendar, month solar ingress, 60-year Samvatsara cycle, and bidirectional date converter.",
+    keywordsTa: "tamil calendar, samvatsara, tamil months, sankranti, chithirai",
+    keywordsEn: "tamil calendar, samvatsara cycle, tamil solar months, solar ingress converter",
+    category: "CalendarApplication",
+    featureListTa: ["Tamil Calendar", "Samvatsara Cycle", "Date Converter"],
+    featureListEn: ["Tamil Calendar", "Samvatsara Cycle", "Date Converter"]
+  },
+  forecast: {
+    titleTa: "பல வருட ஜாதக பலன்கள் & முன்னறிவு (1-60 ஆண்டுகள்) | Codepackr Astro",
+    titleEn: "Multi-Year Horoscope Forecast (1-60 Years) | Codepackr Astro",
+    descTa: "விம்சோத்தரி தசா, புக்தி மற்றும் கோசார அடிப்படையிலான 16 வாழ்க்கை துறைகளுக்கான பல வருட பலன்கள் மற்றும் சான்றுகள்.",
+    descEn: "Multi-year horoscope forecast across 16 life domains based on Vimshottari Dasa, Bhukti, Gochara transits with classical rule evidence.",
+    keywordsTa: "horoscope forecast, multi year jathagam, dasa bhukti prediction, tamil astrology forecast",
+    keywordsEn: "horoscope forecast, multi-year predictions, vimshottari dasa, tamil astrology predictions",
+    category: "AstrologyApplication",
+    featureListTa: ["Multi-Year Forecast", "Life Domains", "Evidence Traceability"],
+    featureListEn: ["Multi-Year Forecast", "Life Domains", "Evidence Traceability"]
+  },
+  "calculation-method": {
+    titleTa: "வானியல் கணித முறை & வெளிப்படைத்தன்மை | Codepackr Astro",
+    titleEn: "Astronomical Calculation Method & Transparency | Codepackr Astro",
+    descTa: "சித்திரபக்ஷ லஹிரி அயனாம்சம், நாசா JPL DE440 எஃபிமெரிஸ், முழு ராசி பாவ முறை மற்றும் விம்சோத்தரி தசா கணித விளக்கம்.",
+    descEn: "Detailed technical specification of Lahiri Ayanamsa, NASA JPL DE440 ephemeris, Whole Sign houses, and Vimshottari Dasa calculation methods.",
+    keywordsTa: "calculation method, lahiri ayanamsa, de440 ephemeris, whole sign houses, thirukanitham",
+    keywordsEn: "calculation method, lahiri ayanamsa, de440 ephemeris, whole sign houses, thirukanitham",
+    category: "TechnicalDocumentation",
+    featureListTa: ["Ayanamsa", "Ephemeris", "Vedic Mathematics"],
+    featureListEn: ["Ayanamsa", "Ephemeris", "Vedic Mathematics"]
+  },
+  "astro-validation": {
+    titleTa: "வானியல் துல்லிய சரிபார்ப்பு & நாசா JPL ஒப்பீடு | Codepackr Astro",
+    titleEn: "Astro Accuracy & Ephemeris Validation Suite | Codepackr Astro",
+    descTa: "நாசா JPL DE440 எஃபிமெரிஸ் ஒப்பீடு, 50+ கோல்டன் ஜாதகங்கள் மற்றும் எல்லை மாறிலிகளின் நேரடி சரிபார்ப்பு.",
+    descEn: "Real-time regression and accuracy test suite verifying JPL DE440 benchmarks, boundary invariants, and 50+ golden charts.",
+    keywordsTa: "astro validation, jpl de440 benchmark, golden charts, ephemeris accuracy",
+    keywordsEn: "astro validation, jpl de440 benchmark, golden charts, ephemeris accuracy",
+    category: "DeveloperTools",
+    featureListTa: ["Ephemeris Benchmarks", "Boundary Tests", "Golden Charts"],
+    featureListEn: ["Ephemeris Benchmarks", "Boundary Tests", "Golden Charts"]
   }
 };
 

@@ -14,6 +14,7 @@ import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
 import { FullReport } from "@/components/full-report";
 import { PrintDialog } from "@/components/print-dialog";
 import { RotatingQuote } from "@/components/rotating-quote";
+import { CalculationCard } from "@/components/calculation-card";
 import { analyse } from "@/lib/astro/analysis";
 import { cn } from "@/lib/utils";
 
@@ -95,6 +96,12 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
             {pdfError ? <p className="mt-2 text-xs font-semibold text-rose-600">{pdfError}</p> : null}
           </div>:null}
         </div>
+
+        {result ? (
+          <div className="no-print">
+            <CalculationCard result={result} lang={lang} />
+          </div>
+        ) : null}
 
         {result?<div id="astro-calculated-card" className="astro-panel no-print rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-display text-lg font-extrabold text-slate-900">{lang==="ta"?"கணிக்கப்பட்ட ஜாதகம்":"Calculated Horoscope"}</h2><p className="text-xs text-slate-500">{result.input.name||"CodePackr Astro"} · {birthDate} · {birthTime}</p></div></div>

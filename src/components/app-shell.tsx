@@ -18,6 +18,8 @@ import {
   Orbit,
   Baby,
   Clock,
+  TrendingUp,
+  Cpu,
 } from "lucide-react";
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
@@ -109,6 +111,38 @@ const MORE_NAV: {
     icon: BookOpen,
   },
   {
+    id: "tamil-calendar",
+    titleTa: "தமிழ் நாட்காட்டி",
+    titleEn: "Tamil Solar Calendar",
+    descTa: "மாத சங்கிராந்தி, 60 வருட சம்வத்ஸரம் & தேதி மாற்றி",
+    descEn: "Solar ingress, 60-year Samvatsara & date converter",
+    icon: CalendarDays,
+  },
+  {
+    id: "forecast",
+    titleTa: "வருட பலன்கள் (முன்னறிவிப்பு)",
+    titleEn: "Multi-Year Forecast",
+    descTa: "1-60 வருட வாழ்க்கை துறைகள் & தசா சான்றுகள்",
+    descEn: "1-60 year life domain forecast & Dasa evidence",
+    icon: TrendingUp,
+  },
+  {
+    id: "calculation-method",
+    titleTa: "கணித முறை விளக்கம்",
+    titleEn: "Calculation Method",
+    descTa: "லஹிரி அயனாம்சம், DE440 எஃபிமெரிஸ் & முறைமை",
+    descEn: "Lahiri Ayanamsa, DE440 ephemeris & methodology",
+    icon: BookOpen,
+  },
+  {
+    id: "astro-validation",
+    titleTa: "வானியல் சரிபார்ப்பு",
+    titleEn: "Astro Validation",
+    descTa: "நாசா JPL DE440 ஒப்பீடு & நேரடி சோதனைகள்",
+    descEn: "Live JPL DE440 benchmarks & test suite",
+    icon: Cpu,
+  },
+  {
     id: "contact",
     titleTa: "தொடர்புக்கு",
     titleEn: "Contact & Support",
@@ -121,6 +155,8 @@ const MORE_NAV: {
 // All Nav Items for Footer Directory
 const ALL_NAV: { id: Page; labelKey: string; icon: typeof Compass }[] = [
   ...PRIMARY_NAV.map((p) => ({ id: p.id, labelKey: p.labelKey, icon: p.icon })),
+  { id: "tamil-calendar", labelKey: "navTamilCalendar", icon: CalendarDays },
+  { id: "forecast", labelKey: "navForecast", icon: TrendingUp },
   { id: "chandrashtama", labelKey: "navChandrashtama", icon: Moon },
   { id: "gochara", labelKey: "navGochara", icon: Orbit },
   { id: "nakshatra", labelKey: "navNakshatraPada", icon: Sparkles },
@@ -129,6 +165,8 @@ const ALL_NAV: { id: Page; labelKey: string; icon: typeof Compass }[] = [
   { id: "prasna", labelKey: "navPrasna", icon: HelpCircle },
   { id: "numerology", labelKey: "navNumerology", icon: Hash },
   { id: "glossary", labelKey: "navGlossary", icon: BookOpen },
+  { id: "calculation-method", labelKey: "navCalculationMethod", icon: BookOpen },
+  { id: "astro-validation", labelKey: "navAstroValidation", icon: Cpu },
   { id: "contact", labelKey: "contactTitle", icon: Mail },
   { id: "disclaimer", labelKey: "navDisclaimer", icon: ShieldCheck },
 ];
@@ -544,6 +582,17 @@ export function AppShell({ children }: { children: ReactNode }) {
                 className="text-accent underline font-medium hover:text-accent/80"
               >
                 {t(lang, "navGlossary")}
+              </a>
+              <span className="text-border">&bull;</span>
+              <a
+                href={getUrl("calculation-method")}
+                onClick={(e) => {
+                  e.preventDefault();
+                  go("calculation-method");
+                }}
+                className="text-accent underline font-medium hover:text-accent/80"
+              >
+                {t(lang, "navCalculationMethod")}
               </a>
               <span className="text-border">&bull;</span>
               <a
