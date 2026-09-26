@@ -19,7 +19,14 @@ export function generateCalculationReceipt(
   longitude: number,
   timezone: string,
   profile: ProductionCalculationProfile,
-  locationVerified: boolean = true
+  locationVerified: boolean = true,
+  details?: {
+    place?: string;
+    timezoneSource?: string;
+    utcOffset?: string;
+    offsetAtBirth?: string;
+    panchangaSchool?: string;
+  }
 ): { receipt: CalculationReceipt; metadata: CalculationMetadata } {
   const hash = buildCalculationProvenanceHash(
     birthDate,
@@ -48,6 +55,24 @@ export function generateCalculationReceipt(
     reportGenerated: true,
     timestamp: nowIso,
     hash,
+    calculationId: hash.slice(0, 16),
+    place: details?.place,
+    latitude,
+    longitude,
+    ianaTimezone: timezone,
+    timezoneSource: details?.timezoneSource || "IANA tzdb",
+    utcOffset: details?.utcOffset,
+    offsetAtBirth: details?.offsetAtBirth || details?.utcOffset,
+    zodiac: profile.zodiac,
+    ayanamsa: profile.ayanamsa,
+    nodeMode: profile.nodeMode,
+    houseSystem: profile.houseSystem,
+    panchangaSchool: details?.panchangaSchool || profile.panchangaMethod,
+    dashaSystem: profile.dashaSystem,
+    astronomyEngine: profile.ephemeris,
+    ephemerisVersion: ASTRO_EPHEMERIS_VERSION,
+    ruleSetVersion: ASTRO_RULESET_VERSION,
+    appVersion: ASTRO_ENGINE_VERSION,
   };
 
   const metadata: CalculationMetadata = {

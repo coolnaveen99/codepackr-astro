@@ -14,6 +14,8 @@ export const DEFAULT_INPUT: BirthInput = {
   lon: 80.25,
   place: "Madras",
   school: "thirukanitham",
+  locationVerified: true,
+  ianaTimezone: "Asia/Kolkata",
 };
 
 /** Named sample charts for testing & demos (client-side only). */
@@ -35,6 +37,8 @@ export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; inpu
       lon: 80.2707,
       place: "Chennai (Madras)",
       school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "Asia/Kolkata",
     },
   },
   {
@@ -54,6 +58,8 @@ export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; inpu
       lon: 78.1198,
       place: "Madurai",
       school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "Asia/Kolkata",
     },
   },
   {
@@ -73,6 +79,8 @@ export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; inpu
       lon: 76.9558,
       place: "Coimbatore",
       school: "vakya",
+      locationVerified: true,
+      ianaTimezone: "Asia/Kolkata",
     },
   },
   {
@@ -91,7 +99,9 @@ export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; inpu
       lat: 12.9716,
       lon: 77.5946,
       place: "Bengaluru",
-      school: "lahiri",
+      school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "Asia/Kolkata",
     },
   },
   {
@@ -111,6 +121,8 @@ export const SAMPLE_CHARTS: { id: string; labelTa: string; labelEn: string; inpu
       lon: 103.8198,
       place: "Singapore",
       school: "thirukanitham",
+      locationVerified: true,
+      ianaTimezone: "Asia/Singapore",
     },
   },
 ];

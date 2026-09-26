@@ -9,6 +9,9 @@ import { ASTRO_EPHEMERIS_SOURCE } from "../src/lib/astro/provenance/version";
 import { generateHorizonForecast } from "../src/lib/astro/prediction/horizons";
 import { searchCities, mergeCityLists } from "../src/lib/astro/place-search";
 import { POPULAR_CITIES } from "../src/lib/astro/samples";
+import { parseReportModeFromUrl } from "../src/components/jathagam-dashboard";
+import { resolveIanaTimezone, resolveHistoricalUtcOffset } from "../src/lib/astro/astronomy/timezone";
+import { calculateComprehensiveDayDetails } from "../src/lib/astro/calendar/panchangam";
 
 describe("Routing & Information Architecture (Sections 32, 33, 41, 50, 76)", () => {
   it("maps home to '/' and jathagam to '/jathagam'", () => {
@@ -43,8 +46,30 @@ describe("Routing & Information Architecture (Sections 32, 33, 41, 50, 76)", () 
     }
   });
 
+  it("maps panchangam to canonical /tamil-calendar route", () => {
+    expect(PAGE_PATHS["tamil-calendar"]).toBe("/tamil-calendar");
+    expect(PAGE_PATHS.panchangam).toBe("/tamil-calendar");
+    expect(getPageUrl("tamil-calendar")).toBe("/tamil-calendar");
+    expect(getPageUrl("panchangam")).toBe("/tamil-calendar");
+  });
+
   it("resolves home by default in SSR / root path", () => {
     expect(resolvePageFromUrl()).toBe("home");
+  });
+
+  it("resolves /panchangam directly to canonical tamil-calendar page", () => {
+    const origWindow = globalThis.window;
+    try {
+      (globalThis as any).window = {
+        location: {
+          pathname: "/panchangam",
+          search: "",
+        },
+      };
+      expect(resolvePageFromUrl()).toBe("tamil-calendar");
+    } finally {
+      (globalThis as any).window = origWindow;
+    }
   });
 
   it("safely migrates legacy root queries with birth params or print to jathagam (Section 78)", () => {
@@ -101,17 +126,66 @@ describe("Authoritative Tools Registry (Section 40, 75)", () => {
     }
   });
 
-  it("filters tools correctly by category and search keyword", () => {
-    const panchangamTools = filterTools(ASTRO_TOOLS, "panchangam", "");
-    expect(panchangamTools.length).toBeGreaterThanOrEqual(2);
-    expect(panchangamTools.some((t) => t.id === "tamil-calendar")).toBe(true);
+  it("maintains single canonical Tamil Calendar & Panchangam tool with alias support", () => {
+    const canonicalTool = ASTRO_TOOLS.find((t) => t.id === "tamil-calendar");
+    expect(canonicalTool).toBeDefined();
+    expect(canonicalTool?.path).toBe("/tamil-calendar");
+
+    // If an alias exists for panchangam, it must point to canonical /tamil-calendar
+    const panchangamAlias = ASTRO_TOOLS.find((t) => t.id === "panchangam-alias");
+    if (panchangamAlias) {
+      expect(panchangamAlias.path).toBe("/tamil-calendar");
+    }
+
+    // Verify no separate duplicate independent panchangam path exists
+    const duplicateTool = ASTRO_TOOLS.find((t) => t.id === "panchangam-tool" && t.path === "/panchangam");
+    expect(duplicateTool).toBeUndefined();
 
     const searchResults = filterTools(ASTRO_TOOLS, "all", "பொருத்தம்");
     expect(searchResults.some((t) => t.id === "porutham")).toBe(true);
   });
 });
 
-describe("Location & Timezone Validation (Sections 5 & 6)", () => {
+describe("Jathagam Report Mode Query Driving (Section 6)", () => {
+  it("parses mode parameter accurately from URL and defaults safely to 'one'", () => {
+    const origWindow = globalThis.window;
+    try {
+      // mode=six
+      (globalThis as any).window = {
+        location: { pathname: "/jathagam", search: "?mode=six" },
+      };
+      expect(parseReportModeFromUrl()).toBe("six");
+
+      // mode=thirty
+      (globalThis as any).window = {
+        location: { pathname: "/jathagam", search: "?mode=thirty" },
+      };
+      expect(parseReportModeFromUrl()).toBe("thirty");
+
+      // mode=one
+      (globalThis as any).window = {
+        location: { pathname: "/jathagam", search: "?mode=one" },
+      };
+      expect(parseReportModeFromUrl()).toBe("one");
+
+      // invalid mode
+      (globalThis as any).window = {
+        location: { pathname: "/jathagam", search: "?mode=unknown-mode" },
+      };
+      expect(parseReportModeFromUrl()).toBe("one");
+
+      // missing mode
+      (globalThis as any).window = {
+        location: { pathname: "/jathagam", search: "" },
+      };
+      expect(parseReportModeFromUrl()).toBe("one");
+    } finally {
+      (globalThis as any).window = origWindow;
+    }
+  });
+});
+
+describe("Location & Timezone Validation (Sections 4 & 5)", () => {
   const validInput: BirthInput = {
     name: "Valid User",
     sex: "M",
@@ -129,11 +203,53 @@ describe("Location & Timezone Validation (Sections 5 & 6)", () => {
     ianaTimezone: "Asia/Kolkata",
   };
 
-  it("successfully computes chart with verified location", () => {
+  it("successfully computes chart with verified location and populates full receipt", () => {
     const res = compute(validInput);
     expect(res).toBeDefined();
     expect(res.receipt?.locationVerified).toBe(true);
-    expect(res.metadata?.timezone).toBe("Asia/Kolkata");
+    expect(res.receipt?.ianaTimezone).toBe("Asia/Kolkata");
+    expect(res.receipt?.timezoneSource).toBe("IANA tzdb");
+    expect(res.receipt?.utcOffset).toBe("+05:30");
+    expect(res.receipt?.offsetAtBirth).toBe("+05:30");
+  });
+
+  it("does not infer locationVerified: true when locationVerified is false or omitted", () => {
+    const unverifiedInput: BirthInput = {
+      ...validInput,
+      locationVerified: false,
+    };
+    const res = compute(unverifiedInput);
+    expect(res.receipt?.locationVerified).toBe(false);
+  });
+
+  it("resolves exact historical UTC offsets across DST transitions using real IANA tzdb", () => {
+    // New York during Eastern Daylight Time (Summer: UTC-4)
+    const nySummer = resolveHistoricalUtcOffset("America/New_York", 1995, 8, 15, 8, 30);
+    expect(nySummer.offsetHours).toBe(-4);
+    expect(nySummer.offsetString).toBe("-04:00");
+    expect(nySummer.timezoneSource).toBe("IANA tzdb");
+
+    // New York during Eastern Standard Time (Winter: UTC-5)
+    const nyWinter = resolveHistoricalUtcOffset("America/New_York", 1995, 1, 15, 8, 30);
+    expect(nyWinter.offsetHours).toBe(-5);
+    expect(nyWinter.offsetString).toBe("-05:00");
+
+    // London during British Summer Time (BST: UTC+1) vs Winter (GMT: UTC+0)
+    const londonSummer = resolveHistoricalUtcOffset("Europe/London", 2023, 7, 1, 12, 0);
+    expect(londonSummer.offsetHours).toBe(1);
+    expect(londonSummer.offsetString).toBe("+01:00");
+
+    const londonWinter = resolveHistoricalUtcOffset("Europe/London", 2023, 1, 1, 12, 0);
+    expect(londonWinter.offsetHours).toBe(0);
+    expect(londonWinter.offsetString).toBe("+00:00");
+  });
+
+  it("resolves canonical IANA timezones from coordinates and place boundaries", () => {
+    expect(resolveIanaTimezone(13.08, 80.27, "Chennai")).toBe("Asia/Kolkata");
+    expect(resolveIanaTimezone(6.92, 79.86, "Colombo (Sl)")).toBe("Asia/Colombo");
+    expect(resolveIanaTimezone(1.35, 103.82, "Singapore")).toBe("Asia/Singapore");
+    expect(resolveIanaTimezone(40.71, -74.0, "New York")).toBe("America/New_York");
+    expect(resolveIanaTimezone(51.5, -0.12, "London")).toBe("Europe/London");
   });
 
   it("handles birth-time quality parameters (Section 23)", () => {
@@ -177,6 +293,32 @@ describe("Astronomical Ephemeris & Fallback Truthfulness (Sections 3 & 7)", () =
     expect(polarNight.status).toBe("unavailable");
     expect(polarNight.sunriseJD).toBeNull();
     expect(polarNight.sunsetJD).toBeNull();
+    expect(polarNight.nextSunriseJD).toBeNull();
+  });
+});
+
+describe("Comprehensive Daily Panchangam & Transitions (Sections 10 & 11)", () => {
+  it("calculates transition intervals and sorted chronological timeline for a complete calendar day", () => {
+    const dayData = calculateComprehensiveDayDetails({
+      year: 2026,
+      month: 4,
+      day: 14,
+      placeName: "Chennai",
+      lat: 13.0827,
+      lon: 80.2707,
+      tz: 5.5,
+    });
+
+    expect(dayData).toBeDefined();
+    expect(dayData.dayTithis.length).toBeGreaterThan(0);
+    expect(dayData.dayNakshatras.length).toBeGreaterThan(0);
+    expect(dayData.dayYogas.length).toBeGreaterThan(0);
+    expect(dayData.dayKaranas.length).toBeGreaterThan(0);
+    expect(dayData.timeline.length).toBeGreaterThan(0);
+
+    // Verify timeline includes key astronomical events
+    expect(dayData.timeline.some((e) => e.type === "sunrise")).toBe(true);
+    expect(dayData.timeline.some((e) => e.type === "sunset")).toBe(true);
   });
 });
 

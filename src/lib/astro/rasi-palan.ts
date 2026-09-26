@@ -715,7 +715,8 @@ const HOUSE_DATA: Record<number, HouseData> = {
 };
 
 // Planetary hours / auspicious Hora helper
-function getSubhaHoras(sunriseJD: number, sunsetJD: number, weekday: number, tz: number) {
+function getSubhaHoras(sunriseJD: number | null, sunsetJD: number | null, weekday: number, tz: number) {
+  if (sunriseJD === null || sunsetJD === null) return [];
   // Approximate standard Subha Horas: Jupiter, Venus, Mercury, Moon
   const subhaGrahas = [
     { ta: "குரு ஹோரை", en: "Guru Hora (Jupiter)" },

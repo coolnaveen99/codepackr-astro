@@ -60,10 +60,10 @@ export function calculateSunTimes(
   // Search for the subsequent sunrise to compute exact sunrise-to-sunrise span
   const nextSearchStart = timeFromJD(sunsetJD + 1 / 1440);
   const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextSearchStart, 1.5);
-  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1.0;
+  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : null;
 
   const daySpan = Math.max(0.1, sunsetJD - sunriseJD);
-  const nightSpan = Math.max(0.1, nextSunriseJD - sunsetJD);
+  const nightSpan = nextSunriseJD !== null ? Math.max(0.1, nextSunriseJD - sunsetJD) : 0;
 
   return {
     sunriseJD,

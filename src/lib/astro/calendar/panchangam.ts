@@ -244,9 +244,6 @@ export function calculateComprehensiveDayDetails(input: {
   const sunTimes = calculateSunTimes(input.year, input.month, input.day, lat, lon, tz, input.elevationMeters);
   const moonTimes = calculateMoonTimes(input.year, input.month, input.day, lat, lon, tz, input.elevationMeters);
 
-  const effectiveSunriseJD = sunTimes.sunriseJD ?? julianDay(input.year, input.month, input.day, 6 - tz);
-  const effectiveSunsetJD = sunTimes.sunsetJD ?? julianDay(input.year, input.month, input.day, 18 - tz);
-  const weekday = Math.floor(effectiveSunriseJD + tz / 24 + 1.5) % 7;
   const rawTamilDate = getTamilDate(input.year, input.month, input.day, lat, lon, tz, ayanamsaType);
   const tamilDate = {
     ...rawTamilDate,
@@ -263,6 +260,7 @@ export function calculateComprehensiveDayDetails(input: {
   const dayStartJD = julianDay(input.year, input.month, input.day, 0 - tz);
   const dayEndJD = julianDay(input.year, input.month, input.day, 24 - tz);
   const noonJD = julianDay(input.year, input.month, input.day, 12 - tz);
+  const weekday = Math.floor(noonJD + tz / 24 + 1.5) % 7;
 
   // -------------------------------------------------------------
   // 1. TITHI TRANSITIONS DURING THE DAY
@@ -642,8 +640,8 @@ export function calculateComprehensiveDayDetails(input: {
   // -------------------------------------------------------------
   const activeNak = dayNakshatras[0] ?? { index: 0, startJD: dayStartJD, endJD: dayEndJD };
   const muhurtha = calculateMuhurthaSpans(
-    effectiveSunriseJD,
-    effectiveSunsetJD,
+    sunTimes.sunriseJD,
+    sunTimes.sunsetJD,
     weekday,
     tz,
     { index: activeNak.index, startJD: activeNak.startJD, endJD: activeNak.endJD }
@@ -787,53 +785,53 @@ export function calculateComprehensiveDayDetails(input: {
     });
   }
 
-  // Rahu Kalam
-  const rStart = clockToFraction(muhurtha.rahuKalam.startClock);
-  rawTimeline.push({
-    timeClock: muhurtha.rahuKalam.startClock,
-    hour: rStart.hour,
-    minute: rStart.minute,
-    fractionOfDay: rStart.fraction,
-    titleTa: "ராகு காலம் ஆரம்பம்",
-    titleEn: "Rahu Kalam Begins",
-    descTa: `${muhurtha.rahuKalam.startClock} முதல் ${muhurtha.rahuKalam.endClock} வரை (சுப காரியங்களைத் தவிர்க்கவும்)`,
-    descEn: `${muhurtha.rahuKalam.startClock} to ${muhurtha.rahuKalam.endClock} (Inauspicious window)`,
-    type: "rahu",
-    nature: "inauspicious",
-    sortMinutes: rStart.hour * 60 + rStart.minute,
-  });
+  // Rahu Kalam, Yamagandam, Abhijit (only if astronomical sunrise/sunset exist)
+  if (sunTimes.sunriseJD !== null && sunTimes.sunsetJD !== null) {
+    const rStart = clockToFraction(muhurtha.rahuKalam.startClock);
+    rawTimeline.push({
+      timeClock: muhurtha.rahuKalam.startClock,
+      hour: rStart.hour,
+      minute: rStart.minute,
+      fractionOfDay: rStart.fraction,
+      titleTa: "ராகு காலம் ஆரம்பம்",
+      titleEn: "Rahu Kalam Begins",
+      descTa: `${muhurtha.rahuKalam.startClock} முதல் ${muhurtha.rahuKalam.endClock} வரை (சுப காரியங்களைத் தவிர்க்கவும்)`,
+      descEn: `${muhurtha.rahuKalam.startClock} to ${muhurtha.rahuKalam.endClock} (Inauspicious window)`,
+      type: "rahu",
+      nature: "inauspicious",
+      sortMinutes: rStart.hour * 60 + rStart.minute,
+    });
 
-  // Yamagandam
-  const yStart = clockToFraction(muhurtha.yamagandam.startClock);
-  rawTimeline.push({
-    timeClock: muhurtha.yamagandam.startClock,
-    hour: yStart.hour,
-    minute: yStart.minute,
-    fractionOfDay: yStart.fraction,
-    titleTa: "எமகண்டம் ஆரம்பம்",
-    titleEn: "Yamagandam Begins",
-    descTa: `${muhurtha.yamagandam.startClock} முதல் ${muhurtha.yamagandam.endClock} வரை`,
-    descEn: `${muhurtha.yamagandam.startClock} to ${muhurtha.yamagandam.endClock}`,
-    type: "yama",
-    nature: "inauspicious",
-    sortMinutes: yStart.hour * 60 + yStart.minute,
-  });
+    const yStart = clockToFraction(muhurtha.yamagandam.startClock);
+    rawTimeline.push({
+      timeClock: muhurtha.yamagandam.startClock,
+      hour: yStart.hour,
+      minute: yStart.minute,
+      fractionOfDay: yStart.fraction,
+      titleTa: "எமகண்டம் ஆரம்பம்",
+      titleEn: "Yamagandam Begins",
+      descTa: `${muhurtha.yamagandam.startClock} முதல் ${muhurtha.yamagandam.endClock} வரை`,
+      descEn: `${muhurtha.yamagandam.startClock} to ${muhurtha.yamagandam.endClock}`,
+      type: "yama",
+      nature: "inauspicious",
+      sortMinutes: yStart.hour * 60 + yStart.minute,
+    });
 
-  // Abhijit Muhurtham
-  const aStart = clockToFraction(muhurtha.abhijit.startClock);
-  rawTimeline.push({
-    timeClock: muhurtha.abhijit.startClock,
-    hour: aStart.hour,
-    minute: aStart.minute,
-    fractionOfDay: aStart.fraction,
-    titleTa: "அபிஜித் முகூர்த்தம்",
-    titleEn: "Abhijit Muhurtham",
-    descTa: `${muhurtha.abhijit.startClock} முதல் ${muhurtha.abhijit.endClock} வரை (சர்வ காரிய சித்தி)`,
-    descEn: `${muhurtha.abhijit.startClock} to ${muhurtha.abhijit.endClock} (Highly auspicious midday span)`,
-    type: "abhijit",
-    nature: "auspicious",
-    sortMinutes: aStart.hour * 60 + aStart.minute,
-  });
+    const aStart = clockToFraction(muhurtha.abhijit.startClock);
+    rawTimeline.push({
+      timeClock: muhurtha.abhijit.startClock,
+      hour: aStart.hour,
+      minute: aStart.minute,
+      fractionOfDay: aStart.fraction,
+      titleTa: "அபிஜித் முகூர்த்தம்",
+      titleEn: "Abhijit Muhurtham",
+      descTa: `${muhurtha.abhijit.startClock} முதல் ${muhurtha.abhijit.endClock} வரை (சர்வ காரிய சித்தி)`,
+      descEn: `${muhurtha.abhijit.startClock} to ${muhurtha.abhijit.endClock} (Highly auspicious midday span)`,
+      type: "abhijit",
+      nature: "auspicious",
+      sortMinutes: aStart.hour * 60 + aStart.minute,
+    });
+  }
 
   // Moon Ingress
   if (moonIngressClock) {
@@ -877,10 +875,11 @@ export function calculateComprehensiveDayDetails(input: {
   // -------------------------------------------------------------
   // 10. COMPATIBLE EVENT PANCHANGAM AT SUNRISE
   // -------------------------------------------------------------
-  const tithiInterval = getTithiInterval(effectiveSunriseJD, tz);
-  const nakInterval = getNakshatraInterval(effectiveSunriseJD, tz, ayanamsaType);
-  const yogaInterval = getYogaInterval(effectiveSunriseJD, tz, ayanamsaType);
-  const karanaInterval = getKaranaInterval(effectiveSunriseJD, tz);
+  const targetSunriseJD = sunTimes.sunriseJD ?? noonJD;
+  const tithiInterval = getTithiInterval(targetSunriseJD, tz);
+  const nakInterval = getNakshatraInterval(targetSunriseJD, tz, ayanamsaType);
+  const yogaInterval = getYogaInterval(targetSunriseJD, tz, ayanamsaType);
+  const karanaInterval = getKaranaInterval(targetSunriseJD, tz);
 
   return {
     date: dateStr,

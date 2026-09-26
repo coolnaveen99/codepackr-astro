@@ -93,6 +93,24 @@ export type CalculationReceipt = {
   reportGenerated: boolean;
   timestamp: string;
   hash: string;
+  calculationId?: string;
+  place?: string;
+  latitude?: number;
+  longitude?: number;
+  ianaTimezone?: string;
+  timezoneSource?: string;
+  utcOffset?: string;
+  offsetAtBirth?: string;
+  zodiac?: string;
+  ayanamsa?: string;
+  nodeMode?: string;
+  houseSystem?: string;
+  panchangaSchool?: string;
+  dashaSystem?: string;
+  astronomyEngine?: string;
+  ephemerisVersion?: string;
+  ruleSetVersion?: string;
+  appVersion?: string;
 };
 
 export type PredictionEvidence = {

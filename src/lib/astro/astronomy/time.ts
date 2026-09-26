@@ -77,7 +77,8 @@ export function formatJD(jd: number, tzHours: number = 0): string {
 }
 
 /** Formats Julian Day into HH:mm clock time string */
-export function formatClock(jd: number, tzHours: number = 0): string {
+export function formatClock(jd: number | null | undefined, tzHours: number = 0): string {
+  if (jd === null || jd === undefined || !Number.isFinite(jd)) return "--:--";
   const c = jdToCalendar(jd, tzHours);
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(c.hour)}:${pad(c.minute)}`;

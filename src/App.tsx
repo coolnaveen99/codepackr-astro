@@ -8,7 +8,6 @@ import { ContactForm } from "@/components/contact-form";
 import { DisclaimerPage } from "@/components/disclaimer-page";
 import { LegalTrustPage } from "@/components/legal-trust-page";
 import { PoruthamView } from "@/components/porutham-view";
-import { PanchangamView } from "@/components/panchangam-view";
 import { DailyRasiView } from "@/components/daily-rasi";
 import { NumerologyView } from "@/components/numerology-view";
 import { GlossaryView } from "@/components/glossary-view";
@@ -99,8 +98,8 @@ function Shell() {
     <AppShell>
       {page === "porutham" ? (
         <PoruthamView lang={lang} />
-      ) : page === "panchangam" ? (
-        <PanchangamView lang={lang} />
+      ) : page === "panchangam" || page === "tamil-calendar" ? (
+        <TamilCalendarView lang={lang} />
       ) : page === "rasipalan" ? (
         <DailyRasiView lang={lang} />
       ) : page === "chandrashtama" ? (
@@ -129,8 +128,7 @@ function Shell() {
         <LegalTrustPage page="privacy" />
       ) : page === "about" ? (
         <LegalTrustPage page="about" />
-      ) : page === "tamil-calendar" ? (
-        <TamilCalendarView lang={lang} />
+
       ) : page === "forecast" ? (
         <ForecastView lang={lang} result={result} />
       ) : page === "calculation-method" ? (

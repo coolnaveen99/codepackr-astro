@@ -86,6 +86,9 @@ export function computeSunriseRelativeNazhigai(
   tz: number = 5.5
 ): SunriseRelativeResult {
   const ss = sunTimes(year, month, day, lat, lon, tz);
+  if (ss.sunriseJD === null || ss.sunsetJD === null) {
+    throw new Error("Astronomical sunrise cannot be calculated for the given date and coordinates (e.g. polar regions).");
+  }
 
   // Convert sunrise JD to fractional hours in local time
   const sunriseHoursLocal = ((ss.sunriseJD + tz / 24 + 0.5) % 1) * 24;

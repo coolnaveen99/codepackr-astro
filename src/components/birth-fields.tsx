@@ -1,7 +1,7 @@
-// Codepackr Astro - Date, Time & City Search Fields
-import { CheckCircle2, MapPin, Search } from "lucide-react";
+import { CheckCircle2, MapPin, Search, AlertTriangle } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { BirthInput, City } from "@/lib/astro/engine";
+import { resolveIanaTimezone } from "@/lib/astro/astronomy/timezone";
 import { t, type Lang } from "@/lib/astro/i18n";
 import { POPULAR_CITIES } from "@/lib/astro/samples";
 import { EXTRA_INDIA_TOWNS, mergeCityLists, searchCities } from "@/lib/astro/place-search";
@@ -410,6 +410,7 @@ export function PlaceSearch({
 
   function pickCity(c: City) {
     setQuery(c.n);
+    const ianaTimezone = resolveIanaTimezone(c.lat, c.lon, c.n);
     onChange({
       ...value,
       place: c.n,
@@ -417,12 +418,24 @@ export function PlaceSearch({
       lon: c.lon,
       tz: c.tz,
       locationVerified: true,
-      ianaTimezone: c.tz === 5.5 ? "Asia/Kolkata" : undefined,
+      ianaTimezone,
     });
     setOpen(false);
   }
 
-  const isLocationValid = Boolean(value.place && Number.isFinite(value.lat) && Number.isFinite(value.lon));
+  const isLocationVerified = Boolean(
+    value.locationVerified === true &&
+    value.place &&
+    Number.isFinite(value.lat) &&
+    Number.isFinite(value.lon)
+  );
+
+  const isManualCoordinates = Boolean(
+    !isLocationVerified &&
+    value.place &&
+    Number.isFinite(value.lat) &&
+    Number.isFinite(value.lon)
+  );
 
   return (
     <div ref={boxRef} className="relative">
@@ -437,27 +450,44 @@ export function PlaceSearch({
           autoComplete="off"
           onFocus={() => setOpen(true)}
           onChange={(e) => {
-            setQuery(e.target.value);
+            const nextPlace = e.target.value;
+            setQuery(nextPlace);
             setOpen(true);
+            onChange({
+              ...value,
+              place: nextPlace,
+              locationVerified: false,
+            });
           }}
         />
       </div>
-      {isLocationValid ? (
+      {isLocationVerified ? (
         <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50/80 px-2.5 py-1.5 text-xs text-emerald-900 flex items-center justify-between">
           <div className="flex items-center gap-1.5 font-medium">
             <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
             <span>{lang === "ta" ? "✓ இடம் சரிபார்க்கப்பட்டது" : "✓ Location verified"}</span>
           </div>
           <span className="text-[11px] font-mono text-emerald-800">
+            {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · {value.ianaTimezone || `UTC${value.tz >= 0 ? "+" : ""}${value.tz}`}
+          </span>
+        </div>
+      ) : isManualCoordinates ? (
+        <div className="mt-2 rounded-lg border border-amber-200 bg-amber-50/80 px-2.5 py-1.5 text-xs text-amber-900 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 font-medium">
+            <AlertTriangle className="size-3.5 text-amber-600 shrink-0" />
+            <span>{lang === "ta" ? "கைமுறை ஆயத்தொலைவுகள் (சரிபார்க்கப்படவில்லை)" : "Manual coordinates (Unverified)"}</span>
+          </div>
+          <span className="text-[11px] font-mono text-amber-800">
             {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · UTC{value.tz >= 0 ? "+" : ""}{value.tz}
           </span>
         </div>
       ) : (
-        <p className="mt-1.5 flex items-center gap-1 text-xs text-muted">
-          <MapPin className="size-3.5" />
-          {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · UTC{value.tz >= 0 ? "+" : ""}
-          {value.tz}
-        </p>
+        <div className="mt-2 rounded-lg border border-rose-200 bg-rose-50/80 px-2.5 py-1.5 text-xs text-rose-900 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 font-medium">
+            <MapPin className="size-3.5 text-rose-600 shrink-0" />
+            <span>{lang === "ta" ? "இடம் தேர்வு செய்யவும்" : "Select a location"}</span>
+          </div>
+        </div>
       )}
       {open ? (
         <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md bg-surface py-1 shadow-card">

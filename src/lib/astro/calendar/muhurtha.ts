@@ -33,12 +33,34 @@ export const VARJYAM_START_GHATIS = [
  * Weekdays: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday.
  */
 export function calculateMuhurthaSpans(
-  sunriseJD: number,
-  sunsetJD: number,
+  sunriseJD: number | null,
+  sunsetJD: number | null,
   weekday: number,
   tz: number = 5.5,
   activeNakshatra?: { index: number; startJD: number; endJD: number }
 ): MuhurthaEvaluation {
+  if (sunriseJD === null || sunsetJD === null) {
+    const emptySpan: TimingInterval = {
+      name: "Unavailable",
+      nameTa: "கிடைக்கவில்லை",
+      startJD: 0,
+      endJD: 0,
+      startClock: "--:--",
+      endClock: "--:--",
+      auspicious: false,
+    };
+    return {
+      rahuKalam: emptySpan,
+      yamagandam: emptySpan,
+      gulikai: emptySpan,
+      abhijit: emptySpan,
+      durmuhurtham: [],
+      varjyam: [],
+      amritaKalam: [],
+      choghadiya: [],
+      gowri: [],
+    };
+  }
   const daySpan = Math.max(0.2, sunsetJD - sunriseJD);
   const part = daySpan / 8;
 

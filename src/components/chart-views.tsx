@@ -216,7 +216,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
             : (lang === "ta" ? "சுருக்க வேத ஜாதகம் (6 பக்கங்கள்)" : "Vedic Horoscope Summary (6 Pages)")
         }
         lang={lang}
-        newTabUrl={`/?page=jathagam&print=auto&mode=${reportType}`}
+        newTabUrl={`/jathagam?print=auto&mode=${reportType === "full30" ? "thirty" : "six"}`}
       >
         <div className="mb-4 flex items-center justify-center gap-2 no-print">
           <div className="flex rounded-lg bg-surface p-1 border border-border/80 shadow-2xs">

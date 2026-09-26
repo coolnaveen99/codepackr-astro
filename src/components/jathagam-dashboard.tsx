@@ -18,14 +18,32 @@ import { CalculationCard } from "@/components/calculation-card";
 import { analyse } from "@/lib/astro/analysis";
 import { cn } from "@/lib/utils";
 
-type ReportMode = "one" | "six" | "thirty";
+export type ReportMode = "one" | "six" | "thirty";
+
+export function parseReportModeFromUrl(): ReportMode {
+  if (typeof window === "undefined") return "one";
+  const params = new URLSearchParams(window.location.search);
+  const m = params.get("mode");
+  if (m === "six" || m === "thirty" || m === "one") return m;
+  return "one";
+}
 
 export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:Lang;draft:BirthInput;onChange:(v:BirthInput)=>void;onSubmit:()=>void;result:ChartResult|null}) {
-  const [mode,setMode]=useState<ReportMode>("one");
+  const [mode, setModeState] = useState<ReportMode>(parseReportModeFromUrl);
   const [pdfBusy,setPdfBusy]=useState(false);
   const [pdfError,setPdfError]=useState("");
   const [showPrintModal,setShowPrintModal]=useState(false);
   const {go}=useNav();
+
+  const setMode = (newMode: ReportMode) => {
+    setModeState(newMode);
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      params.set("mode", newMode);
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({ ...window.history.state, mode: newMode }, "", newUrl);
+    }
+  };
   const generate=()=>onSubmit();
   const printSelected=()=>{
     setPdfError("");
@@ -131,7 +149,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
             onClose={() => setShowPrintModal(false)}
             title={reportTitle(mode, lang)}
             lang={lang}
-            newTabUrl={`/?print=auto&mode=${mode}&name=${encodeURIComponent(result.input.name || "")}&d=${result.input.day}&m=${result.input.month}&y=${result.input.year}&h=${result.input.hour}&min=${result.input.minute}&lat=${result.input.lat}&lon=${result.input.lon}&tz=${result.input.tz}&place=${encodeURIComponent(result.input.place)}`}
+            newTabUrl={`/jathagam?print=auto&mode=${mode}&name=${encodeURIComponent(result.input.name || "")}&d=${result.input.day}&m=${result.input.month}&y=${result.input.year}&h=${result.input.hour}&min=${result.input.minute}&lat=${result.input.lat}&lon=${result.input.lon}&tz=${result.input.tz}&place=${encodeURIComponent(result.input.place)}`}
           >
             {mode === "one" ? (
               <div className="astro-export-one-page mx-auto bg-white p-4 sm:p-6 rounded-xl border border-border shadow-xs">

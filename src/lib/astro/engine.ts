@@ -27,6 +27,8 @@ import { generateCalculationReceipt } from "./provenance/receipt";
 import { DEFAULT_PRODUCTION_PROFILE } from "./provenance/profile";
 import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
 import { getTamilDate } from "./calendar/tamil-calendar";
+import { calculateSunTimes } from "./astronomy/sunrise";
+import { resolveIanaTimezone, resolveHistoricalUtcOffset, isLocationVerified } from "./astronomy/timezone";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -75,8 +77,8 @@ export type ChartResult = {
   school: School;
   weekday: number;
   isDay: boolean;
-  sunriseJD: number;
-  sunsetJD: number;
+  sunriseJD: number | null;
+  sunsetJD: number | null;
   list: BodyPos[];
   bodies: Record<PlanetId, number>;
   pan: {
@@ -441,26 +443,20 @@ function tropicalBodies(jd: number) {
   };
 }
 
-export function sunTimes(year: number, month: number, day: number, lat: number, lon: number, tz: number) {
-  const utc0 = Date.UTC(year, month - 1, day, 0, 0, 0) - tz * 3600000;
-  const start = MakeTime(new Date(utc0));
-  const observer = new Observer(lat, lon, 0);
-  const rise = SearchRiseSet(Body.Sun, observer, +1, start, 1.2);
-  // Search backwards from midday so we get this date's sunset,
-  // not the previous day's sunset at local midnight.
-  const sunsetSearchStart = MakeTime(new Date(utc0 + 12 * 3600000));
-  const set = SearchRiseSet(Body.Sun, observer, -1, sunsetSearchStart, 1.0);
-  const toJd = (tm: AstroTime | null, fallbackHour: number) => {
-    if (!tm) return julianDay(year, month, day, fallbackHour - tz);
-    return tm.ut + 2451545.0;
+export function sunTimes(
+  year: number,
+  month: number,
+  day: number,
+  lat: number,
+  lon: number,
+  tz: number
+): { sunriseJD: number | null; sunsetJD: number | null; nextSunriseJD: number | null } {
+  const res = calculateSunTimes(year, month, day, lat, lon, tz);
+  return {
+    sunriseJD: res.sunriseJD,
+    sunsetJD: res.sunsetJD,
+    nextSunriseJD: res.nextSunriseJD,
   };
-  const sunriseJD = toJd(rise, 6);
-  const sunsetJD = toJd(set, 18);
-  // Calculate the actual following sunrise; sunrise-to-sunrise is not exactly 24 hours.
-  const nextStart = timeFromJD(sunsetJD + 1 / 1440);
-  const nextRise = SearchRiseSet(Body.Sun, observer, +1, nextStart, 1.5);
-  const nextSunriseJD = nextRise ? nextRise.ut + 2451545.0 : sunriseJD + 1;
-  return { sunriseJD, sunsetJD, nextSunriseJD };
 }
 
 function weekdayFromJD(jd: number) {
@@ -491,7 +487,18 @@ function panchanga(sunSid: number, moonSid: number, weekday: number) {
   };
 }
 
-function muhurta(sunriseJD: number, sunsetJD: number, weekday: number) {
+function muhurta(sunriseJD: number | null, sunsetJD: number | null, weekday: number) {
+  if (sunriseJD === null || sunsetJD === null) {
+    const emptySpan = { start: 0, end: 0 };
+    return {
+      rahu: emptySpan,
+      yamaganda: emptySpan,
+      gulikaKalam: emptySpan,
+      abhijit: emptySpan,
+      choghadiya: [],
+      gowri: [],
+    };
+  }
   const day = Math.max(0.2, sunsetJD - sunriseJD);
   const part = day / 8;
   const rahuIdx = [7, 1, 6, 4, 5, 3, 2][weekday] ?? 2;
@@ -731,7 +738,8 @@ export function formatJD(jd: number, tz: number) {
   return `${pad(d)}-${pad(month)}-${year} ${pad(h)}:${pad(mm)}`;
 }
 
-export function formatClock(jd: number, tz: number) {
+export function formatClock(jd: number | null | undefined, tz: number) {
+  if (jd === null || jd === undefined || !Number.isFinite(jd)) return "--:--";
   const s = formatJD(jd, tz);
   return s.split(" ")[1] ?? s;
 }
@@ -811,8 +819,9 @@ export function compute(input: BirthInput): ChartResult {
   const lagnaTrop = tropicalAscendant(jd, input.lat, input.lon);
   const lagna = norm360(lagnaTrop - grahas.aya);
   const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
-  const wd = weekdayFromJD(ss.sunriseJD + input.tz / 24);
-  const isDay = jd >= ss.sunriseJD && jd < ss.sunsetJD;
+  const jdMidday = julianDay(input.year, input.month, input.day, 12 - input.tz);
+  const wd = weekdayFromJD(jdMidday + input.tz / 24);
+  const isDay = ss.sunriseJD !== null && ss.sunsetJD !== null ? jd >= ss.sunriseJD && jd < ss.sunsetJD : true;
   const list: BodyPos[] = [];
   const bodies = grahas.bodies;
   for (const p of PLANETS) {
@@ -849,10 +858,10 @@ export function compute(input: BirthInput): ChartResult {
   const { sav, bav } = ashtakavarga(bodies);
 
   // Upagrahas calculation (Parashara tradition)
-  const daySpan = ss.sunsetJD - ss.sunriseJD;
-  const nightSpan = (ss.nextSunriseJD || ss.sunriseJD + 1) - ss.sunsetJD;
+  const daySpan = ss.sunriseJD !== null && ss.sunsetJD !== null ? ss.sunsetJD - ss.sunriseJD : 0.5;
+  const nightSpan = ss.sunsetJD !== null && ss.nextSunriseJD !== null ? ss.nextSunriseJD - ss.sunsetJD : 0.5;
   const span = isDay ? daySpan : nightSpan;
-  const startJD = isDay ? ss.sunriseJD : ss.sunsetJD;
+  const startJD = isDay ? (ss.sunriseJD ?? jd) : (ss.sunsetJD ?? jd);
   const partLen = span / 8;
 
   const dayOrder = [0, 1, 2, 3, 4, 5, 6].map((offset) => (wd + offset) % 7);
@@ -916,7 +925,7 @@ export function compute(input: BirthInput): ChartResult {
   ];
 
   // Special Lagnas
-  const hoursFromSunrise = (jd - ss.sunriseJD) * 24;
+  const hoursFromSunrise = ss.sunriseJD !== null ? (jd - ss.sunriseJD) * 24 : ((jd - jdMidday) * 24 + 6);
   const horaLagnaLon = norm360(bodies.sun + hoursFromSunrise * 30);
   const ghatiLagnaLon = norm360(lagna + hoursFromSunrise * 37.5);
   const moonNakProg = (norm360(bodies.moon) % (360 / 27)) / (360 / 27);
@@ -941,16 +950,24 @@ export function compute(input: BirthInput): ChartResult {
   const pad = (n: number) => String(n).padStart(2, "0");
   const birthDateStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
   const birthTimeStr = `${pad(input.hour)}:${pad(input.minute)}`;
-  const timezoneStr = input.ianaTimezone || `UTC${input.tz >= 0 ? "+" : ""}${input.tz}`;
-  const isLocVerified = input.locationVerified ?? (Number.isFinite(input.lat) && Number.isFinite(input.lon) && input.place?.trim().length > 0);
+  const ianaTimezone = input.ianaTimezone || resolveIanaTimezone(input.lat, input.lon, input.place);
+  const histOffset = resolveHistoricalUtcOffset(ianaTimezone, input.year, input.month, input.day, input.hour, input.minute);
+  const isLocVerified = isLocationVerified(input.locationVerified);
   const { receipt, metadata } = generateCalculationReceipt(
     birthDateStr,
     birthTimeStr,
     input.lat,
     input.lon,
-    timezoneStr,
+    ianaTimezone,
     DEFAULT_PRODUCTION_PROFILE,
-    isLocVerified
+    isLocVerified,
+    {
+      place: input.place,
+      timezoneSource: histOffset.timezoneSource,
+      utcOffset: histOffset.offsetString,
+      offsetAtBirth: histOffset.offsetString,
+      panchangaSchool: school,
+    }
   );
 
   const sensitivity = analyzeBirthTimeSensitivity({
@@ -1021,9 +1038,9 @@ export type DailyPanchang = {
   jdNoon: number;
   weekday: number;
   aya: number;
-  sunriseJD: number;
-  sunsetJD: number;
-  nextSunriseJD: number;
+  sunriseJD: number | null;
+  sunsetJD: number | null;
+  nextSunriseJD: number | null;
   pan: ChartResult["pan"];
   muh: ChartResult["muh"];
   /** 24 planetary horas (oorai) from sunrise to next sunrise */
@@ -1039,7 +1056,12 @@ export type DailyPanchang = {
  * Day is divided into 24 equal parts from sunrise to next sunrise.
  * First hora of the civil day is ruled by the weekday lord.
  */
-export function planetaryHoras(sunriseJD: number, nextSunriseJD: number, weekday: number): HoraSlot[] {
+export function planetaryHoras(
+  sunriseJD: number | null,
+  nextSunriseJD: number | null,
+  weekday: number
+): HoraSlot[] {
+  if (sunriseJD === null || nextSunriseJD === null) return [];
   const span = Math.max(0.5, nextSunriseJD - sunriseJD);
   const slot = span / 24;
   const startLord = WEEKDAY_HORA_START[weekday] ?? "sun";
@@ -1077,7 +1099,7 @@ export function computeDailyPanchang(input: {
   const school = input.school ?? "thirukanitham";
   const jdNoon = julianDay(input.year, input.month, input.day, 12 - input.tz);
   const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
-  const wd = weekdayFromJD(ss.sunriseJD + input.tz / 24);
+  const wd = weekdayFromJD(jdNoon + input.tz / 24);
   const grahas = siderealGrahas(jdNoon, school);
   const pan = panchanga(grahas.bodies.sun, grahas.bodies.moon, wd);
   const muh = muhurta(ss.sunriseJD, ss.sunsetJD, wd);
@@ -1113,6 +1135,8 @@ export * from "./astronomy/coordinates";
 export * from "./astronomy/time";
 export * from "./astronomy/sidereal";
 export * from "./astronomy/ephemeris";
+export * from "./astronomy/sunrise";
+export * from "./astronomy/timezone";
 export * from "./astronomy/sunrise";
 export * from "./astronomy/validation";
 export * from "./calendar/samvatsara";
