@@ -4,7 +4,7 @@ import type { BirthInput, City } from "@/lib/astro/engine";
 import { resolveIanaTimezone } from "@/lib/astro/astronomy/timezone";
 import { t, type Lang } from "@/lib/astro/i18n";
 import { POPULAR_CITIES } from "@/lib/astro/samples";
-import { EXTRA_INDIA_TOWNS, mergeCityLists, searchCities } from "@/lib/astro/place-search";
+import { EXTRA_INDIA_TOWNS, loadWorldCities, mergeCityLists, searchCities } from "@/lib/astro/place-search";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -377,16 +377,17 @@ export function PlaceSearch({
   id?: string;
 }) {
   const [query, setQuery] = useState(value.place);
+  const [deferredQuery, setDeferredQuery] = useState(value.place);
   const [cities, setCities] = useState<City[]>(() => mergeCityLists(POPULAR_CITIES, EXTRA_INDIA_TOWNS));
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const parentTimer = useRef<number>(0);
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/data/cities.json")
-      .then((r) => r.json())
-      .then((list: City[]) => {
-        if (!cancelled && Array.isArray(list)) setCities(mergeCityLists(list, EXTRA_INDIA_TOWNS));
+    loadWorldCities()
+      .then((list) => {
+        if (!cancelled) setCities(mergeCityLists(list, EXTRA_INDIA_TOWNS));
       })
       .catch(() => {});
     return () => {
@@ -396,7 +397,13 @@ export function PlaceSearch({
 
   useEffect(() => {
     setQuery(value.place);
+    setDeferredQuery(value.place);
   }, [value.place]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setDeferredQuery(query), 140);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -406,7 +413,7 @@ export function PlaceSearch({
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
-  const matches = useMemo(() => searchCities(cities, query, 16), [cities, query]);
+  const matches = useMemo(() => searchCities(cities, deferredQuery, 16), [cities, deferredQuery]);
 
   function pickCity(c: City) {
     setQuery(c.n);
@@ -453,11 +460,14 @@ export function PlaceSearch({
             const nextPlace = e.target.value;
             setQuery(nextPlace);
             setOpen(true);
-            onChange({
-              ...value,
-              place: nextPlace,
-              locationVerified: false,
-            });
+            window.clearTimeout(parentTimer.current);
+            parentTimer.current = window.setTimeout(() => {
+              onChange({
+                ...value,
+                place: nextPlace,
+                locationVerified: false,
+              });
+            }, 180);
           }}
         />
       </div>
