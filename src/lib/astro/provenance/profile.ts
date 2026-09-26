@@ -1,9 +1,14 @@
-// Codepackr Astro — Production Calculation Profile (Final Decision 2)
+// Codepackr Astro — Production Calculation Profile
 import type { ProductionCalculationProfile } from "../types";
 
+/**
+ * Locked production defaults.
+ * Chart school default is Thirukanitham (Drik + Thirukanitham ayanamsa).
+ * Lahiri / Chitrapaksha is an explicit selectable school, not a silent alias.
+ */
 export const DEFAULT_PRODUCTION_PROFILE: ProductionCalculationProfile = {
   zodiac: "sidereal",
-  ayanamsa: "lahiri",
+  ayanamsa: "thirukanitham",
   nodeMode: "mean",
   houseSystem: "whole-sign",
   panchangaMethod: "thirukanitham-oriented",
