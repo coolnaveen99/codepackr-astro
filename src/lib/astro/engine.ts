@@ -28,7 +28,7 @@ import { DEFAULT_PRODUCTION_PROFILE } from "./provenance/profile";
 import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
 import { getTamilDate } from "./calendar/tamil-calendar";
 import { calculateSunTimes } from "./astronomy/sunrise";
-import { resolveIanaTimezone, resolveHistoricalUtcOffset, isLocationVerified } from "./astronomy/timezone";
+import { resolveIanaTimezoneAssignment, resolveHistoricalUtcOffset, isLocationVerified } from "./astronomy/timezone";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -950,8 +950,19 @@ export function compute(input: BirthInput): ChartResult {
   const pad = (n: number) => String(n).padStart(2, "0");
   const birthDateStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
   const birthTimeStr = `${pad(input.hour)}:${pad(input.minute)}`;
-  const ianaTimezone = input.ianaTimezone || resolveIanaTimezone(input.lat, input.lon, input.place);
-  const histOffset = resolveHistoricalUtcOffset(ianaTimezone, input.year, input.month, input.day, input.hour, input.minute);
+  const resolvedTz = input.ianaTimezone
+    ? { iana: input.ianaTimezone, source: "place-name" as const }
+    : resolveIanaTimezoneAssignment(input.lat, input.lon, input.place);
+  const ianaTimezone = resolvedTz.iana;
+  const histOffset = resolveHistoricalUtcOffset(
+    ianaTimezone,
+    input.year,
+    input.month,
+    input.day,
+    input.hour,
+    input.minute,
+    resolvedTz.source
+  );
   const isLocVerified = isLocationVerified(input.locationVerified);
   const { receipt, metadata } = generateCalculationReceipt(
     birthDateStr,
@@ -967,6 +978,7 @@ export function compute(input: BirthInput): ChartResult {
       utcOffset: histOffset.offsetString,
       offsetAtBirth: histOffset.offsetString,
       panchangaSchool: school,
+      ayanamsa: school === "lahiri" ? "lahiri" : "thirukanitham",
     }
   );
 

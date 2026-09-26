@@ -149,7 +149,7 @@ export function TamilCalendarView({ lang }: TamilCalendarViewProps) {
       lon: activeCity.lon,
       tz: activeCity.tz,
       placeName: isTa ? activeCity.nameTa : activeCity.name,
-      ayanamsaType: "lahiri",
+      ayanamsaType: "thirukanitham",
     });
   }, [selYear, selMonth, selDay, activeCity, isTa]);
 
@@ -189,7 +189,7 @@ export function TamilCalendarView({ lang }: TamilCalendarViewProps) {
           lon: activeCity.lon,
           tz: activeCity.tz,
           placeName: activeCity.name,
-          ayanamsaType: "lahiri",
+          ayanamsaType: "thirukanitham",
         });
         days.push(details);
       } catch {

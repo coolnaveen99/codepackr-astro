@@ -33,6 +33,7 @@ import { SIGNS_TA, SIGNS_EN } from "../constants";
 import { evaluateFestivalsForDay, type FestivalRuleMatch, type DayFestivalContext } from "./festivals";
 import { MoonPhase, Illumination, Body } from "astronomy-engine";
 import type { AstroInterval } from "../types";
+import { requirePanchangamLocation } from "./panchangam-location";
 
 export type EventPanchangam = {
   date: string;
@@ -232,11 +233,8 @@ export function calculateComprehensiveDayDetails(input: {
   elevationMeters?: number;
   ayanamsaType?: "lahiri" | "thirukanitham";
 }): ComprehensiveDayPanchang {
-  const lat = input.lat ?? 13.0827; // Chennai reference default
-  const lon = input.lon ?? 80.2707;
-  const tz = input.tz ?? 5.5;
-  const placeName = input.placeName ?? "Chennai (Madras)";
-  const ayanamsaType = input.ayanamsaType ?? "lahiri";
+  const { lat, lon, tz, placeName } = requirePanchangamLocation(input);
+  const ayanamsaType = input.ayanamsaType ?? "thirukanitham";
 
   const pad = (n: number) => String(n).padStart(2, "0");
   const dateStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;

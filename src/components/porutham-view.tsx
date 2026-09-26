@@ -226,7 +226,7 @@ export function PoruthamView({ lang }: { lang: Lang }) {
             onClose={() => setShowPrintModal(false)}
             title={lang === "ta" ? "திருமணப் பொருத்த அச்சுப் பிரதி (A4)" : "Marriage Compatibility Report (A4 Print)"}
             lang={lang}
-            newTabUrl="/?page=porutham&print=auto"
+            newTabUrl="/porutham?print=auto"
           >
             <div className="relative overflow-hidden w-full max-w-[210mm] mx-auto py-1">
               <Watermark />
