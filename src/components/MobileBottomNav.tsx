@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Calculator, Search, Star, MoreHorizontal, BookOpen, Scale, Sparkles, TrendingUp, ClipboardList, GraduationCap } from 'lucide-react';
+import { Home, Star, MoreHorizontal, Sparkles, TrendingUp, type LucideIcon } from 'lucide-react';
 
 export type MobileTab = string;
 
@@ -50,8 +50,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   );
 };
 
-const icon = (El: React.ComponentType<{ className?: string; strokeWidth?: number }>) =>
-  <El className="w-5 h-5" strokeWidth={2} />;
+const icon = (El: LucideIcon) => <El className="w-5 h-5" strokeWidth={2} />;
 
 export const ASTRO_MOBILE_TABS: MobileNavTab[] = [
   { id: 'home', label: 'Home', icon: icon(Home) },
