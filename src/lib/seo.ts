@@ -15,21 +15,32 @@ export interface ToolSeoConfig {
   featureListEn: string[];
 }
 
-export const SEO_DATA: Partial<Record<Page, ToolSeoConfig>> & { jathagam: ToolSeoConfig } = {
-  jathagam: {
-    titleTa: "Free Tamil Jathagam | Codepackr Astro",
-    titleEn: "Free Tamil Jathagam | Codepackr Astro",
-    descTa: "Tamil jathagam, porutham, panchangam.",
-    descEn: "Tamil jathagam, porutham, panchangam.",
-    keywordsTa: "jathagam",
-    keywordsEn: "jathagam",
+export const SEO_DATA: Partial<Record<Page, ToolSeoConfig>> & { home: ToolSeoConfig; jathagam: ToolSeoConfig } = {
+  home: {
+    titleTa: "CodePackr Astro — தமிழ் ஜோதிடம், ஜாதகம், பஞ்சாங்கம் மற்றும் இலவச கருவிகள்",
+    titleEn: "CodePackr Astro — Tamil Horoscope, Panchangam & Precision Vedic Astrology Tools",
+    descTa: "தமிழில் இலவச ஜோதிட மற்றும் காலண்டர் கருவிகள். ஜாதகம், பஞ்சாங்கம், தமிழ் காலண்டர், ராசிபலன், நட்சத்திரம், பொருத்தம் உள்ளிட்ட கருவிகள் ஒரே இடத்தில்.",
+    descEn: "Complete suite of free Tamil Vedic astrology and ephemeris tools: Horoscope creator, daily Panchangam, Tamil solar calendar, marriage compatibility, and forecasts.",
+    keywordsTa: "tamil astrology, jathagam, panchangam, tamil calendar, porutham, rasipalan, ஜோதிடம், ஜாதகம், பஞ்சாங்கம்",
+    keywordsEn: "tamil astrology, vedic horoscope, daily panchangam, tamil calendar, marriage compatibility, rasi palan",
     category: "AstrologyApplication",
-    featureListTa: ["Jathagam"],
-    featureListEn: ["Jathagam"]
+    featureListTa: ["ஜாதகம்", "பஞ்சாங்கம்", "தமிழ் காலண்டர்", "பொருத்தம்", "ராசிபலன்"],
+    featureListEn: ["Jathagam Creation", "Daily Panchangam", "Tamil Calendar", "Porutham", "Forecasts"]
+  },
+  jathagam: {
+    titleTa: "இலவச தமிழ் ஜாதகம் உருவாக்கி — CodePackr Astro",
+    titleEn: "Free Tamil Horoscope (Jathagam) Generator | CodePackr Astro",
+    descTa: "பிறந்த தேதி, நேரம் மற்றும் இடம் கொண்டு துல்லியமான லக்னம், ராசி, நவாம்சம், 16 வர்க்க கட்டங்கள், தசா-புத்தி மற்றும் யோகங்களுடன் கூடிய தமிழ் ஜாதகத்தை உடனே உருவாக்குங்கள்.",
+    descEn: "Generate free, printable Tamil Vedic birth chart with Lagna, Rasi, Navamsa, 16 harmonic Vargas, Vimshottari Dasa balance, and planetary positions.",
+    keywordsTa: "tamil jathagam, birth chart, kundli, navamsa, rasi chart, தமிழ் ஜாதகம், ஜாதகம் கணித்தல்",
+    keywordsEn: "tamil jathagam, birth chart calculator, vedic horoscope, navamsa, rasi, lagna calculator",
+    category: "AstrologyApplication",
+    featureListTa: ["1-Page Summary", "6-Page Report", "30-Page Book", "PDF Export"],
+    featureListEn: ["1-Page Summary", "6-Page Report", "30-Page Book", "PDF Export"]
   },
   "tamil-calendar": {
-    titleTa: "தமிழ் நாட்காட்டி & 60 வருட சம்வத்ஸர அட்டவணை | Codepackr Astro",
-    titleEn: "Tamil Solar Calendar & 60-Year Samvatsara Cycle | Codepackr Astro",
+    titleTa: "தமிழ் காலண்டர் & தினசரி பஞ்சாங்கம் — CodePackr Astro",
+    titleEn: "Tamil Calendar & Daily Panchangam Engine | CodePackr Astro",
     descTa: "துல்லியமான தமிழ் சூரிய நாட்காட்டி, மாத சங்கிராந்தி, 60 வருட சம்வத்ஸர சுழற்சி மற்றும் கிரிகோரியன் - தமிழ் தேதி மாற்றி.",
     descEn: "Accurate event-based Tamil solar calendar, month solar ingress, 60-year Samvatsara cycle, and bidirectional date converter.",
     keywordsTa: "tamil calendar, samvatsara, tamil months, sankranti, chithirai",

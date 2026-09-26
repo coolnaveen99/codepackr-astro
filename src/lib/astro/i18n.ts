@@ -169,6 +169,7 @@ const COPY = {
     ta: "பொறுப்புத் துறப்பு: சுயவிவரம் மற்றும் ஜாதகத் தகவல்கள் வரன் வீட்டார் அளித்த உள்ளீட்டின்படி கணினி முறையில் அச்சிடப்பட்டது. திருமணத்திற்கு முன் இருவீட்டாரும் விவரங்களையும் ஜாதகப் பொருத்தத்தையும் நேரில் சரிபார்த்துக் கொள்ளவும். விவரங்களுக்கு: astro.codepackr.com/?page=disclaimer",
     en: "Disclaimer: All matrimonial and astrological details are printed as entered by the user. Families are advised to verify all credentials and horoscope compatibility independently prior to finalizing marriages. Refer: astro.codepackr.com/?page=disclaimer",
   },
+  navHome: { ta: "முகப்பு", en: "Home" },
   navDisclaimer: { ta: "பொறுப்புத் துறப்பு", en: "Disclaimer" },
   good: { ta: "நல்லது", en: "Good" },
   bad: { ta: "தவிர்க்க", en: "Avoid" },
@@ -176,8 +177,9 @@ const COPY = {
   navChart: { ta: "ஜாதகம்", en: "Jathagam" },
   navPorutham: { ta: "பொருத்தம்", en: "Porutham" },
   navPanchang: { ta: "பஞ்சாங்கம்", en: "Panchangam" },
-  navTamilCalendar: { ta: "தமிழ் நாட்காட்டி", en: "Tamil Calendar" },
-  navForecast: { ta: "வருட பலன்கள்", en: "Forecast" },
+  navCalendar: { ta: "தமிழ் காலண்டர்", en: "Tamil Calendar" },
+  navTamilCalendar: { ta: "தமிழ் காலண்டர்", en: "Tamil Calendar" },
+  navForecast: { ta: "பலன்கள்", en: "Forecast" },
   navCalculationMethod: { ta: "கணித முறை விளக்கம்", en: "Calculation Method" },
   navAstroValidation: { ta: "வானியல் சரிபார்ப்பு", en: "Astro Validation" },
   navBiodata: { ta: "பயோடேட்டா", en: "Biodata" },
@@ -330,6 +332,8 @@ const COPY = {
 
 export type CopyKey = keyof typeof COPY;
 
-export function t(lang: Lang, key: CopyKey): string {
-  return COPY[key][lang];
+export function t(lang: Lang, key: CopyKey | string): string {
+  const item = (COPY as Record<string, Record<Lang, string>>)[key as string];
+  if (!item) return String(key);
+  return item[lang] ?? item.en ?? String(key);
 }

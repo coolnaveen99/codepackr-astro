@@ -2,6 +2,7 @@
 import { useState } from "react";
 import type { ChartResult } from "@/lib/astro/engine";
 import { CheckCircle2, AlertTriangle, ShieldCheck, Hash, Cpu, Compass, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { SIGNS_TA, SIGNS_EN, NAK_TA, NAK_EN, planetName } from "@/lib/astro/constants";
 
 interface CalculationCardProps {
   result: ChartResult;
@@ -16,6 +17,14 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
   const tDate = result.tamilDate;
 
   const isTa = lang === "ta";
+
+  const lagna = result.list.find((p) => p.id === "lagna");
+  const moon = result.list.find((p) => p.id === "moon");
+  const lagnaSignName = lagna ? (isTa ? SIGNS_TA[lagna.sign] : SIGNS_EN[lagna.sign]) : "—";
+  const moonSignName = moon ? (isTa ? SIGNS_TA[moon.sign] : SIGNS_EN[moon.sign]) : "—";
+  const moonNakName = moon ? (isTa ? NAK_TA[moon.nak] : NAK_EN[moon.nak]) : "—";
+  const dasaLordName = result.dasa?.lord ? planetName(result.dasa.lord as any, lang) : "—";
+  const birthTime = `${String(result.input.hour).padStart(2, "0")}:${String(result.input.minute).padStart(2, "0")}`;
 
   return (
     <div className="calculation-card rounded-2xl border border-blue-200 bg-gradient-to-br from-white to-blue-50/40 p-5 shadow-sm">
@@ -69,7 +78,7 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
         </div>
         <div className="flex items-center gap-1.5 rounded-lg border border-slate-200/80 bg-white/80 p-2 text-xs text-slate-700">
           <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
-          <span>{isTa ? "விம்சFocus தசை பலன்" : "Vimshottari Dasa"}</span>
+          <span>{isTa ? "விம்சோத்தரி தசா பலன்" : "Vimshottari Dasa"}</span>
         </div>
       </div>
 
@@ -121,6 +130,49 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
         </div>
       )}
 
+      {/* Why This Result? Section (Section 47) */}
+      <div className="mt-4 rounded-xl border border-blue-200/80 bg-blue-50/50 p-4">
+        <div className="flex items-center gap-2 font-bold text-xs sm:text-sm text-blue-900 mb-2.5">
+          <Info className="h-4 w-4 text-blue-600 shrink-0" />
+          <span>{isTa ? "ஏன் இந்த முடிவு? (காரணங்கள் & கணிதப் பின்னணி)" : "Why This Result? (Mathematical Background)"}</span>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+          <div className="rounded-lg bg-white/95 p-3 border border-blue-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block mb-1">
+              {isTa ? "லக்னம்: " : "Janma Lagna: "}
+              <span className="text-blue-700">{lagnaSignName}</span>
+            </span>
+            <ul className="text-slate-600 text-[11px] leading-relaxed space-y-0.5">
+              <li>• {isTa ? "பிறந்த நேரம்:" : "Birth time:"} {birthTime}</li>
+              <li>• {isTa ? "இடம்:" : "Place:"} {result.input.place} ({result.input.lat.toFixed(2)}°N, {result.input.lon.toFixed(2)}°E)</li>
+              <li>• {isTa ? "முறை:" : "System:"} Whole Sign (முழு ராசி பாவம்)</li>
+            </ul>
+          </div>
+          <div className="rounded-lg bg-white/95 p-3 border border-blue-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block mb-1">
+              {isTa ? "ராசி & நட்சத்திரம்: " : "Moon Sign & Star: "}
+              <span className="text-blue-700">{moonSignName} ({moonNakName})</span>
+            </span>
+            <ul className="text-slate-600 text-[11px] leading-relaxed space-y-0.5">
+              <li>• {isTa ? "சந்திர பாகை:" : "Moon Longitude:"} {moon?.dms || "—"}</li>
+              <li>• {isTa ? "அயனாம்சம்:" : "Ayanamsa:"} {result.school === "lahiri" ? "Lahiri" : "Thirukanitham"} ({result.aya.toFixed(2)}°)</li>
+              <li>• {isTa ? "பாதம்:" : "Pada:"} {moon?.pada || 1} / 4</li>
+            </ul>
+          </div>
+          <div className="rounded-lg bg-white/95 p-3 border border-blue-100 shadow-2xs">
+            <span className="font-bold text-slate-900 block mb-1">
+              {isTa ? "தசா இருப்பு: " : "Dasa Balance: "}
+              <span className="text-blue-700">{dasaLordName}</span>
+            </span>
+            <ul className="text-slate-600 text-[11px] leading-relaxed space-y-0.5">
+              <li>• {isTa ? "முறை:" : "Cycle:"} விம்சோத்தரி 120 வருட சுழற்சி</li>
+              <li>• {isTa ? "காரணம்:" : "Basis:"} {isTa ? "சந்திரனின் நட்சத்திர பாதக் கணிப்பு" : "Moon traversal within birth nakshatra"}</li>
+              <li>• {isTa ? "தசாநாதன்:" : "Lord:"} {dasaLordName}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       {/* Tamil Calendar & Profile Quick View */}
       {tDate && (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-slate-50 px-3.5 py-2 text-xs text-slate-700">
@@ -160,7 +212,7 @@ export function CalculationCard({ result, lang }: CalculationCardProps) {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <span className="text-slate-400 block">{isTa ? "வானியல் எஞ்சின்:" : "Ephemeris Engine:"}</span>
-              <span className="font-semibold">{metadata?.ephemerisSource ?? "Swiss Ephemeris / DE440"}</span>
+              <span className="font-semibold">{metadata?.ephemerisSource ?? "Astronomy Engine (VSOP87 / ELP2000, JPL DE440 benchmarked)"}</span>
             </div>
             <div>
               <span className="text-slate-400 block">{isTa ? "அயனாம்சம்:" : "Ayanamsa Model:"}</span>

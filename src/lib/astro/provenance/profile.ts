@@ -8,7 +8,7 @@ export const DEFAULT_PRODUCTION_PROFILE: ProductionCalculationProfile = {
   houseSystem: "whole-sign",
   panchangaMethod: "thirukanitham-oriented",
   dashaSystem: "vimshottari",
-  ephemeris: "swiss-ephemeris",
+  ephemeris: "astronomy-engine",
   timezoneSource: "iana-tzdb",
 };
 

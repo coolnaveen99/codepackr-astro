@@ -44,8 +44,8 @@ export type EventPanchangam = {
   sunsetClock: string;
   moonriseClock: string;
   moonsetClock: string;
-  sunriseJD: number;
-  sunsetJD: number;
+  sunriseJD: number | null;
+  sunsetJD: number | null;
   tithi: AstroInterval;
   nakshatra: AstroInterval;
   yoga: AstroInterval;
@@ -244,7 +244,9 @@ export function calculateComprehensiveDayDetails(input: {
   const sunTimes = calculateSunTimes(input.year, input.month, input.day, lat, lon, tz, input.elevationMeters);
   const moonTimes = calculateMoonTimes(input.year, input.month, input.day, lat, lon, tz, input.elevationMeters);
 
-  const weekday = Math.floor(sunTimes.sunriseJD + tz / 24 + 1.5) % 7;
+  const effectiveSunriseJD = sunTimes.sunriseJD ?? julianDay(input.year, input.month, input.day, 6 - tz);
+  const effectiveSunsetJD = sunTimes.sunsetJD ?? julianDay(input.year, input.month, input.day, 18 - tz);
+  const weekday = Math.floor(effectiveSunriseJD + tz / 24 + 1.5) % 7;
   const rawTamilDate = getTamilDate(input.year, input.month, input.day, lat, lon, tz, ayanamsaType);
   const tamilDate = {
     ...rawTamilDate,
@@ -286,7 +288,7 @@ export function calculateComprehensiveDayDetails(input: {
       endJD: t1,
       startClock: "00:00",
       endClock: formatClock(t1, tz),
-      isSunriseTithi: sunTimes.sunriseJD >= dayStartJD && sunTimes.sunriseJD <= t1,
+      isSunriseTithi: sunTimes.sunriseJD !== null && sunTimes.sunriseJD >= dayStartJD && sunTimes.sunriseJD <= t1,
     });
 
     dayTithis.push({
@@ -299,7 +301,7 @@ export function calculateComprehensiveDayDetails(input: {
       endJD: t2 < dayEndJD ? t2 : dayEndJD,
       startClock: formatClock(t1, tz),
       endClock: t2 < dayEndJD ? formatClock(t2, tz) : "அடுத்த நாள் வரை",
-      isSunriseTithi: sunTimes.sunriseJD > t1,
+      isSunriseTithi: sunTimes.sunriseJD !== null && sunTimes.sunriseJD > t1,
     });
   } else {
     // Single tithi spans entire day
@@ -343,7 +345,7 @@ export function calculateComprehensiveDayDetails(input: {
       endJD: n1,
       startClock: "00:00",
       endClock: formatClock(n1, tz),
-      isSunriseNakshatra: sunTimes.sunriseJD >= dayStartJD && sunTimes.sunriseJD <= n1,
+      isSunriseNakshatra: sunTimes.sunriseJD !== null && sunTimes.sunriseJD >= dayStartJD && sunTimes.sunriseJD <= n1,
     });
 
     dayNakshatras.push({
@@ -357,7 +359,7 @@ export function calculateComprehensiveDayDetails(input: {
       endJD: n2 < dayEndJD ? n2 : dayEndJD,
       startClock: formatClock(n1, tz),
       endClock: n2 < dayEndJD ? formatClock(n2, tz) : "அடுத்த நாள் வரை",
-      isSunriseNakshatra: sunTimes.sunriseJD > n1,
+      isSunriseNakshatra: sunTimes.sunriseJD !== null && sunTimes.sunriseJD > n1,
     });
   } else {
     dayNakshatras.push({
@@ -640,8 +642,8 @@ export function calculateComprehensiveDayDetails(input: {
   // -------------------------------------------------------------
   const activeNak = dayNakshatras[0] ?? { index: 0, startJD: dayStartJD, endJD: dayEndJD };
   const muhurtha = calculateMuhurthaSpans(
-    sunTimes.sunriseJD,
-    sunTimes.sunsetJD,
+    effectiveSunriseJD,
+    effectiveSunsetJD,
     weekday,
     tz,
     { index: activeNak.index, startJD: activeNak.startJD, endJD: activeNak.endJD }
@@ -678,36 +680,40 @@ export function calculateComprehensiveDayDetails(input: {
   const rawTimeline: Array<TimelineEvent & { sortMinutes: number }> = [];
 
   // Sunrise
-  const sRiseParsed = clockToFraction(formatClock(sunTimes.sunriseJD, tz));
-  rawTimeline.push({
-    timeClock: formatClock(sunTimes.sunriseJD, tz),
-    hour: sRiseParsed.hour,
-    minute: sRiseParsed.minute,
-    fractionOfDay: sRiseParsed.fraction,
-    titleTa: "சூரியோதயம்",
-    titleEn: "Sunrise",
-    descTa: "பகல்பொழுது ஆரம்பம் மற்றும் சூரிய உதய வேளை",
-    descEn: "Astronomical sunrise with atmospheric refraction",
-    type: "sunrise",
-    nature: "auspicious",
-    sortMinutes: sRiseParsed.hour * 60 + sRiseParsed.minute,
-  });
+  if (sunTimes.sunriseJD !== null) {
+    const sRiseParsed = clockToFraction(formatClock(sunTimes.sunriseJD, tz));
+    rawTimeline.push({
+      timeClock: formatClock(sunTimes.sunriseJD, tz),
+      hour: sRiseParsed.hour,
+      minute: sRiseParsed.minute,
+      fractionOfDay: sRiseParsed.fraction,
+      titleTa: "சூரியோதயம்",
+      titleEn: "Sunrise",
+      descTa: "பகல்பொழுது ஆரம்பம் மற்றும் சூரிய உதய வேளை",
+      descEn: "Astronomical sunrise with atmospheric refraction",
+      type: "sunrise",
+      nature: "auspicious",
+      sortMinutes: sRiseParsed.hour * 60 + sRiseParsed.minute,
+    });
+  }
 
   // Sunset
-  const sSetParsed = clockToFraction(formatClock(sunTimes.sunsetJD, tz));
-  rawTimeline.push({
-    timeClock: formatClock(sunTimes.sunsetJD, tz),
-    hour: sSetParsed.hour,
-    minute: sSetParsed.minute,
-    fractionOfDay: sSetParsed.fraction,
-    titleTa: "சூரிய அஸ்தமனம்",
-    titleEn: "Sunset",
-    descTa: "சாயங்கால பிரதோஷ வேளை ஆரம்பம்",
-    descEn: "Astronomical sunset and twilight",
-    type: "sunset",
-    nature: "neutral",
-    sortMinutes: sSetParsed.hour * 60 + sSetParsed.minute,
-  });
+  if (sunTimes.sunsetJD !== null) {
+    const sSetParsed = clockToFraction(formatClock(sunTimes.sunsetJD, tz));
+    rawTimeline.push({
+      timeClock: formatClock(sunTimes.sunsetJD, tz),
+      hour: sSetParsed.hour,
+      minute: sSetParsed.minute,
+      fractionOfDay: sSetParsed.fraction,
+      titleTa: "சூரிய அஸ்தமனம்",
+      titleEn: "Sunset",
+      descTa: "சாயங்கால பிரதோஷ வேளை ஆரம்பம்",
+      descEn: "Astronomical sunset and twilight",
+      type: "sunset",
+      nature: "neutral",
+      sortMinutes: sSetParsed.hour * 60 + sSetParsed.minute,
+    });
+  }
 
   // Moonrise if within today
   if (moonTimes.moonriseJD) {
@@ -871,10 +877,10 @@ export function calculateComprehensiveDayDetails(input: {
   // -------------------------------------------------------------
   // 10. COMPATIBLE EVENT PANCHANGAM AT SUNRISE
   // -------------------------------------------------------------
-  const tithiInterval = getTithiInterval(sunTimes.sunriseJD, tz);
-  const nakInterval = getNakshatraInterval(sunTimes.sunriseJD, tz, ayanamsaType);
-  const yogaInterval = getYogaInterval(sunTimes.sunriseJD, tz, ayanamsaType);
-  const karanaInterval = getKaranaInterval(sunTimes.sunriseJD, tz);
+  const tithiInterval = getTithiInterval(effectiveSunriseJD, tz);
+  const nakInterval = getNakshatraInterval(effectiveSunriseJD, tz, ayanamsaType);
+  const yogaInterval = getYogaInterval(effectiveSunriseJD, tz, ayanamsaType);
+  const karanaInterval = getKaranaInterval(effectiveSunriseJD, tz);
 
   return {
     date: dateStr,
@@ -882,8 +888,8 @@ export function calculateComprehensiveDayDetails(input: {
     weekdayNameTa: WEEKDAYS_TA[weekday]!,
     weekdayNameEn: WEEKDAYS_EN[weekday]!,
     tamilDate,
-    sunriseClock: formatClock(sunTimes.sunriseJD, tz),
-    sunsetClock: formatClock(sunTimes.sunsetJD, tz),
+    sunriseClock: sunTimes.sunriseJD !== null ? formatClock(sunTimes.sunriseJD, tz) : "இந்த நாளுக்கான சூரிய உதயம் இல்லை",
+    sunsetClock: sunTimes.sunsetJD !== null ? formatClock(sunTimes.sunsetJD, tz) : "இந்த நாளுக்கான சூரிய அஸ்தமனம் இல்லை",
     moonriseClock: moonTimes.moonriseJD ? formatClock(moonTimes.moonriseJD, tz) : "தெரியவில்லை",
     moonsetClock: moonTimes.moonsetJD ? formatClock(moonTimes.moonsetJD, tz) : "தெரியவில்லை",
     sunriseJD: sunTimes.sunriseJD,

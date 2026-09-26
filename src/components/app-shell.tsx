@@ -30,11 +30,12 @@ import { CodepackrFamilyBar } from "@/components/CodepackrFamilyBar";
 
 // Primary Navigation (Core Vedic Astrological Services)
 const PRIMARY_NAV: { id: Page; labelKey: string; shortTa: string; shortEn: string; icon: typeof Compass }[] = [
-  { id: "jathagam", labelKey: "navChart", shortTa: "ஜாதகம்", shortEn: "Horoscope", icon: Compass },
-  { id: "porutham", labelKey: "navPorutham", shortTa: "பொருத்தம்", shortEn: "Porutham", icon: HeartHandshake },
-  { id: "panchangam", labelKey: "navPanchang", shortTa: "பஞ்சாங்கம்", shortEn: "Panchangam", icon: CalendarDays },
-  { id: "biodata", labelKey: "navBiodata", shortTa: "பயோடேட்டா", shortEn: "Biodata", icon: FileText },
-  { id: "rasipalan", labelKey: "navRasiPalan", shortTa: "ராசி பலன்", shortEn: "Rasi Palan", icon: Sparkles },
+  { id: "home", labelKey: "navHome", shortTa: "முகப்பு", shortEn: "Home", icon: Compass },
+  { id: "jathagam", labelKey: "navChart", shortTa: "ஜாதகம்", shortEn: "Horoscope", icon: FileText },
+  { id: "tamil-calendar", labelKey: "navCalendar", shortTa: "தமிழ் காலண்டர்", shortEn: "Tamil Calendar", icon: CalendarDays },
+  { id: "panchangam", labelKey: "navPanchang", shortTa: "பஞ்சாங்கம்", shortEn: "Panchangam", icon: Clock },
+  { id: "forecast", labelKey: "navForecast", shortTa: "பலன்கள்", shortEn: "Forecast", icon: TrendingUp },
+  { id: "porutham", labelKey: "navPorutham", shortTa: "திருமணம்", shortEn: "Porutham", icon: HeartHandshake },
 ];
 
 // Secondary / Additional Tools (Organized in "More" Dropdown)
@@ -46,6 +47,22 @@ const MORE_NAV: {
   descEn: string;
   icon: typeof Compass;
 }[] = [
+  {
+    id: "biodata",
+    titleTa: "ஜோதிட பயோடேட்டா",
+    titleEn: "Astro Biodata Maker",
+    descTa: "திருமண வரன் பயோடேட்டா & PDF ஏற்றுமதி",
+    descEn: "Matrimonial horoscope biodata maker with PDF",
+    icon: FileText,
+  },
+  {
+    id: "rasipalan",
+    titleTa: "ராசி பலன்",
+    titleEn: "Daily Rasi Palan",
+    descTa: "12 ராசிகளுக்கான தினசரி கிரக நிலை & பலன்கள்",
+    descEn: "Daily transit horoscope for all 12 zodiac signs",
+    icon: Sparkles,
+  },
   {
     id: "chandrashtama",
     titleTa: "சந்திராஷ்டமம்",
@@ -111,36 +128,12 @@ const MORE_NAV: {
     icon: BookOpen,
   },
   {
-    id: "tamil-calendar",
-    titleTa: "தமிழ் நாட்காட்டி",
-    titleEn: "Tamil Solar Calendar",
-    descTa: "மாத சங்கிராந்தி, 60 வருட சம்வத்ஸரம் & தேதி மாற்றி",
-    descEn: "Solar ingress, 60-year Samvatsara & date converter",
-    icon: CalendarDays,
-  },
-  {
-    id: "forecast",
-    titleTa: "வருட பலன்கள் (முன்னறிவிப்பு)",
-    titleEn: "Multi-Year Forecast",
-    descTa: "1-60 வருட வாழ்க்கை துறைகள் & தசா சான்றுகள்",
-    descEn: "1-60 year life domain forecast & Dasa evidence",
-    icon: TrendingUp,
-  },
-  {
     id: "calculation-method",
     titleTa: "கணித முறை விளக்கம்",
     titleEn: "Calculation Method",
     descTa: "லஹிரி அயனாம்சம், DE440 எஃபிமெரிஸ் & முறைமை",
     descEn: "Lahiri Ayanamsa, DE440 ephemeris & methodology",
     icon: BookOpen,
-  },
-  {
-    id: "astro-validation",
-    titleTa: "வானியல் சரிபார்ப்பு",
-    titleEn: "Astro Validation",
-    descTa: "நாசா JPL DE440 ஒப்பீடு & நேரடி சோதனைகள்",
-    descEn: "Live JPL DE440 benchmarks & test suite",
-    icon: Cpu,
   },
   {
     id: "contact",
@@ -155,8 +148,8 @@ const MORE_NAV: {
 // All Nav Items for Footer Directory
 const ALL_NAV: { id: Page; labelKey: string; icon: typeof Compass }[] = [
   ...PRIMARY_NAV.map((p) => ({ id: p.id, labelKey: p.labelKey, icon: p.icon })),
-  { id: "tamil-calendar", labelKey: "navTamilCalendar", icon: CalendarDays },
-  { id: "forecast", labelKey: "navForecast", icon: TrendingUp },
+  { id: "biodata", labelKey: "navBiodata", icon: FileText },
+  { id: "rasipalan", labelKey: "navRasiPalan", icon: Sparkles },
   { id: "chandrashtama", labelKey: "navChandrashtama", icon: Moon },
   { id: "gochara", labelKey: "navGochara", icon: Orbit },
   { id: "nakshatra", labelKey: "navNakshatraPada", icon: Sparkles },
@@ -166,7 +159,6 @@ const ALL_NAV: { id: Page; labelKey: string; icon: typeof Compass }[] = [
   { id: "numerology", labelKey: "navNumerology", icon: Hash },
   { id: "glossary", labelKey: "navGlossary", icon: BookOpen },
   { id: "calculation-method", labelKey: "navCalculationMethod", icon: BookOpen },
-  { id: "astro-validation", labelKey: "navAstroValidation", icon: Cpu },
   { id: "contact", labelKey: "contactTitle", icon: Mail },
   { id: "disclaimer", labelKey: "navDisclaimer", icon: ShieldCheck },
 ];

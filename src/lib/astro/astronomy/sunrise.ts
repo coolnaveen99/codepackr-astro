@@ -3,23 +3,24 @@ import { Body, MakeTime, Observer, SearchRiseSet, type AstroTime } from "astrono
 import { julianDay, timeFromJD } from "./time";
 
 export type SunTimesResult = {
-  sunriseJD: number;
-  sunsetJD: number;
-  nextSunriseJD: number;
+  sunriseJD: number | null;
+  sunsetJD: number | null;
+  nextSunriseJD: number | null;
   daySpanFraction: number;
   nightSpanFraction: number;
-  status: "exact" | "unavailable";
+  status: "exact" | "unavailable" | "not-applicable";
 };
 
 export type MoonTimesResult = {
   moonriseJD: number | null;
   moonsetJD: number | null;
-  status: "exact" | "unavailable";
+  status: "exact" | "unavailable" | "not-applicable";
 };
 
 /**
  * Calculates exact astronomical sunrise and sunset for a given geographic observer.
  * Incorporates standard atmospheric refraction (34 arcminutes) and solar semi-diameter (16 arcminutes).
+ * Never fabricates 06:00/18:00 values if sunrise/sunset cannot be computed (e.g. polar day/night).
  */
 export function calculateSunTimes(
   year: number,
@@ -42,15 +43,13 @@ export function calculateSunTimes(
   const set = SearchRiseSet(Body.Sun, observer, -1, midday, 1.0);
 
   if (!rise || !set) {
-    // Polar regions or extreme latitudes where sun may not rise/set
-    const fallbackRise = julianDay(year, month, day, 6 - tz);
-    const fallbackSet = julianDay(year, month, day, 18 - tz);
+    // Polar regions or extreme latitudes where sun does not rise or set
     return {
-      sunriseJD: fallbackRise,
-      sunsetJD: fallbackSet,
-      nextSunriseJD: fallbackRise + 1,
-      daySpanFraction: 0.5,
-      nightSpanFraction: 0.5,
+      sunriseJD: null,
+      sunsetJD: null,
+      nextSunriseJD: null,
+      daySpanFraction: 0,
+      nightSpanFraction: 0,
       status: "unavailable",
     };
   }

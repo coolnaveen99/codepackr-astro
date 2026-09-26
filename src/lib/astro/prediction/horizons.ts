@@ -35,6 +35,24 @@ export function generateHorizonForecast(
 
       const domains = evaluateAllDomains(chartData, pStart, pEnd);
 
+      // Compute dynamic supporting & caution factors from actual chart inputs
+      const suppFactors: string[] = [
+        `தசா நாதர் (${chartData.activeMahaDasaLord.toUpperCase()}) அதிபதி பலம்`,
+        chartData.yogas.length > 0
+          ? `${chartData.yogas[0]?.nameTa || "யோகம்"} சாதக தாக்கம்`
+          : "ராசிக்கு சுப கிரகப் பார்வை பலம்",
+      ];
+      const cautFactors: string[] = chartData.sadeSatiActive
+        ? ["சனி கோச்சார நிலை - விழிப்புணர்வும் நிதானமும் தேவை", "விரையச் செலவுகளைக் கட்டுப்படுத்துதல்"]
+        : ["புதிய முதலீடுகளில் நிதானமான திட்டமிடல்", "முக்கிய ஆவணங்களை இருமுறை சரிபார்த்தல்"];
+
+      // Derive supportLevel from evaluated domains
+      const domainList = Object.values(domains);
+      const strongDomains = domainList.filter((d) => d.supportLevel === "strong").length;
+      const cautionDomains = domainList.filter((d) => d.supportLevel === "caution").length;
+      const periodLevel: ForecastPeriod["supportLevel"] =
+        strongDomains >= 4 ? "strong" : cautionDomains >= 4 ? "caution" : strongDomains >= 2 ? "moderate" : "mixed";
+
       periods.push({
         start: pStart,
         end: pEnd,
@@ -42,10 +60,13 @@ export function generateHorizonForecast(
         labelEn: `Month ${m + 1} (${curYear}-${pad(curMonth)})`,
         mahaDasa: chartData.activeMahaDasaLord,
         bhukti: chartData.activeBhuktiLord,
-        majorTransits: ["குரு பெயர்ச்சி", "சனி பார்வை"],
-        supportingFactors: ["சுப தசா பலம்", "ராசி சுபப் பார்வை"],
-        cautionFactors: ["அவசர முடிவுகளைத் தவிர்க்கவும்"],
-        supportLevel: "moderate",
+        majorTransits: [
+          `சந்திரன் மாத சுழற்சி (${curMonth} / 12)`,
+          chartData.sadeSatiActive ? "சனி கோச்சாரம் (விழிப்புணர்வு)" : "குரு சுப பார்வை சுழற்சி",
+        ],
+        supportingFactors: suppFactors,
+        cautionFactors: cautFactors,
+        supportLevel: periodLevel,
         domains,
       });
     }
@@ -66,6 +87,20 @@ export function generateHorizonForecast(
 
       const domains = evaluateAllDomains(chartData, pStart, pEnd);
 
+      const suppFactors: string[] = [
+        `தசா இயக்கம்: ${chartData.activeMahaDasaLord.toUpperCase()}`,
+        `சம்வத்ஸர சுழற்சி (${sam.nameTa}) பாரம்பரிய பலம்`,
+      ];
+      const cautFactors: string[] = chartData.sadeSatiActive
+        ? ["சனி பெயர்ச்சி தாக்கம் - கடமைகள் மற்றும் ஒழுக்கத்திற்கு முக்கியத்துவம்"]
+        : ["நீண்ட கால முதலீடுகளில் விழிப்புணர்வு"];
+
+      const domainList = Object.values(domains);
+      const strongCount = domainList.filter((d) => d.supportLevel === "strong").length;
+      const cautionCount = domainList.filter((d) => d.supportLevel === "caution").length;
+      const periodLevel: ForecastPeriod["supportLevel"] =
+        strongCount >= 4 ? "strong" : cautionCount >= 4 ? "caution" : "moderate";
+
       periods.push({
         start: pStart,
         end: pEnd,
@@ -75,9 +110,9 @@ export function generateHorizonForecast(
         mahaDasa: chartData.activeMahaDasaLord,
         bhukti: chartData.activeBhuktiLord,
         majorTransits: ["குரு மற்றும் சனி பெயர்ச்சி தாக்கம்"],
-        supportingFactors: ["தசா முன்னேற்றம்", "முயற்சிகளுக்கு பலன்"],
-        cautionFactors: ["பொறுமையுடன் செயல்படவும்"],
-        supportLevel: "moderate",
+        supportingFactors: suppFactors,
+        cautionFactors: cautFactors,
+        supportLevel: periodLevel,
         domains,
       });
     }
@@ -109,8 +144,11 @@ export function generateHorizonForecast(
         tamilYear: sam.nameTa,
         mahaDasa: chartData.activeMahaDasaLord,
         majorTransits: ["நீண்ட கால சஞ்சார சுழற்சி"],
-        supportingFactors: ["வாழ்வியல் அனுபவம்", "முதிர்ச்சி மற்றும் நிலைத்தன்மை"],
-        cautionFactors: ["இயற்கை மாற்றங்களை ஏற்று நிதானம் காத்தல்"],
+        supportingFactors: [
+          `தசா கட்டமைப்பு (${chartData.activeMahaDasaLord.toUpperCase()})`,
+          `${sam.nameTa} கால சுழற்சி வளர்ச்சி`,
+        ],
+        cautionFactors: ["இயற்கை பருவ மாற்றங்களை ஏற்று கடமைகளில் நிலைத்திருத்தல்"],
         supportLevel: "moderate",
         domains,
       });

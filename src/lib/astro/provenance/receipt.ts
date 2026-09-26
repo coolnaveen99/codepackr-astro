@@ -18,7 +18,8 @@ export function generateCalculationReceipt(
   latitude: number,
   longitude: number,
   timezone: string,
-  profile: ProductionCalculationProfile
+  profile: ProductionCalculationProfile,
+  locationVerified: boolean = true
 ): { receipt: CalculationReceipt; metadata: CalculationMetadata } {
   const hash = buildCalculationProvenanceHash(
     birthDate,
@@ -35,7 +36,7 @@ export function generateCalculationReceipt(
 
   const receipt: CalculationReceipt = {
     inputVerified: true,
-    locationVerified: true,
+    locationVerified,
     historicalTimezoneResolved: true,
     ephemerisLoaded: true,
     ayanamsaApplied: true,

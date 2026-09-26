@@ -1,5 +1,5 @@
 // Codepackr Astro - Date, Time & City Search Fields
-import { MapPin, Search } from "lucide-react";
+import { CheckCircle2, MapPin, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { BirthInput, City } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
@@ -410,9 +410,19 @@ export function PlaceSearch({
 
   function pickCity(c: City) {
     setQuery(c.n);
-    onChange({ ...value, place: c.n, lat: c.lat, lon: c.lon, tz: c.tz });
+    onChange({
+      ...value,
+      place: c.n,
+      lat: c.lat,
+      lon: c.lon,
+      tz: c.tz,
+      locationVerified: true,
+      ianaTimezone: c.tz === 5.5 ? "Asia/Kolkata" : undefined,
+    });
     setOpen(false);
   }
+
+  const isLocationValid = Boolean(value.place && Number.isFinite(value.lat) && Number.isFinite(value.lon));
 
   return (
     <div ref={boxRef} className="relative">
@@ -432,11 +442,23 @@ export function PlaceSearch({
           }}
         />
       </div>
-      <p className="mt-1.5 flex items-center gap-1 text-xs text-muted">
-        <MapPin className="size-3.5" />
-        {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · UTC{value.tz >= 0 ? "+" : ""}
-        {value.tz}
-      </p>
+      {isLocationValid ? (
+        <div className="mt-2 rounded-lg border border-emerald-200 bg-emerald-50/80 px-2.5 py-1.5 text-xs text-emerald-900 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 font-medium">
+            <CheckCircle2 className="size-3.5 text-emerald-600 shrink-0" />
+            <span>{lang === "ta" ? "✓ இடம் சரிபார்க்கப்பட்டது" : "✓ Location verified"}</span>
+          </div>
+          <span className="text-[11px] font-mono text-emerald-800">
+            {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · UTC{value.tz >= 0 ? "+" : ""}{value.tz}
+          </span>
+        </div>
+      ) : (
+        <p className="mt-1.5 flex items-center gap-1 text-xs text-muted">
+          <MapPin className="size-3.5" />
+          {value.lat.toFixed(2)}°N {value.lon.toFixed(2)}°E · UTC{value.tz >= 0 ? "+" : ""}
+          {value.tz}
+        </p>
+      )}
       {open ? (
         <div className="absolute z-20 mt-1 max-h-56 w-full overflow-auto rounded-md bg-surface py-1 shadow-card">
           {matches.length === 0 ? (

@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from "react";
 
 export type Page =
+  | "home"
   | "jathagam"
   | "porutham"
   | "biodata"
@@ -25,6 +26,7 @@ export type Page =
   | "astro-validation";
 
 export const PAGE_SET = new Set<string>([
+  "home",
   "jathagam",
   "porutham",
   "biodata",
@@ -49,7 +51,8 @@ export const PAGE_SET = new Set<string>([
 ]);
 
 export const PAGE_PATHS: Record<Page, string> = {
-  jathagam: "/",
+  home: "/",
+  jathagam: "/jathagam",
   porutham: "/porutham",
   biodata: "/biodata",
   panchangam: "/panchangam",
@@ -77,9 +80,10 @@ export function getPageUrl(p: Page): string {
 }
 
 export function resolvePageFromUrl(): Page {
-  if (typeof window === "undefined") return "jathagam";
+  if (typeof window === "undefined") return "home";
 
-  const queryPage = new URLSearchParams(window.location.search).get("page");
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryPage = searchParams.get("page");
   if (queryPage && PAGE_SET.has(queryPage)) {
     return queryPage as Page;
   }
@@ -89,17 +93,31 @@ export function resolvePageFromUrl(): Page {
     .replace(/^\/+/, "")
     .replace(/\.html$/i, "")
     .toLowerCase();
-  if (rawPath && PAGE_SET.has(rawPath)) {
-    return rawPath as Page;
+
+  // Legacy root query check (e.g. /?d=20&m=5&y=1990 or /?print=auto)
+  // Safely migrate historical shared links to jathagam page
+  const hasBirthParams = (searchParams.has("d") && searchParams.has("m") && searchParams.has("y")) || searchParams.has("print");
+  if ((rawPath === "" || rawPath === "index") && hasBirthParams) {
+    return "jathagam";
   }
+
+  if (rawPath === "" || rawPath === "index" || rawPath === "home") {
+    return "home";
+  }
+
   if (rawPath === "jathagam" || rawPath === "horoscope") {
     return "jathagam";
   }
+
   if (rawPath === "dev/astro-validation" || rawPath === "astro-validation") {
     return "astro-validation";
   }
 
-  return "jathagam";
+  if (PAGE_SET.has(rawPath)) {
+    return rawPath as Page;
+  }
+
+  return "home";
 }
 
 interface NavContextType {

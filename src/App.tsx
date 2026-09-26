@@ -22,6 +22,7 @@ import { TamilCalendarView } from "@/components/tamil-calendar-view";
 import { ForecastView } from "@/components/forecast-view";
 import { CalculationMethodView } from "@/components/calculation-method-view";
 import { AstroValidationView } from "@/components/astro-validation-view";
+import { HomeToolsView } from "@/components/home-tools-view";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { LangProvider, useLang } from "@/lib/lang";
 import { NavProvider, useNav } from "@/lib/nav";
@@ -136,7 +137,7 @@ function Shell() {
         <CalculationMethodView lang={lang} />
       ) : page === "astro-validation" ? (
         <AstroValidationView lang={lang} />
-      ) : (
+      ) : page === "jathagam" ? (
         <>
           <JathagamDashboard
             lang={lang}
@@ -158,6 +159,8 @@ function Shell() {
             </section>
           ) : null}
         </>
+      ) : (
+        <HomeToolsView lang={lang} />
       )}
     </AppShell>
   );

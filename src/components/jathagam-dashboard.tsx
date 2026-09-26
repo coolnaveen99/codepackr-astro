@@ -53,10 +53,23 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
   const birthTime = result ? `${String(result.input.hour).padStart(2,"0")}:${String(result.input.minute).padStart(2,"0")}` : "";
 
   return <main className="astro-dashboard mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
-    <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center lg:items-center">
+    {/* Breadcrumbs (Section 81) */}
+    <nav className="mb-4 flex items-center gap-2 text-xs font-semibold text-slate-500" aria-label="Breadcrumb">
+      <button
+        type="button"
+        onClick={() => go("home")}
+        className="hover:text-accent transition-colors flex items-center gap-1"
+      >
+        <span>{lang === "ta" ? "முகப்பு" : "Home"}</span>
+      </button>
+      <span className="text-slate-300">/</span>
+      <span className="text-slate-800">{lang === "ta" ? "ஜாதகம்" : "Jathagam"}</span>
+    </nav>
+
+    <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center">
       <div>
         <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-gradient-to-r from-accent/15 to-accent/5 px-3.5 py-1.5 text-[11px] font-bold tracking-wide text-accent shadow-sm"><Sparkles className="size-3.5"/>{lang==="ta"?"✦ பிரீமியம் தமிழ் ஜாதக அறிக்கை":"✦ Premium Tamil Horoscope Report"}</div>
-        <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">{lang==="ta"?"உங்கள் ஜன்ம ஜாதகம் — முழு அறிக்கை":"Your Birth Chart — Complete Report"}</h1>
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">{lang==="ta"?"ஜாதகம் உருவாக்கவும் — முழு அறிக்கை":"Generate Tamil Horoscope — Complete Report"}</h1>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-500 sm:text-base">{lang==="ta"?"பிறந்த நேரத்திலிருந்து ராசி, நவாம்சம், தசை, யோகம் வரை — தெளிவான கணக்கீடு, அழகான அறிக்கை. 1 · 6 · 30 பக்கங்களில் உடனடியாக உருவாக்குங்கள்.":"From birth moment to rasi, navamsa, dasha and yogas — clear calculations, elegant reports. Generate instantly in 1, 6, or 30 pages."}</p>
       </div>
       <RotatingQuote lang={lang} className="w-full lg:max-w-md shrink-0 no-print" />

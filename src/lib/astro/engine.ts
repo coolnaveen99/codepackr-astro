@@ -22,7 +22,7 @@ import {
   type School,
 } from "./constants";
 import { BAV, BAV_FROM, BAV_PLANETS, GANA_NAK, YONI_NAK, YONI_ENEMY, NAT_FRIEND, NAT_ENEMY, SIGN_LORD, type BavPlanet } from "./tables";
-import type { CalculationMetadata, CalculationReceipt, BirthTimeSensitivity, TamilDateResult } from "./types";
+import type { CalculationMetadata, CalculationReceipt, BirthTimeSensitivity, TamilDateResult, BirthTimeQuality } from "./types";
 import { generateCalculationReceipt } from "./provenance/receipt";
 import { DEFAULT_PRODUCTION_PROFILE } from "./provenance/profile";
 import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
@@ -43,6 +43,9 @@ export type BirthInput = {
   lon: number;
   place: string;
   school: School;
+  locationVerified?: boolean;
+  ianaTimezone?: string;
+  birthTimeQuality?: BirthTimeQuality;
 };
 
 export type BodyPos = {
@@ -798,6 +801,9 @@ export function siderealGrahas(jd: number, school: School) {
 }
 
 export function compute(input: BirthInput): ChartResult {
+  if (!input || !Number.isFinite(input.lat) || !Number.isFinite(input.lon)) {
+    throw new Error("Invalid or unverified birth coordinates. Latitude and longitude must be finite numbers.");
+  }
   const hourUT = input.hour + input.minute / 60 - input.tz;
   const jd = julianDay(input.year, input.month, input.day, hourUT);
   const school = input.school;
@@ -935,13 +941,16 @@ export function compute(input: BirthInput): ChartResult {
   const pad = (n: number) => String(n).padStart(2, "0");
   const birthDateStr = `${input.year}-${pad(input.month)}-${pad(input.day)}`;
   const birthTimeStr = `${pad(input.hour)}:${pad(input.minute)}`;
+  const timezoneStr = input.ianaTimezone || `UTC${input.tz >= 0 ? "+" : ""}${input.tz}`;
+  const isLocVerified = input.locationVerified ?? (Number.isFinite(input.lat) && Number.isFinite(input.lon) && input.place?.trim().length > 0);
   const { receipt, metadata } = generateCalculationReceipt(
     birthDateStr,
     birthTimeStr,
     input.lat,
     input.lon,
-    `UTC${input.tz >= 0 ? "+" : ""}${input.tz}`,
-    DEFAULT_PRODUCTION_PROFILE
+    timezoneStr,
+    DEFAULT_PRODUCTION_PROFILE,
+    isLocVerified
   );
 
   const sensitivity = analyzeBirthTimeSensitivity({
