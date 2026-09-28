@@ -172,10 +172,6 @@ export function DateTimeFields({
         day: Math.min(Math.max(value.day || 1, 1), daysInMonth(value.year || 1990, value.month || 1)),
       };
   const months = lang === "ta" ? MONTHS_TA : MONTHS_EN;
-  const monthLimit = !allowFuture && safe.year === today.year ? today.month : 12;
-  const dayLimit = !allowFuture && safe.year === today.year && safe.month === today.month
-    ? Math.min(daysInMonth(safe.year, safe.month), today.day)
-    : daysInMonth(safe.year, safe.month);
   const wantedDay = useRef(value.day);
 
   useEffect(() => {
@@ -229,7 +225,7 @@ export function DateTimeFields({
             <NumericDateInput
               value={safe.month}
               min={1}
-              max={monthLimit}
+              max={12}
               maxLength={2}
               ariaLabel={lang === "ta" ? "மாதம்" : "Month"}
               testId="birth-month"
