@@ -113,8 +113,16 @@ export function updatePageMeta(page: Page, lang: Lang): void {
   setMetaTag("property", "og:description", desc);
   setMetaTag("property", "og:url", canonicalUrl);
   setMetaTag("property", "og:type", "website");
+  setMetaTag("property", "og:site_name", "Codepackr Astro");
+  setMetaTag("property", "og:image", "https://astro.codepackr.com/og.jpg");
+  setMetaTag("property", "og:image:type", "image/jpeg");
+  setMetaTag("property", "og:image:width", "1200");
+  setMetaTag("property", "og:image:height", "630");
+  setMetaTag("property", "og:image:alt", title);
   setMetaTag("name", "twitter:title", title);
   setMetaTag("name", "twitter:description", desc);
+  setMetaTag("name", "twitter:image", "https://astro.codepackr.com/og.jpg");
+  setMetaTag("name", "twitter:image:alt", title);
   updateJsonLd(page, lang, title, desc, canonicalUrl, data);
 }
 
