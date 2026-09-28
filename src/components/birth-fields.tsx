@@ -217,7 +217,7 @@ export function DateTimeFields({
             <NumericDateInput
               value={safe.day}
               min={1}
-              max={dayLimit}
+              max={31}
               maxLength={2}
               ariaLabel={lang === "ta" ? "நாள்" : "Day"}
               testId="birth-day"
