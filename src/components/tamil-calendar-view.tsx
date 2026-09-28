@@ -41,6 +41,7 @@ import { SAMVATSARA_60 } from "@/lib/astro/calendar/samvatsara";
 import { POPULAR_CITIES } from "@/lib/astro/samples";
 import type { Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
+import { NumericDateInput, clampBirthDate } from "@/components/birth-fields";
 
 interface TamilCalendarViewProps {
   lang: Lang;
@@ -270,13 +271,17 @@ export function TamilCalendarView({ lang }: TamilCalendarViewProps) {
             </button>
 
             <div className="flex items-center gap-2">
-              <input
-                type="number"
+              <NumericDateInput
                 value={selDay}
                 min={1}
                 max={31}
-                onChange={(e) => setSelDay(Math.max(1, Math.min(31, Number(e.target.value) || 1)))}
-                className="w-14 rounded-xl border border-slate-200 bg-white py-1.5 px-2 text-center text-xs font-black text-slate-900 shadow-2xs focus:border-blue-500 focus:outline-none"
+                maxLength={2}
+                ariaLabel={isTa ? "நாள்" : "Day"}
+                testId="tamil-calendar-day"
+                onCommit={(nextDay) => {
+                  const next = clampBirthDate(selYear, selMonth, nextDay);
+                  setSelDay(next.day);
+                }}
               />
               <select
                 value={selMonth}
@@ -292,13 +297,17 @@ export function TamilCalendarView({ lang }: TamilCalendarViewProps) {
                   </option>
                 ))}
               </select>
-              <input
-                type="number"
+              <NumericDateInput
                 value={selYear}
                 min={1900}
                 max={2100}
-                onChange={(e) => setSelYear(Number(e.target.value) || 2026)}
-                className="w-20 rounded-xl border border-slate-200 bg-white py-1.5 px-2 text-center text-xs font-black text-slate-900 shadow-2xs focus:border-blue-500 focus:outline-none"
+                maxLength={4}
+                ariaLabel={isTa ? "ஆண்டு" : "Year"}
+                testId="tamil-calendar-year"
+                onCommit={(nextYear) => {
+                  const next = clampBirthDate(nextYear, selMonth, selDay);
+                  setSelYear(next.year); setSelMonth(next.month); setSelDay(next.day);
+                }}
               />
             </div>
 
