@@ -118,7 +118,7 @@ function NumericDateInput({
         "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none",
       )}
       onChange={(e) => {
-        const digits = e.target.value.replace(/\\D/g, "").slice(0, maxLength);
+        const digits = e.target.value.replace(/\D/g, "").slice(0, maxLength);
         setText(digits);
       }}
       onBlur={commit}
@@ -214,15 +214,27 @@ export function DateTimeFields({
         <div className="grid grid-cols-3 gap-2">
           <div>
             <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
-            <FieldSelect value={safe.day} onChange={(v) => setDate({ day: Number(v) })}>
-              {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => <option key={d} value={d}>{d}</option>)}
-            </FieldSelect>
+            <NumericDateInput
+              value={safe.day}
+              min={1}
+              max={dayLimit}
+              maxLength={2}
+              ariaLabel={lang === "ta" ? "நாள்" : "Day"}
+              testId="birth-day"
+              onCommit={(day) => setDate({ day })}
+            />
           </div>
           <div>
             <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
-            <FieldSelect value={safe.month} onChange={(v) => setDate({ month: Number(v) })}>
-              {months.slice(0, monthLimit).map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
-            </FieldSelect>
+            <NumericDateInput
+              value={safe.month}
+              min={1}
+              max={monthLimit}
+              maxLength={2}
+              ariaLabel={lang === "ta" ? "மாதம்" : "Month"}
+              testId="birth-month"
+              onCommit={(month) => setDate({ month })}
+            />
           </div>
           <div>
             <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
