@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { NumericDateInput, clampBirthDate } from "@/components/birth-fields";
 import { buildNumeroProfile, numeroText } from "@/lib/astro/numerology";
 import { t, type Lang } from "@/lib/astro/i18n";
 
@@ -47,33 +48,24 @@ export function NumerologyView({ lang }: { lang: Lang }) {
           <div className="grid grid-cols-3 gap-2">
             <div>
               <Label>{t(lang, "day")}</Label>
-              <Input
-                type="number"
-                min={1}
-                max={31}
-                value={day}
-                onChange={(e) => setDay(Math.min(31, Math.max(1, Number(e.target.value) || 1)))}
-              />
+              <NumericDateInput value={day} min={1} max={31} maxLength={2} ariaLabel={t(lang, "day")} testId="numerology-day"
+                onCommit={(nextDay) => setDay(clampBirthDate(year, month, nextDay).day)} />
             </div>
             <div>
               <Label>{t(lang, "calMonth")}</Label>
-              <Input
-                type="number"
-                min={1}
-                max={12}
-                value={month}
-                onChange={(e) => setMonth(Math.min(12, Math.max(1, Number(e.target.value) || 1)))}
-              />
+              <NumericDateInput value={month} min={1} max={12} maxLength={2} ariaLabel={t(lang, "calMonth")} testId="numerology-month"
+                onCommit={(nextMonth) => {
+                  const next = clampBirthDate(year, nextMonth, day);
+                  setMonth(next.month); setDay(next.day);
+                }} />
             </div>
             <div>
               <Label>{t(lang, "year")}</Label>
-              <Input
-                type="number"
-                min={1900}
-                max={2100}
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value) || 1990)}
-              />
+              <NumericDateInput value={year} min={1900} max={2100} maxLength={4} ariaLabel={t(lang, "year")} testId="numerology-year"
+                onCommit={(nextYear) => {
+                  const next = clampBirthDate(nextYear, month, day);
+                  setYear(next.year); setMonth(next.month); setDay(next.day);
+                }} />
             </div>
           </div>
           <Button type="submit" size="lg" className="w-full sm:w-auto">
