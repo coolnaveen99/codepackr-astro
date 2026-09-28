@@ -8,6 +8,7 @@ import {
 } from "@/lib/astro/nakshatra-tool";
 import { type Lang } from "@/lib/astro/i18n";
 import { cn } from "@/lib/utils";
+import { NumericDateInput, clampBirthDate } from "@/components/birth-fields";
 import {
   Sparkles,
   Compass,
@@ -163,34 +164,24 @@ export function NakshatraView({
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
             <div>
               <span className="text-[11px] text-muted block mb-1">{lang === "ta" ? "ஆண்டு" : "Year"}</span>
-              <input
-                type="number"
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-bg px-3 py-1.5 text-sm text-fg"
-              />
+              <NumericDateInput value={year} min={1900} max={2100} maxLength={4} ariaLabel="Year" testId="nakshatra-year"
+                onCommit={(nextYear) => {
+                  const next = clampBirthDate(nextYear, month, day);
+                  setYear(next.year); setMonth(next.month); setDay(next.day);
+                }} />
             </div>
             <div>
               <span className="text-[11px] text-muted block mb-1">{lang === "ta" ? "மாதம்" : "Month"}</span>
-              <input
-                type="number"
-                min={1}
-                max={12}
-                value={month}
-                onChange={(e) => setMonth(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-bg px-3 py-1.5 text-sm text-fg"
-              />
+              <NumericDateInput value={month} min={1} max={12} maxLength={2} ariaLabel="Month" testId="nakshatra-month"
+                onCommit={(nextMonth) => {
+                  const next = clampBirthDate(year, nextMonth, day);
+                  setMonth(next.month); setDay(next.day);
+                }} />
             </div>
             <div>
               <span className="text-[11px] text-muted block mb-1">{lang === "ta" ? "நாள்" : "Day"}</span>
-              <input
-                type="number"
-                min={1}
-                max={31}
-                value={day}
-                onChange={(e) => setDay(Number(e.target.value))}
-                className="w-full rounded-lg border border-border bg-bg px-3 py-1.5 text-sm text-fg"
-              />
+              <NumericDateInput value={day} min={1} max={31} maxLength={2} ariaLabel="Day" testId="nakshatra-day"
+                onCommit={(nextDay) => setDay(clampBirthDate(year, month, nextDay).day)} />
             </div>
             <div>
               <span className="text-[11px] text-muted block mb-1">{lang === "ta" ? "மணி (0-23)" : "Hour"}</span>
