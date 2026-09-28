@@ -115,6 +115,10 @@ function YearInput({
         "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none")}
       onChange={(e) => handleChange(e.target.value)}
       onBlur={commitOnBlur}
+      onBeforeInput={(e) => {
+        if (e.data && /\\D/.test(e.data)) e.preventDefault();
+        if (e.data && text.length >= 4) e.preventDefault();
+      }}
       onFocus={(e) => e.currentTarget.select()}
       onKeyDown={(e) => {
         if (e.key === "ArrowUp") { e.preventDefault(); onCommit(clamp(year + 1)); }
