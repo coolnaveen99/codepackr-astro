@@ -8,6 +8,7 @@ import {
 } from "@/lib/astro/nazhigai";
 import { POPULAR_CITIES } from "@/lib/astro/samples";
 import { type Lang } from "@/lib/astro/i18n";
+import { NumericDateInput, clampBirthDate } from "@/components/birth-fields";
 import { cn } from "@/lib/utils";
 import {
   Clock,
@@ -118,28 +119,18 @@ export function NazhigaiView({ lang }: { lang: Lang }) {
                   {lang === "ta" ? "பிறந்த / விரும்பிய தேதி" : "Date"}
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
-                  <input
-                    type="number"
-                    value={year}
-                    onChange={(e) => setYear(Number(e.target.value))}
-                    className="rounded-lg border border-border bg-bg px-2 py-1.5 text-xs text-fg"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={12}
-                    value={month}
-                    onChange={(e) => setMonth(Number(e.target.value))}
-                    className="rounded-lg border border-border bg-bg px-2 py-1.5 text-xs text-fg"
-                  />
-                  <input
-                    type="number"
-                    min={1}
-                    max={31}
-                    value={day}
-                    onChange={(e) => setDay(Number(e.target.value))}
-                    className="rounded-lg border border-border bg-bg px-2 py-1.5 text-xs text-fg"
-                  />
+                  <NumericDateInput value={year} min={1900} max={2100} maxLength={4} ariaLabel="Year" testId="nazhigai-year"
+                    onCommit={(nextYear) => {
+                      const next = clampBirthDate(nextYear, month, day);
+                      setYear(next.year); setMonth(next.month); setDay(next.day);
+                    }} />
+                  <NumericDateInput value={month} min={1} max={12} maxLength={2} ariaLabel="Month" testId="nazhigai-month"
+                    onCommit={(nextMonth) => {
+                      const next = clampBirthDate(year, nextMonth, day);
+                      setMonth(next.month); setDay(next.day);
+                    }} />
+                  <NumericDateInput value={day} min={1} max={31} maxLength={2} ariaLabel="Day" testId="nazhigai-day"
+                    onCommit={(nextDay) => setDay(clampBirthDate(year, month, nextDay).day)} />
                 </div>
               </div>
 
