@@ -1,3 +1,4 @@
+// Codepackr Astro - shared editable date/time inputs
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { BirthInput } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
@@ -5,64 +6,31 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 export const MONTHS_TA = [
-  "ஜனவரி",
-  "பிப்ரவரி",
-  "மார்ச்",
-  "ஏப்ரல்",
-  "மே",
-  "ஜூன்",
-  "ஜூலை",
-  "ஆகஸ்ட்",
-  "செப்டம்பர்",
-  "அக்டோபர்",
-  "நவம்பர்",
-  "டிசம்பர்",
+  "ஜனவரி","பிப்ரவரி","மார்ச்","ஏப்ரல்","மே","ஜூன்",
+  "ஜூலை","ஆகஸ்ட்","செப்டம்பர்","அக்டோபர்","நவம்பர்","டிசம்பர்",
 ];
 export const MONTHS_EN = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December",
 ];
 
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
-const DIM = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+const DIM = [31,28,31,30,31,30,31,31,30,31,30,31];
 export const MIN_BIRTH_YEAR = 1900;
 
 export function todayParts(now = new Date()) {
-  return {
-    year: now.getFullYear(),
-    month: now.getMonth() + 1,
-    day: now.getDate(),
-  };
+  return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
 }
-
 export function isLeapYear(year: number) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
-
 export function daysInMonth(year: number, month: number) {
   const m = Math.min(Math.max(month | 0, 1), 12);
-  if (m === 2) return isLeapYear(year) ? 29 : 28;
-  return DIM[m - 1]!;
+  return m === 2 ? (isLeapYear(year) ? 29 : 28) : DIM[m - 1]!;
 }
-
 export function clampBirthDate(
-  year: number,
-  month: number,
-  day: number,
-  now = new Date(),
-  allowFuture = false,
+  year: number, month: number, day: number, now = new Date(), allowFuture = false,
 ) {
   const today = todayParts(now);
   const maxYear = allowFuture ? today.year + 2 : today.year;
@@ -77,79 +45,58 @@ export function clampBirthDate(
   const d = Math.min(Math.max(Math.trunc(Number(day)) || 1, 1), maxD);
   return { year: y, month: m, day: d };
 }
-
 export function to12(hour24: number) {
   const ampm = hour24 < 12 ? "AM" : "PM";
   const h = hour24 % 12 === 0 ? 12 : hour24 % 12;
   return { h, ampm: ampm as "AM" | "PM" };
 }
-
 export function to24(h12: number, ampm: "AM" | "PM") {
-  if (ampm === "AM") return h12 === 12 ? 0 : h12;
-  return h12 === 12 ? 12 : h12 + 12;
+  return ampm === "AM" ? (h12 === 12 ? 0 : h12) : (h12 === 12 ? 12 : h12 + 12);
 }
 
 export function FieldSelect({
-  id,
-  value,
-  onChange,
-  children,
-  className,
+  id, value, onChange, children, className,
 }: {
-  id?: string;
-  value: string | number;
-  onChange: (v: string) => void;
-  children: ReactNode;
-  className?: string;
+  id?: string; value: string | number; onChange: (v: string) => void; children: ReactNode; className?: string;
 }) {
   return (
-    <select
-      id={id}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "h-11 w-full rounded-md bg-surface px-2 text-sm text-fg shadow-card",
-        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none",
-        className,
-      )}
-    >
+    <select id={id} value={value} onChange={(e) => onChange(e.target.value)}
+      className={cn("h-11 w-full rounded-md bg-surface px-2 text-sm text-fg shadow-card",
+        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none", className)}>
       {children}
     </select>
   );
 }
 
 function YearInput({
-  year,
-  min,
-  max,
-  onCommit,
-}: {
-  year: number;
-  min: number;
-  max: number;
-  onCommit: (year: number) => void;
-}) {
+  year, min, max, onCommit,
+}: { year: number; min: number; max: number; onCommit: (year: number) => void }) {
   const [text, setText] = useState(String(year));
 
-  useEffect(() => {
-    setText(String(year));
-  }, [year]);
+  useEffect(() => setText(String(year)), [year]);
 
-  function clamp(n: number) {
-    return Math.min(Math.max(n, min), max);
+  function clamp(n: number) { return Math.min(Math.max(n, min), max); }
+
+  function handleChange(raw: string) {
+    const digits = raw.replace(/\D/g, "").slice(0, 4);
+    setText(digits);
+    // Important: do not commit while the user is editing an incomplete year.
+    // This keeps backspace/delete usable instead of immediately restoring 1990.
+    if (digits.length === 4) {
+      const n = Number(digits);
+      if (Number.isFinite(n)) onCommit(clamp(n));
+    }
   }
 
-  function commitDigits(raw: string) {
-    if (raw.length !== 4) {
-      setText(String(year));
-      return;
+  function commitOnBlur() {
+    if (text.length === 4) {
+      const n = Number(text);
+      if (Number.isFinite(n)) {
+        onCommit(clamp(n));
+        return;
+      }
     }
-    const n = Number(raw);
-    if (!Number.isFinite(n)) {
-      setText(String(year));
-      return;
-    }
-    onCommit(clamp(n));
+    setText(String(year));
   }
 
   return (
@@ -164,49 +111,25 @@ function YearInput({
       value={text}
       placeholder="1990"
       data-testid="birth-year"
-      className={cn(
-        "h-11 w-full rounded-md bg-surface px-2 text-center text-sm tabular-nums text-fg shadow-card",
-        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none",
-      )}
-      onChange={(e) => {
-        const digits = e.target.value.replace(/\D/g, "").slice(0, 4);
-        setText(digits);
-        if (digits.length === 4) {
-          const n = Number(digits);
-          if (Number.isFinite(n)) onCommit(clamp(n));
-        }
-      }}
-      onBlur={() => commitDigits(text)}
+      className={cn("h-11 w-full rounded-md bg-surface px-2 text-center text-sm tabular-nums text-fg shadow-card",
+        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none")}
+      onChange={(e) => handleChange(e.target.value)}
+      onBlur={commitOnBlur}
       onFocus={(e) => e.currentTarget.select()}
       onKeyDown={(e) => {
-        if (e.key === "ArrowUp") {
-          e.preventDefault();
-          onCommit(clamp(year + 1));
-        } else if (e.key === "ArrowDown") {
-          e.preventDefault();
-          onCommit(clamp(year - 1));
-        }
+        if (e.key === "ArrowUp") { e.preventDefault(); onCommit(clamp(year + 1)); }
+        else if (e.key === "ArrowDown") { e.preventDefault(); onCommit(clamp(year - 1)); }
       }}
     />
   );
 }
 
 export function DateTimeFields({
-  lang,
-  value,
-  onChange,
-  allowFuture = false,
-}: {
-  lang: Lang;
-  value: BirthInput;
-  onChange: (next: BirthInput) => void;
-  allowFuture?: boolean;
-}) {
+  lang, value, onChange, allowFuture = false,
+}: { lang: Lang; value: BirthInput; onChange: (next: BirthInput) => void; allowFuture?: boolean }) {
   const clock = to12(value.hour);
   const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => {
-    setNow(new Date());
-  }, []);
+  useEffect(() => { setNow(new Date()); }, []);
   const today = now ? todayParts(now) : { year: 2099, month: 12, day: 31 };
   const maxYear = allowFuture ? today.year + 2 : today.year;
   const safe = now
@@ -214,35 +137,26 @@ export function DateTimeFields({
       ? {
           year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), maxYear),
           month: Math.min(Math.max(value.month || 1, 1), 12),
-          day: Math.min(
-            Math.max(value.day || 1, 1),
-            daysInMonth(value.year || 1990, value.month || 1),
-          ),
+          day: Math.min(Math.max(value.day || 1, 1), daysInMonth(value.year || 1990, value.month || 1)),
         }
       : clampBirthDate(value.year, value.month, value.day, now)
     : {
         year: Math.min(Math.max(value.year || 1990, MIN_BIRTH_YEAR), maxYear),
         month: Math.min(Math.max(value.month || 1, 1), 12),
-        day: Math.min(
-          Math.max(value.day || 1, 1),
-          daysInMonth(value.year || 1990, value.month || 1),
-        ),
+        day: Math.min(Math.max(value.day || 1, 1), daysInMonth(value.year || 1990, value.month || 1)),
       };
   const months = lang === "ta" ? MONTHS_TA : MONTHS_EN;
   const monthLimit = !allowFuture && safe.year === today.year ? today.month : 12;
-  const dayLimit =
-    !allowFuture && safe.year === today.year && safe.month === today.month
-      ? Math.min(daysInMonth(safe.year, safe.month), today.day)
-      : daysInMonth(safe.year, safe.month);
+  const dayLimit = !allowFuture && safe.year === today.year && safe.month === today.month
+    ? Math.min(daysInMonth(safe.year, safe.month), today.day)
+    : daysInMonth(safe.year, safe.month);
   const wantedDay = useRef(value.day);
 
   useEffect(() => {
     if (!now) return;
     if (allowFuture) {
       const maxD = daysInMonth(safe.year, safe.month);
-      if (safe.day > maxD) {
-        onChange({ ...value, year: safe.year, month: safe.month, day: maxD });
-      }
+      if (safe.day > maxD) onChange({ ...value, year: safe.year, month: safe.month, day: maxD });
       return;
     }
     if (safe.year !== value.year || safe.month !== value.month || safe.day !== value.day) {
@@ -253,11 +167,8 @@ export function DateTimeFields({
   function setDate(patch: Partial<Pick<BirthInput, "year" | "month" | "day">>) {
     if (patch.day != null) wantedDay.current = patch.day;
     const next = clampBirthDate(
-      patch.year ?? value.year,
-      patch.month ?? value.month,
-      patch.day ?? wantedDay.current,
-      now ?? new Date(),
-      allowFuture,
+      patch.year ?? value.year, patch.month ?? value.month, patch.day ?? wantedDay.current,
+      now ?? new Date(), allowFuture,
     );
     if (next.year === value.year && next.month === value.month && next.day === value.day) return;
     onChange({ ...value, ...next });
@@ -269,39 +180,20 @@ export function DateTimeFields({
         <Label>{t(lang, "date")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
-              {t(lang, "day")}
-            </span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
             <FieldSelect value={safe.day} onChange={(v) => setDate({ day: Number(v) })}>
-              {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
+              {Array.from({ length: dayLimit }, (_, i) => i + 1).map((d) => <option key={d} value={d}>{d}</option>)}
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
-              {t(lang, "calMonth")}
-            </span>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
             <FieldSelect value={safe.month} onChange={(v) => setDate({ month: Number(v) })}>
-              {months.slice(0, monthLimit).map((m, i) => (
-                <option key={m} value={i + 1}>
-                  {m}
-                </option>
-              ))}
+              {months.slice(0, monthLimit).map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
-              {t(lang, "year")}
-            </span>
-            <YearInput
-              year={safe.year}
-              min={MIN_BIRTH_YEAR}
-              max={maxYear}
-              onCommit={(year) => setDate({ year })}
-            />
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
+            <YearInput year={safe.year} min={MIN_BIRTH_YEAR} max={maxYear} onCommit={(year) => setDate({ year })} />
           </div>
         </div>
         <p className="mt-1.5 text-xs text-muted">{t(lang, "dateHint")}</p>
@@ -310,46 +202,20 @@ export function DateTimeFields({
         <Label>{t(lang, "time")}</Label>
         <div className="grid grid-cols-3 gap-2">
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
-              {t(lang, "hour")}
-            </span>
-            <FieldSelect
-              value={clock.h}
-              onChange={(v) => onChange({ ...value, hour: to24(Number(v), clock.ampm) })}
-            >
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {h}
-                </option>
-              ))}
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "hour")}</span>
+            <FieldSelect value={clock.h} onChange={(v) => onChange({ ...value, hour: to24(Number(v), clock.ampm) })}>
+              {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
             </FieldSelect>
           </div>
           <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">
-              {t(lang, "minute")}
-            </span>
-            <FieldSelect
-              value={value.minute}
-              onChange={(v) => onChange({ ...value, minute: Number(v) })}
-            >
-              {MINUTES.map((m) => (
-                <option key={m} value={m}>
-                  {String(m).padStart(2, "0")}
-                </option>
-              ))}
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "minute")}</span>
+            <FieldSelect value={value.minute} onChange={(v) => onChange({ ...value, minute: Number(v) })}>
+              {MINUTES.map((m) => <option key={m} value={m}>{String(m).padStart(2, "0")}</option>)}
             </FieldSelect>
           </div>
           <div>
-            <span
-              className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate"
-              title={lang === "ta" ? "முற்பகல் / பிற்பகல் (AM / PM)" : "AM / PM"}
-            >
-              AM / PM
-            </span>
-            <FieldSelect
-              value={clock.ampm}
-              onChange={(v) => onChange({ ...value, hour: to24(clock.h, v as "AM" | "PM") })}
-            >
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate" title={lang === "ta" ? "முற்பகல் / பிற்பகல் (AM / PM)" : "AM / PM"}>AM / PM</span>
+            <FieldSelect value={clock.ampm} onChange={(v) => onChange({ ...value, hour: to24(clock.h, v as "AM" | "PM") })}>
               <option value="AM">{t(lang, "am")}</option>
               <option value="PM">{t(lang, "pm")}</option>
             </FieldSelect>
