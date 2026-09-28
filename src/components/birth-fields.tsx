@@ -68,35 +68,38 @@ export function FieldSelect({
   );
 }
 
-function YearInput({
-  year, min, max, onCommit,
-}: { year: number; min: number; max: number; onCommit: (year: number) => void }) {
-  const [text, setText] = useState(String(year));
+function NumericDateInput({
+  value,
+  max,
+  min = 1,
+  maxLength = 2,
+  ariaLabel,
+  testId,
+  onCommit,
+}: {
+  value: number;
+  min?: number;
+  max: number;
+  maxLength?: number;
+  ariaLabel: string;
+  testId: string;
+  onCommit: (value: number) => void;
+}) {
+  const [text, setText] = useState(String(value));
 
-  useEffect(() => setText(String(year)), [year]);
+  useEffect(() => setText(String(value)), [value]);
 
-  function clamp(n: number) { return Math.min(Math.max(n, min), max); }
-
-  function handleChange(raw: string) {
-    const digits = raw.replace(/\D/g, "").slice(0, 4);
-    setText(digits);
-    // Important: do not commit while the user is editing an incomplete year.
-    // This keeps backspace/delete usable instead of immediately restoring 1990.
-    if (digits.length === 4) {
-      const n = Number(digits);
-      if (Number.isFinite(n)) onCommit(clamp(n));
+  function commit() {
+    if (!text) {
+      setText(String(value));
+      return;
     }
-  }
-
-  function commitOnBlur() {
-    if (text.length === 4) {
-      const n = Number(text);
-      if (Number.isFinite(n)) {
-        onCommit(clamp(n));
-        return;
-      }
+    const n = Number(text);
+    if (!Number.isInteger(n) || n < min || n > max) {
+      setText(String(value));
+      return;
     }
-    setText(String(year));
+    onCommit(n);
   }
 
   return (
@@ -104,26 +107,45 @@ function YearInput({
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"
-      autoComplete="bday-year"
+      autoComplete="off"
       spellCheck={false}
-      maxLength={4}
-      aria-label="Year"
+      maxLength={maxLength}
+      aria-label={ariaLabel}
       value={text}
-      placeholder="1990"
-      data-testid="birth-year"
-      className={cn("h-11 w-full rounded-md bg-surface px-2 text-center text-sm tabular-nums text-fg shadow-card",
-        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none")}
-      onChange={(e) => handleChange(e.target.value)}
-      onBlur={commitOnBlur}
-      onBeforeInput={(e) => {
-        if (e.data && /\\D/.test(e.data)) e.preventDefault();
-        if (e.data && text.length >= 4) e.preventDefault();
+      data-testid={testId}
+      className={cn(
+        "h-11 w-full rounded-md bg-surface px-2 text-center text-sm tabular-nums text-fg shadow-card",
+        "focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:outline-none",
+      )}
+      onChange={(e) => {
+        const digits = e.target.value.replace(/\\D/g, "").slice(0, maxLength);
+        setText(digits);
       }}
+      onBlur={commit}
       onFocus={(e) => e.currentTarget.select()}
       onKeyDown={(e) => {
-        if (e.key === "ArrowUp") { e.preventDefault(); onCommit(clamp(year + 1)); }
-        else if (e.key === "ArrowDown") { e.preventDefault(); onCommit(clamp(year - 1)); }
+        if (e.key === "Enter") {
+          e.preventDefault();
+          commit();
+          e.currentTarget.blur();
+        }
       }}
+    />
+  );
+}
+
+function YearInput({
+  year, min, max, onCommit,
+}: { year: number; min: number; max: number; onCommit: (year: number) => void }) {
+  return (
+    <NumericDateInput
+      value={year}
+      min={min}
+      max={max}
+      maxLength={4}
+      ariaLabel="Year"
+      testId="birth-year"
+      onCommit={onCommit}
     />
   );
 }
@@ -158,25 +180,32 @@ export function DateTimeFields({
 
   useEffect(() => {
     if (!now) return;
-    if (allowFuture) {
-      const maxD = daysInMonth(safe.year, safe.month);
-      if (safe.day > maxD) onChange({ ...value, year: safe.year, month: safe.month, day: maxD });
-      return;
+    const maxD = daysInMonth(safe.year, safe.month);
+    const nextDay = Math.min(safe.day, maxD);
+    if (
+      safe.year !== value.year ||
+      safe.month !== value.month ||
+      nextDay !== value.day
+    ) {
+      onChange({ ...value, year: safe.year, month: safe.month, day: nextDay });
     }
-    if (safe.year !== value.year || safe.month !== value.month || safe.day !== value.day) {
-      onChange({ ...value, year: safe.year, month: safe.month, day: safe.day });
-    }
-  }, [now, safe.year, safe.month, safe.day, value, onChange, allowFuture]);
+  }, [now, safe.year, safe.month, safe.day, value, onChange]);
 
   function setDate(patch: Partial<Pick<BirthInput, "year" | "month" | "day">>) {
     if (patch.day != null) wantedDay.current = patch.day;
+
     const next = clampBirthDate(
-      patch.year ?? value.year, patch.month ?? value.month, patch.day ?? wantedDay.current,
-      now ?? new Date(), allowFuture,
+      patch.year ?? value.year,
+      patch.month ?? value.month,
+      patch.day ?? wantedDay.current,
+      now ?? new Date(),
+      allowFuture,
     );
+
     if (next.year === value.year && next.month === value.month && next.day === value.day) return;
     onChange({ ...value, ...next });
   }
+
 
   return (
     <div className="flex flex-col gap-3">
@@ -230,4 +259,32 @@ export function DateTimeFields({
   );
 }
 
-export { PlaceSearch } from "./place-search-field";
+export { PlaceSearch } from "./place-search-field";          <div>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
+            <NumericDateInput
+              value={safe.day}
+              min={1}
+              max={dayLimit}
+              maxLength={2}
+              ariaLabel={lang === "ta" ? "நாள்" : "Day"}
+              testId="birth-day"
+              onCommit={(day) => setDate({ day })}
+            />
+          </div>
+          <div>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
+            <NumericDateInput
+              value={safe.month}
+              min={1}
+              max={monthLimit}
+              maxLength={2}
+              ariaLabel={lang === "ta" ? "மாதம்" : "Month"}
+              testId="birth-month"
+              onCommit={(month) => setDate({ month })}
+            />
+          </div>
+          <div>
+            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
+            <YearInput year={safe.year} min={MIN_BIRTH_YEAR} max={maxYear} onCommit={(year) => setDate({ year })} />
+          </div>
+
