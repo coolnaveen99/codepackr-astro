@@ -68,7 +68,7 @@ export function FieldSelect({
   );
 }
 
-function NumericDateInput({
+export function NumericDateInput({
   value,
   max,
   min = 1,
