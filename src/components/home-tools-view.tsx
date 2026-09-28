@@ -28,6 +28,7 @@ import {
 import type { Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
 import { HomeHeroPreview } from "@/components/home-hero-preview";
+import { HeroPreviewCards } from "@/components/hero-preview-cards";
 import {
   ASTRO_TOOLS,
   TOOL_CATEGORIES,
@@ -59,6 +60,51 @@ const ICON_MAP: Record<string, typeof Compass> = {
   CheckCircle2,
 };
 
+const MAJOR_POPULAR_CONFIG: Record<
+  string,
+  {
+    badgeTa: string;
+    badgeEn: string;
+    badgeColor: string;
+    iconBg: string;
+    ctaTa: string;
+    ctaEn: string;
+  }
+> = {
+  porutham: {
+    badgeTa: "10 பொருத்தங்கள்",
+    badgeEn: "10 Poruthams",
+    badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    iconBg: "bg-emerald-100 text-emerald-700 group-hover:bg-emerald-600 group-hover:text-white",
+    ctaTa: "பொருத்தம் பார்க்க",
+    ctaEn: "Check Match",
+  },
+  biodata: {
+    badgeTa: "HD PDF அச்சு",
+    badgeEn: "HD PDF Export",
+    badgeColor: "bg-rose-50 text-rose-700 border-rose-200/90",
+    iconBg: "bg-rose-100 text-rose-700 group-hover:bg-rose-600 group-hover:text-white",
+    ctaTa: "பயோடேட்டா செய்ய",
+    ctaEn: "Create Biodata",
+  },
+  jathagam: {
+    badgeTa: "1 · 6 · 30 பக்கங்கள்",
+    badgeEn: "1 · 6 · 30 Pages",
+    badgeColor: "bg-orange-50 text-orange-800 border-orange-200/90",
+    iconBg: "bg-orange-100 text-orange-800 group-hover:bg-accent group-hover:text-white",
+    ctaTa: "ஜாதகம் உருவாக்க",
+    ctaEn: "Create Jathagam",
+  },
+  "tamil-calendar": {
+    badgeTa: "தினசரி பஞ்சாங்கம்",
+    badgeEn: "Daily Panchangam",
+    badgeColor: "bg-amber-50 text-amber-800 border-amber-200/90",
+    iconBg: "bg-amber-100 text-amber-800 group-hover:bg-amber-600 group-hover:text-white",
+    ctaTa: "காலண்டர் திறக்க",
+    ctaEn: "Open Calendar",
+  },
+};
+
 interface HomeToolsViewProps {
   lang: Lang;
 }
@@ -74,7 +120,10 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
   }, [selectedCategory, searchQuery]);
 
   const popularTools = useMemo(() => {
-    return ASTRO_TOOLS.filter((t) => t.popular);
+    const majorIds = ["porutham", "biodata", "jathagam", "tamil-calendar"] as const;
+    return majorIds
+      .map((id) => ASTRO_TOOLS.find((t) => t.id === id))
+      .filter((t): t is AstroTool => !!t);
   }, []);
 
   const scrollToTools = () => {
@@ -88,8 +137,8 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
     <div className="mx-auto w-full max-w-[1440px] px-4 py-5 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
       {/* 1. Hero Section - Compact & Modern High-Tech */}
       <section className="relative overflow-hidden rounded-3xl border border-accent/25 bg-gradient-to-br from-amber-50/80 via-surface to-orange-50/50 p-5 sm:p-7 lg:p-8 shadow-card">
-        <div className="relative z-10 grid gap-6 lg:grid-cols-[1.18fr_0.82fr] lg:items-center">
-        <div className="space-y-3.5 sm:space-y-4">
+        <div className="relative z-10 grid gap-8 lg:grid-cols-12 lg:items-center">
+        <div className="space-y-3.5 sm:space-y-4 lg:col-span-7">
           <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-bold tracking-wide text-accent">
             <Sparkles className="size-3.5" />
             <span>
@@ -165,7 +214,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
             </button>
           </div>
         </div>
-        <HomeHeroPreview lang={lang} />
+        <HeroPreviewCards lang={lang} className="lg:col-span-5" />
         </div>
 
         {/* Decorative background glow */}
@@ -215,23 +264,52 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {popularTools.slice(0, 6).map((tool) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {popularTools.map((tool) => {
+            const config = MAJOR_POPULAR_CONFIG[tool.id];
             const Icon = ICON_MAP[tool.icon] || Compass;
+            const badge = isTa ? config?.badgeTa : config?.badgeEn;
+            const cta = isTa ? config?.ctaTa : config?.ctaEn;
+
             return (
-              <button
+              <div
                 key={tool.id}
-                type="button"
                 onClick={() => go(tool.id as any)}
-                className="group flex flex-col items-center text-center p-4 rounded-xl border border-slate-200 bg-white hover:border-accent/40 hover:shadow-md transition-all active:scale-95"
+                className="group relative flex flex-col justify-between p-5 rounded-2xl border border-slate-200/90 bg-white hover:border-accent/40 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 cursor-pointer shadow-2xs"
               >
-                <span className="flex size-11 items-center justify-center rounded-xl bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white transition-colors mb-2.5">
-                  <Icon className="size-5.5" />
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-slate-900 line-clamp-1 group-hover:text-accent transition-colors">
-                  {isTa ? tool.titleTa : tool.titleEn}
-                </span>
-              </button>
+                <div>
+                  <div className="flex items-center justify-between mb-3.5">
+                    <span
+                      className={`flex size-11 items-center justify-center rounded-xl transition-all duration-200 ${
+                        config?.iconBg ||
+                        "bg-accent/10 text-accent group-hover:bg-accent group-hover:text-white"
+                      }`}
+                    >
+                      <Icon className="size-5.5" />
+                    </span>
+                    {badge && (
+                      <span
+                        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
+                          config?.badgeColor || "bg-accent/10 text-accent border-accent/20"
+                        }`}
+                      >
+                        {badge}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-accent transition-colors mb-1.5 leading-snug">
+                    {isTa ? tool.titleTa : tool.titleEn}
+                  </h3>
+                  <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                    {isTa ? tool.descriptionTa : tool.descriptionEn}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-accent group-hover:text-accent/90">
+                  <span>{cta || (isTa ? "திறக்க" : "Open")}</span>
+                  <ArrowRight className="size-3.5 transition-transform duration-200 group-hover:translate-x-1" />
+                </div>
+              </div>
             );
           })}
         </div>

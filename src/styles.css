@@ -332,3 +332,49 @@
   .astro-traditional-preview table th { padding: 7px 8px; font-weight: 700; }
   .astro-traditional-preview table td { padding: 7px 8px; }
 }
+
+/* Floating Staggered Hero Preview Cards Keyframes & Animations */
+@keyframes floatCard1 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes floatCard2 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes floatCard3 {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-9px); }
+}
+.animate-float-card-1 { animation: floatCard1 5.4s ease-in-out infinite 0s; }
+.animate-float-card-2 { animation: floatCard2 4.8s ease-in-out infinite 0.7s; }
+.animate-float-card-3 { animation: floatCard3 6.2s ease-in-out infinite 1.4s; }
+.animate-float-card-1:hover,
+.animate-float-card-2:hover,
+.animate-float-card-3:hover {
+  animation-play-state: paused !important;
+}
+@keyframes drawChartLine { to { stroke-dashoffset: 0; } }
+@keyframes fadeChartArea { from { opacity: 0; } to { opacity: 1; } }
+.animate-draw-line {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: drawChartLine 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+.animate-fade-chart-area {
+  animation: fadeChartArea 1.2s ease-out 0.4s forwards;
+}
+@media (max-width: 1023px) {
+  .hero-floating-cards { display: none !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-card-1,
+  .animate-float-card-2,
+  .animate-float-card-3,
+  .animate-draw-line,
+  .animate-fade-chart-area {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
