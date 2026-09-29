@@ -8,7 +8,7 @@ interface AstroHeroProps {
 
 /** Unique chart-centric Tamil-first hero — not the shared split + 3-card pattern */
 export function AstroHero({ lang }: AstroHeroProps) {
-  const { navigate } = useNav();
+  const { go } = useNav();
   const isTa = lang === "ta";
 
   return (
@@ -51,7 +51,7 @@ export function AstroHero({ lang }: AstroHeroProps) {
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
-              onClick={() => navigate("jathagam")}
+              onClick={() => go("jathagam")}
               className="inline-flex items-center gap-2 rounded-xl bg-amber-700 px-6 py-3 text-sm font-bold text-white shadow-md shadow-amber-700/25 hover:bg-amber-800 active:scale-95 transition cursor-pointer"
             >
               {isTa ? "ஜாதகம் உருவாக்க" : "Create Jathagam"}
@@ -70,7 +70,7 @@ export function AstroHero({ lang }: AstroHeroProps) {
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             type="button"
-            onClick={() => navigate("jathagam")}
+            onClick={() => go("jathagam")}
             className="rounded-2xl border border-amber-200/80 bg-white/95 p-4 text-left shadow-sm hover:border-amber-400 hover:shadow-md transition cursor-pointer"
           >
             <div className="flex items-center gap-3">
@@ -85,7 +85,7 @@ export function AstroHero({ lang }: AstroHeroProps) {
           </button>
           <button
             type="button"
-            onClick={() => navigate("porutham")}
+            onClick={() => go("porutham")}
             className="rounded-2xl border border-orange-200/80 bg-white/95 p-4 text-left shadow-sm hover:border-orange-400 hover:shadow-md transition cursor-pointer"
           >
             <div className="text-sm font-bold text-slate-900 mb-1">{isTa ? "பொருத்தம்" : "Porutham"}</div>
@@ -98,7 +98,7 @@ export function AstroHero({ lang }: AstroHeroProps) {
           </button>
           <button
             type="button"
-            onClick={() => navigate("daily-rasi")}
+            onClick={() => go("daily-rasi")}
             className="rounded-2xl border border-yellow-200/80 bg-white/95 p-4 text-left shadow-sm hover:border-yellow-400 hover:shadow-md transition cursor-pointer"
           >
             <div className="text-sm font-bold text-slate-900">{isTa ? "தினசரி ராசிபலன்" : "Daily Rasi"}</div>
