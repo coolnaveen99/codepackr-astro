@@ -100,7 +100,7 @@ export function BiodataSheet({
     <div
       ref={sheetRef}
       id="biodata-sheet"
-      className="biodata-sheet relative mx-auto w-full max-w-[210mm] bg-[#fffdfa] text-ink p-4 sm:p-5 shadow-card border border-[#dcd3c4] overflow-hidden print:shadow-none print:border-none print:p-[6mm_8mm] print:m-0"
+      className="biodata-sheet relative mx-auto w-full max-w-[210mm] min-h-[297mm] h-[297mm] bg-[#fffdfa] text-ink p-5 sm:p-6 shadow-card border border-[#dcd3c4] overflow-hidden flex flex-col justify-between print:shadow-none print:border-none print:p-[7mm_9mm] print:m-0 print:h-[297mm] print:min-h-[297mm]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Decorative double border */}
@@ -109,7 +109,7 @@ export function BiodataSheet({
       
       <Watermark />
 
-      <div className="relative z-1 flex flex-col space-y-3 sm:space-y-3.5">
+      <div className="relative z-1 flex flex-col justify-between h-full flex-1 space-y-3 sm:space-y-4">
         {/* Top Auspicious Header */}
         <header className="flex flex-col items-center text-center pb-2 border-b border-accent/30">
           <img
@@ -297,7 +297,7 @@ export function BiodataSheet({
         </section>
 
         {/* Bottom Footer */}
-        <footer className="pt-2 border-t border-accent/25 flex items-center justify-between text-[9.5px] text-muted">
+        <footer className="mt-auto pt-2 border-t border-accent/25 flex items-center justify-between text-[9.5px] text-muted">
           <div className="flex items-center gap-1.5">
             <img src={ganeshSrc} alt="" className="h-3.5 w-auto object-contain" />
             <a

@@ -81,7 +81,7 @@ export function FullReport({
 
   // Render Page Footer on EVERY page with hyperlinked disclaimer
   const renderPageFooter = (pageNum: number) => (
-    <footer className="mt-1 pt-1 border-t border-accent/25 flex items-center justify-between text-[9.5px] text-muted">
+    <footer className="mt-auto pt-1.5 border-t border-accent/25 flex items-center justify-between text-[9.5px] text-muted">
       <div className="flex items-center gap-1.5">
         <img src={ganeshSrc} alt="" className="h-3 w-auto object-contain" />
         <a
@@ -117,7 +117,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 1: ஜாதக முகப்பு & சுருக்கம் (Cover & Primary Astrological Summary) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -235,7 +235,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 2: பிறப்பு பஞ்சாங்க அங்கங்கள் (Panchanga Angas at Birth) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -324,7 +324,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 3: இராசி சக்கரம் & லக்ன பாவங்கள் (D1 Rasi Chart & House Overview) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -389,7 +389,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 4: நவாம்ச சக்கரம் (D9 Navamsa Chart) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -473,7 +473,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 5: முழு கிரக நிலைகள் & தகுதிகள் அட்டவணை (Planetary Dignities Table) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -538,7 +538,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 6: உபகிரகங்கள் & சிறப்புக் லக்னங்கள் (Upagrahas & Special Lagnas) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -608,7 +608,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 7: விரிவான ஷட்பல பலம் (Comprehensive Shadbala Strengths) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -674,7 +674,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 8: இஷ்ட-கஷ்ட பலம், விம்சொபகம் & பாவ பலம் (Ishta/Kashta & Bhava Bala) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -737,7 +737,7 @@ export function FullReport({
         const bA = analysis.bhavas[pair.hA - 1];
         const bB = analysis.bhavas[pair.hB - 1];
         return (
-          <div key={pair.pNum} className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+          <div key={pair.pNum} className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
             <Watermark />
             <div className="relative z-1 flex flex-col justify-between h-full">
               <div>
@@ -808,7 +808,7 @@ export function FullReport({
       {lifeAreas.slice(0, 8).map((area, idx) => {
         const pageNumber = 15 + idx;
         return (
-          <div key={area.id} className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+          <div key={area.id} className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
             <Watermark />
             <div className="relative z-1 flex flex-col justify-between h-full">
               <div>
@@ -841,7 +841,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 23: விம்சொத்தரி தசா-புக்தி 120 ஆண்டு காலவரிசை (120-Year Dasa Timeline) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -900,7 +900,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 24: தற்போதைய தசா-புக்தி விரிவான பலன் (Current Dasa-Bhukti Forecast) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -948,7 +948,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 25: சுப யோகங்கள் விரிவான தொகுப்பு (Exhaustive Yogas Analysis) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -986,7 +986,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 26: தோஷங்கள் & நிவர்த்திகள் (Doshas: Chevvai, Kaal Sarpa, Sade Sati) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -1067,7 +1067,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 27: அஷ்டகவர்க்க அட்டவணை (Ashtakavarga SAV & BAV Tables) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -1130,7 +1130,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 28: கோச்சாரக் கணிப்பு (Gochara Planetary Transits) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -1179,7 +1179,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 29: ஷோடசவர்க்க வர்க்க சக்கரங்கள் (Shodashavarga Divisional Charts) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
@@ -1223,7 +1223,7 @@ export function FullReport({
       {/* ========================================================================= */}
       {/* PAGE 30: பரிகாரங்கள் & பொறுப்புத் துறப்பு (Remedies, Shanti & Disclaimer) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-4 sm:p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>

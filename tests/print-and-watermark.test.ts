@@ -94,11 +94,15 @@ describe("Print & PDF Watermark Validation", () => {
   });
 
   it("validates print and PDF export format parity in shared CSS and export engine", () => {
-    // Both print and PDF export must enforce 210mm width and A4 standards
+    // Both print and PDF export must enforce 210mm width and 297mm A4 standards
     expect(stylesFile).toContain("210mm");
-    expect(stylesFile).toContain("padding: 6mm 8mm");
+    expect(stylesFile).toContain("297mm");
+    expect(stylesFile).toContain("padding: 7mm 9mm");
+    expect(stylesFile).toContain("margin-top: auto");
     expect(pdfExportFile).toContain('cp.style.width = "210mm";');
-    expect(pdfExportFile).toContain('cp.style.padding = "6mm 8mm";');
+    expect(pdfExportFile).toContain('cp.style.height = "297mm";');
+    expect(pdfExportFile).toContain('cp.style.padding = "7mm 9mm";');
+    expect(pdfExportFile).toContain('ft.style.marginTop = "auto";');
     expect(pdfExportFile).toContain('backgroundColor: "#fffdfa"');
   });
 

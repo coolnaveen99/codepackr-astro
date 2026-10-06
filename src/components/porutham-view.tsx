@@ -200,7 +200,7 @@ export function PoruthamView({ lang }: { lang: Lang }) {
           </section>
 
           {/* Printable Footer */}
-          <footer className="mt-4 hidden border-t border-border pt-3 print:flex flex-col gap-2 text-xs text-muted">
+          <footer className="mt-auto hidden border-t border-border pt-3 print:flex flex-col gap-2 text-xs text-muted">
             <div className="rounded border border-border/80 bg-elevated/40 p-2 text-[10px] text-muted text-left leading-relaxed flex items-center justify-between">
               <div>
                 <span className="font-semibold text-ink">{t(lang, "legalDisclaimerTitle")}: </span>
@@ -228,9 +228,9 @@ export function PoruthamView({ lang }: { lang: Lang }) {
             lang={lang}
             newTabUrl="/porutham?print=auto"
           >
-            <div className="relative overflow-hidden w-full max-w-[210mm] mx-auto py-1">
+            <div className="print-page porutham-print-sheet relative overflow-hidden w-full max-w-[210mm] min-h-[297mm] h-[297mm] mx-auto p-4 sm:p-6 bg-[#fffdfa] flex flex-col justify-between">
               <Watermark />
-              <div className="relative z-1">
+              <div className="relative z-1 flex flex-col justify-between h-full flex-1">
                 <div className="flex flex-col items-center justify-center border-b border-border pb-3 text-center">
                   <h2 className="font-display mt-1 text-2xl font-bold text-ink">
                     {t(lang, "poruthamTitle")}
@@ -291,7 +291,7 @@ export function PoruthamView({ lang }: { lang: Lang }) {
                   <span>{t(lang, "pdfDisclaimerReferWeb")}</span>
                 </div>
 
-                <footer className="mt-2 flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
+                <footer className="mt-auto flex items-center justify-between border-t border-border pt-2 text-xs text-muted">
                   <div className="flex items-center gap-2">
                     <div>
                       <span className="font-semibold text-accent">astro.codepackr.com</span>

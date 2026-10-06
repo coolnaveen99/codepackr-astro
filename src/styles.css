@@ -171,33 +171,69 @@
   .biodata-sheet {
     box-sizing: border-box !important;
     box-shadow: none !important;
+    border: none !important;
     width: 210mm !important;
     max-width: 210mm !important;
-    padding: 6mm 8mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    padding: 7mm 9mm !important;
     margin: 0 auto !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
     break-after: avoid !important;
     break-inside: avoid !important;
     position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
     background: #ffffff !important;
   }
   .print-page {
     box-sizing: border-box !important;
     box-shadow: none !important;
+    border: none !important;
     width: 210mm !important;
     max-width: 210mm !important;
-    height: 286mm !important;
-    max-height: 288mm !important;
-    padding: 6mm 8mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    padding: 7mm 9mm !important;
     margin: 0 auto !important;
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     page-break-after: always !important;
     break-after: page !important;
     position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
     overflow: hidden !important;
     background: #ffffff !important;
+  }
+  .print-page > .relative.z-1,
+  .biodata-sheet > .relative.z-1,
+  .astro-export-one-page > .relative.z-1,
+  .astro-export-one-page .astro-traditional-preview,
+  .astro-export-one-page .astro-traditional-preview > .relative.z-1,
+  .porutham-print-sheet,
+  .porutham-print-sheet > .relative.z-1 {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    flex: 1 1 auto !important;
+    min-height: 100% !important;
+    height: 100% !important;
+  }
+  .print-page footer,
+  .biodata-sheet footer,
+  .astro-export-one-page footer,
+  .porutham-print-sheet footer {
+    margin-top: auto !important;
+    padding-top: 6px !important;
+    flex-shrink: 0 !important;
+    width: 100% !important;
   }
   .print-page:last-child {
     page-break-after: auto !important;
@@ -230,10 +266,17 @@
     box-sizing: border-box !important;
     text-align: left !important;
     width: 210mm !important;
-    min-height: 286mm !important;
-    padding: 6mm 8mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    padding: 7mm 9mm !important;
     margin: 0 !important;
     background: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    overflow: hidden !important;
     page-break-after: auto !important;
     break-after: auto !important;
   }
@@ -255,7 +298,7 @@
   #jathagam-export-root .astro-traditional-preview .astro-charts-col > div {
     width: 100% !important;
   }
-  #jathagam-export-root .print-page { text-align: center !important; }
+  #jathagam-export-root .print-page { text-align: left !important; }
   #jathagam-export-root .print-page table,
   #jathagam-export-root .print-page ul,
   #jathagam-export-root .print-page ol { text-align: left !important; }
@@ -276,13 +319,41 @@
   }
   .print-page,
   .biodata-sheet,
-  .astro-export-one-page {
+  .astro-export-one-page,
+  .porutham-print-sheet {
     box-sizing: border-box;
     width: 210mm;
     max-width: 210mm;
+    min-height: 297mm;
+    height: 297mm;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  .print-page > .relative.z-1,
+  .biodata-sheet > .relative.z-1,
+  .astro-export-one-page > .relative.z-1,
+  .astro-export-one-page .astro-traditional-preview,
+  .astro-export-one-page .astro-traditional-preview > .relative.z-1,
+  .porutham-print-sheet > .relative.z-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 1 auto;
+    min-height: 100%;
+    height: 100%;
+  }
+  .print-page footer,
+  .biodata-sheet footer,
+  .astro-export-one-page footer,
+  .porutham-print-sheet footer {
+    margin-top: auto;
+    flex-shrink: 0;
+    width: 100%;
   }
   .astro-export-host {
     position: fixed;

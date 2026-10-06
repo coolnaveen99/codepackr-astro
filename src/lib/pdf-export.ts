@@ -85,7 +85,7 @@ export async function exportElementToPdf(
       onclone: (doc) => {
         // Enforce exact A4 print properties on all pages
         const clonedPages = doc.querySelectorAll<HTMLElement>(
-          ".print-page, .biodata-sheet, .astro-export-one-page"
+          ".print-page, .biodata-sheet, .astro-export-one-page, .porutham-print-sheet"
         );
         clonedPages.forEach((cp) => {
           cp.style.position = "relative";
@@ -96,8 +96,10 @@ export async function exportElementToPdf(
           cp.style.justifyContent = "space-between";
           cp.style.width = "210mm";
           cp.style.maxWidth = "210mm";
-          cp.style.minHeight = "286mm";
-          cp.style.padding = "6mm 8mm";
+          cp.style.height = "297mm";
+          cp.style.minHeight = "297mm";
+          cp.style.maxHeight = "297mm";
+          cp.style.padding = "7mm 9mm";
           cp.style.margin = "0 auto";
           cp.style.border = "none";
           cp.style.boxShadow = "none";
@@ -105,6 +107,30 @@ export async function exportElementToPdf(
           cp.style.background = "#fffdfa";
           cp.style.overflow = "hidden";
           cp.style.visibility = "visible";
+          cp.style.textAlign = "left";
+        });
+
+        // Ensure inner flex wrapper fills the full 297mm parent height
+        const innerWrappers = doc.querySelectorAll<HTMLElement>(
+          ".print-page > .relative.z-1, .biodata-sheet > .relative.z-1, .astro-export-one-page > .relative.z-1, .astro-export-one-page .astro-traditional-preview, .astro-export-one-page .astro-traditional-preview > .relative.z-1, .porutham-print-sheet > .relative.z-1"
+        );
+        innerWrappers.forEach((iw) => {
+          iw.style.display = "flex";
+          iw.style.flexDirection = "column";
+          iw.style.justifyContent = "space-between";
+          iw.style.flex = "1 1 auto";
+          iw.style.height = "100%";
+          iw.style.minHeight = "100%";
+        });
+
+        // Ensure all page footers are anchored to the bottom
+        const footers = doc.querySelectorAll<HTMLElement>(
+          ".print-page footer, .biodata-sheet footer, .astro-export-one-page footer, .porutham-print-sheet footer"
+        );
+        footers.forEach((ft) => {
+          ft.style.marginTop = "auto";
+          ft.style.flexShrink = "0";
+          ft.style.width = "100%";
         });
 
         // Ensure watermark is visible and styled identically

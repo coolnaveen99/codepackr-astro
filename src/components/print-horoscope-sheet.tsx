@@ -78,7 +78,7 @@ export function PrintHoroscopeSheet({
 
   // Common Footer Bar for each page
   const renderPageFooter = (pageNum: number) => (
-    <footer className="mt-2 pt-1 border-t border-accent/25 flex items-center justify-between text-[10px] text-muted">
+    <footer className="mt-auto pt-1.5 border-t border-accent/25 flex items-center justify-between text-[10px] text-muted">
       <div className="flex items-center gap-1.5">
         <img src={ganeshSrc} alt="" className="h-3.5 w-auto object-contain" />
         <a
@@ -112,9 +112,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 1: முதன்மை ஜாதகக் கணிப்பு (Core Charts & Planetary Positions) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               1,
@@ -217,9 +217,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 2: ஜாதகப் பொதுப் பலன்கள் (General Predictions & Bhava Phalan) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               2,
@@ -291,9 +291,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 3: யோகங்கள் & தோஷங்கள் (Auspicious Yogas & Dosha Analysis) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               3,
@@ -415,9 +415,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 4: பிறப்புப் பஞ்சாங்கம் & அஷ்டகவர்க்கம் (Panchangam & Ashtakavarga) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               4,
@@ -531,9 +531,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 5: விம்சோத்தரி தசா புக்தி (Dasa & Bhukti System) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               5,
@@ -666,9 +666,9 @@ export function PrintHoroscopeSheet({
       {/* ========================================================================= */}
       {/* PAGE 6: கோச்சாரம், பரிகாரங்கள் & அதிர்ஷ்டக் குறிப்புகள் (Transits & Remedies) */}
       {/* ========================================================================= */}
-      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none">
+      <div className="print-page relative flex flex-col justify-between overflow-hidden bg-[#fffdfa] border border-[#dcd3c4] p-5 mb-8 print:mb-0 print:border-none min-h-[297mm] h-[297mm]">
         <Watermark />
-        <div className="relative z-1 flex flex-col justify-between h-full">
+        <div className="relative z-1 flex flex-col justify-between h-full flex-1">
           <div>
             {renderGodHeader(
               6,
