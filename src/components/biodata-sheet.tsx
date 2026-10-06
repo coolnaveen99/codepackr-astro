@@ -100,7 +100,7 @@ export function BiodataSheet({
     <div
       ref={sheetRef}
       id="biodata-sheet"
-      className="biodata-sheet relative mx-auto w-full max-w-[210mm] bg-[#fffdfa] text-ink p-4 sm:p-5 shadow-card border border-[#dcd3c4] overflow-hidden"
+      className="biodata-sheet relative mx-auto w-full max-w-[210mm] bg-[#fffdfa] text-ink p-4 sm:p-5 shadow-card border border-[#dcd3c4] overflow-hidden print:shadow-none print:border-none print:p-[6mm_8mm] print:m-0"
       style={{ boxSizing: "border-box" }}
     >
       {/* Decorative double border */}

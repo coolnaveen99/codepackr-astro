@@ -2,6 +2,8 @@ import { useState, type ReactNode } from "react";
 import { BarChart3, BookOpen, Check, FileDown, FileText, Info, Printer, ShieldCheck, Sparkles, UserRound } from "lucide-react";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
+import { exportElementToPdf } from "@/lib/pdf-export";
+import { Watermark } from "@/components/watermark";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
@@ -176,65 +178,11 @@ function reportTitle(mode:ReportMode,lang:Lang) {
 async function exportSelectedPdf(mode:ReportMode,name?:string) {
   const root=document.getElementById("jathagam-export-root");
   if(!root) throw new Error("Jathagam export content is not ready.");
-  await document.fonts?.ready;
-  const images=Array.from(root.querySelectorAll<HTMLImageElement>("img"));
-  await Promise.all(images.map(img=>img.complete?Promise.resolve():new Promise<void>(resolve=>{img.onload=()=>resolve();img.onerror=()=>resolve();})));
-  await new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve())));
-  const pages=(mode==="one"
-    ? [root.querySelector<HTMLElement>(".astro-export-one-page")]
-    : Array.from(root.querySelectorAll<HTMLElement>(".print-page"))).filter((p):p is HTMLElement=>Boolean(p));
-  if(!pages.length) throw new Error("No report pages found.");
-  const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait",compress:true});
-  const margin=5,maxWidth=200,maxHeight=287;
-  for(let i=0;i<pages.length;i++){
-    const page=pages[i];
-    const targetWidth = page.scrollWidth || 794;
-    const canvas=await html2canvas(page,{
-      scale:2,useCORS:true,allowTaint:true,backgroundColor:"#ffffff",logging:false,windowWidth:targetWidth,
-      onclone:(doc)=>{
-        const r=doc.getElementById("jathagam-export-root");
-        if(r){
-          r.style.position="static";
-          r.style.left="0";
-          r.style.top="0";
-          r.style.width="210mm";
-          r.style.maxWidth="210mm";
-          r.style.zIndex="auto";
-          r.style.pointerEvents="auto";
-          r.style.display="block";
-          r.style.visibility="visible";
-        }
-        const clonedPages=doc.querySelectorAll<HTMLElement>(".print-page, .astro-export-one-page");
-        clonedPages.forEach(cp=>{
-          cp.style.position="relative";
-          cp.style.left="0";
-          cp.style.top="0";
-          cp.style.display="block";
-          cp.style.visibility="visible";
-        });
-        const chartCols=doc.querySelectorAll<HTMLElement>(".astro-charts-col");
-        chartCols.forEach(cc=>{
-          cc.style.display="flex";
-          cc.style.flexDirection="column";
-          cc.style.gap="12px";
-          cc.style.width="290px";
-        });
-        const previewBodies=doc.querySelectorAll<HTMLElement>(".astro-preview-body");
-        previewBodies.forEach(pb=>{
-          pb.style.display="grid";
-          pb.style.gridTemplateColumns="minmax(0, 1fr) 290px";
-          pb.style.gap="14px";
-        });
-      }
-    });
-    if(i>0) pdf.addPage();
-    const aspect=canvas.height/canvas.width;
-    let width=maxWidth,height=width*aspect;
-    if(height>maxHeight){height=maxHeight;width=height/aspect;}
-    pdf.addImage(canvas.toDataURL("image/jpeg",0.94),"JPEG",(210-width)/2,margin,width,height,undefined,"FAST");
-  }
   const safeName=(name||"jathagam").trim().replace(/[^a-zA-Z0-9-_]+/g,"-").replace(/^-+|-+$/g,"")||"jathagam";
-  pdf.save(`${safeName}-${mode}-jathagam(astro.codepackr.com).pdf`);
+  await exportElementToPdf(root, {
+    filename: `${safeName}-${mode}-jathagam(astro.codepackr.com).pdf`,
+    title: `${safeName} - ${reportTitle(mode, "ta")}`,
+  });
 }
 
 function ReportCard({mode,selected,onSelect,lang,icon,titleTa,titleEn,descTa,descEn}:{mode:ReportMode;selected:boolean;onSelect:(m:ReportMode)=>void;lang:Lang;icon:ReactNode;titleTa:string;titleEn:string;descTa:string;descEn:string}) {
@@ -247,15 +195,66 @@ function TraditionalPreview({result,lang}:{result:ChartResult;lang:Lang}) {
   const moon=result.list.find(p=>p.id==="moon"); const lagna=result.list.find(p=>p.id==="lagna");
   const sign=(i:number)=>lang==="ta"?SIGNS_TA[i]:SIGNS_EN[i]; const nak=moon?(lang==="ta"?NAK_TA[moon.nak]:NAK_EN[moon.nak]):"—";
   const rows=result.list.filter(p=>p.id!=="lagna").slice(0,9);
-  return <div className="astro-traditional-preview rounded-xl border border-slate-200 bg-white p-3 sm:p-5"><div className="mb-4 border-b border-accent/20 pb-3 text-center"><div className="text-[10px] font-bold uppercase tracking-widest text-accent">{lang==="ta"?"ஜாதகர்":"Jathakar"}</div><div className="mt-1 break-words text-2xl font-extrabold leading-tight text-accent">{result.input.name?.trim()||"—"}</div><div className="mt-1 break-words text-xs text-slate-500">{birthDate} · {birthTime} · {result.input.place}</div></div><div className="astro-preview-body grid gap-4 lg:grid-cols-[1fr_300px]">
-    <div><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{[[lang==="ta"?"பெயர்":"Name",result.input.name||"—"],[lang==="ta"?"பிறந்த தேதி / நேரம்":"Birth date / time",`${birthDate} · ${birthTime}`],[lang==="ta"?"பிறந்த இடம்":"Birth place",result.input.place],[lang==="ta"?"லக்னம்":"Lagna",lagna?sign(lagna.sign):"—"],[lang==="ta"?"சந்திர ராசி":"Moon sign",moon?sign(moon.sign):"—"],[lang==="ta"?"நட்சத்திரம்":"Nakshatra",moon?`${nak} · ${moon.pada}`:"—"]].map(([k,v])=><InfoCell key={String(k)} label={String(k)} value={String(v)}/>)}</div>
-      <div className="mt-3 rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"><InfoCell label={lang==="ta"?"திதி":"Tithi"} value={`${result.pan.paksha==="shukla"?(lang==="ta"?"வளர்பிறை":"Shukla"):(lang==="ta"?"தேய்பிறை":"Krishna")} · ${(lang==="ta"?TITHI_TA:TITHI_EN)[result.pan.tithiIdx]}`}/><InfoCell label={lang==="ta"?"யோகம்":"Yoga"} value={(lang==="ta"?YOGA_TA:YOGA_EN)[result.pan.yogaNum]}/><InfoCell label={lang==="ta"?"கரணம்":"Karana"} value={(lang==="ta"?KARANA_TA:KARANA_EN)[result.pan.karanaIdx]}/><InfoCell label={lang==="ta"?"கிழமை":"Weekday"} value={(lang==="ta"?WEEK_TA:WEEK_EN)[result.weekday]}/><InfoCell label={lang==="ta"?"சூரிய உதயம்":"Sunrise"} value={formatClock(result.sunriseJD,result.input.tz)}/><InfoCell label={lang==="ta"?"சூரிய அஸ்தமனம்":"Sunset"} value={formatClock(result.sunsetJD,result.input.tz)}/></div></div>
-      <div className="mt-3 overflow-hidden rounded-xl border border-slate-200"><div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-xs font-extrabold text-slate-700">{lang==="ta"?"கிரக நிலைகள்":"Planetary Positions"}</div><div className="overflow-x-auto"><table className="w-full min-w-[520px] text-left text-xs"><thead className="bg-white text-[10px] uppercase text-slate-400"><tr><th className="px-3 py-2">{lang==="ta"?"கிரகம்":"Planet"}</th><th>{lang==="ta"?"ராசி":"Sign"}</th><th>{lang==="ta"?"பாகை":"Degree"}</th><th>{lang==="ta"?"நிலை":"Status"}</th></tr></thead><tbody className="divide-y divide-slate-100">{rows.map(p=><tr key={p.id}><td className="px-3 py-2 font-bold text-slate-800">{planetName(p.id,lang)}</td><td>{sign(p.sign)}</td><td>{p.dms}</td><td className="text-slate-500">{p.retrograde?(lang==="ta"?"வக்கிரம்":"Retrograde"):"—"}</td></tr>)}</tbody></table></div></div>
+  return (
+    <div className="astro-traditional-preview relative overflow-hidden rounded-xl border border-slate-200 bg-[#fffdfa] p-3 sm:p-5">
+      <Watermark />
+      <div className="relative z-1">
+        <div className="mb-4 border-b border-accent/20 pb-3 text-center">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-accent">{lang==="ta"?"ஜாதகர்":"Jathakar"}</div>
+          <div className="mt-1 break-words text-2xl font-extrabold leading-tight text-accent">{result.input.name?.trim()||"—"}</div>
+          <div className="mt-1 break-words text-xs text-slate-500">{birthDate} · {birthTime} · {result.input.place}</div>
+        </div>
+        <div className="astro-preview-body grid gap-4 lg:grid-cols-[1fr_300px]">
+          <div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {[[lang==="ta"?"பெயர்":"Name",result.input.name||"—"],[lang==="ta"?"பிறந்த தேதி / நேரம்":"Birth date / time",`${birthDate} · ${birthTime}`],[lang==="ta"?"பிறந்த இடம்":"Birth place",result.input.place],[lang==="ta"?"லக்னம்":"Lagna",lagna?sign(lagna.sign):"—"],[lang==="ta"?"சந்திர ராசி":"Moon sign",moon?sign(moon.sign):"—"],[lang==="ta"?"நட்சத்திரம்":"Nakshatra",moon?`${nak} · ${moon.pada}`:"—"]].map(([k,v])=><InfoCell key={String(k)} label={String(k)} value={String(v)}/>)}
+            </div>
+            <div className="mt-3 rounded-xl border border-accent/20 bg-accent/10 p-3">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <InfoCell label={lang==="ta"?"திதி":"Tithi"} value={`${result.pan.paksha==="shukla"?(lang==="ta"?"வளர்பிறை":"Shukla"):(lang==="ta"?"தேய்பிறை":"Krishna")} · ${(lang==="ta"?TITHI_TA:TITHI_EN)[result.pan.tithiIdx]}`}/>
+                <InfoCell label={lang==="ta"?"யோகம்":"Yoga"} value={(lang==="ta"?YOGA_TA:YOGA_EN)[result.pan.yogaNum]}/>
+                <InfoCell label={lang==="ta"?"கரணம்":"Karana"} value={(lang==="ta"?KARANA_TA:KARANA_EN)[result.pan.karanaIdx]}/>
+                <InfoCell label={lang==="ta"?"கிழமை":"Weekday"} value={(lang==="ta"?WEEK_TA:WEEK_EN)[result.weekday]}/>
+                <InfoCell label={lang==="ta"?"சூரிய உதயம்":"Sunrise"} value={formatClock(result.sunriseJD,result.input.tz)}/>
+                <InfoCell label={lang==="ta"?"சூரிய அஸ்தமனம்":"Sunset"} value={formatClock(result.sunsetJD,result.input.tz)}/>
+              </div>
+            </div>
+            <div className="mt-3 overflow-hidden rounded-xl border border-slate-200">
+              <div className="border-b border-slate-100 bg-slate-50 px-3 py-2 text-xs font-extrabold text-slate-700">{lang==="ta"?"கிரக நிலைகள்":"Planetary Positions"}</div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[520px] text-left text-xs">
+                  <thead className="bg-white text-[10px] uppercase text-slate-400">
+                    <tr><th className="px-3 py-2">{lang==="ta"?"கிரகம்":"Planet"}</th><th>{lang==="ta"?"ராசி":"Sign"}</th><th>{lang==="ta"?"பாகை":"Degree"}</th><th>{lang==="ta"?"நிலை":"Status"}</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {rows.map(p=><tr key={p.id}><td className="px-3 py-2 font-bold text-slate-800">{planetName(p.id,lang)}</td><td>{sign(p.sign)}</td><td>{p.dms}</td><td className="text-slate-500">{p.retrograde?(lang==="ta"?"வக்கிரம்":"Retrograde"):"—"}</td></tr>)}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div className="astro-charts-col flex flex-col gap-3">
+            <div className="w-full rounded-xl border border-accent/20 bg-accent/10 p-3">
+              <div className="mb-2 text-center text-xs font-extrabold text-accent">{lang==="ta"?"ராசி கட்டம்":"Rasi Chart"}</div>
+              <SouthChart positions={result.list} lang={lang}/>
+            </div>
+            <div className="w-full rounded-xl border border-violet-100 bg-violet-50/30 p-3">
+              <div className="mb-2 text-center text-xs font-extrabold text-violet-800">{lang==="ta"?"நவாம்சம் (D9)":"Navamsa (D9)"}</div>
+              <SouthChart positions={result.list} lang={lang} mode="navamsa"/>
+            </div>
+          </div>
+        </div>
+        <footer className="mt-4 border-t border-accent/20 pt-2.5 flex flex-wrap items-center justify-between gap-2 text-[10px] text-slate-500">
+          <div>
+            <span className="font-semibold text-slate-700">{lang === "ta" ? "பொறுப்புத் துறப்பு: " : "Disclaimer: "}</span>
+            <span>{lang === "ta" ? "ஜோதிட முடிவுகள் வழிகாட்டுதலுக்கு மட்டுமே. விவரங்களுக்கு astro.codepackr.com/disclaimer பார்க்கவும்." : "Astrological calculations are for advisory purposes only. Visit astro.codepackr.com/disclaimer."}</span>
+          </div>
+          <div className="font-mono text-slate-400">
+            astro.codepackr.com &bull; CodePackr Astro
+          </div>
+        </footer>
+      </div>
     </div>
-    <div className="astro-charts-col flex flex-col gap-3">
-      <div className="w-full rounded-xl border border-accent/20 bg-accent/10 p-3"><div className="mb-2 text-center text-xs font-extrabold text-accent">{lang==="ta"?"ராசி கட்டம்":"Rasi Chart"}</div><SouthChart positions={result.list} lang={lang}/></div>
-      <div className="w-full rounded-xl border border-violet-100 bg-violet-50/30 p-3"><div className="mb-2 text-center text-xs font-extrabold text-violet-800">{lang==="ta"?"நவாம்சம் (D9)":"Navamsa (D9)"}</div><SouthChart positions={result.list} lang={lang} mode="navamsa"/></div>
-    </div>
-  </div></div>;
+  );
 }
 function InfoCell({label,value}:{label:string;value:string}) { return <div><div className="text-[9px] font-bold uppercase tracking-wide text-slate-400">{label}</div><div className="mt-0.5 text-xs font-bold leading-5 text-slate-800">{value}</div></div>; }

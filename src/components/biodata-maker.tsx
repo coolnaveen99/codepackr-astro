@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { exportElementToPdf } from "@/lib/pdf-export";
 
 export function BiodataMaker({ lang }: { lang: Lang }) {
   const [bio, setBio] = useState<Biodata>(DEFAULT_BIODATA);
@@ -59,45 +60,12 @@ export function BiodataMaker({ lang }: { lang: Lang }) {
     if (!el) return;
     setBusy(true);
     try {
-      const { default: html2canvas } = await import("html2canvas-pro");
-      const { jsPDF } = await import("jspdf");
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#fffdfa",
-        logging: false,
-      });
-      const img = canvas.toDataURL("image/jpeg", 0.95);
-      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-      const pageW = 210;
-      const pageH = 297;
-      
-      // Fit with 4mm safe margin so nothing touches edges or triggers auto page break
-      const margin = 4;
-      const maxW = pageW - margin * 2;
-      const maxH = pageH - margin * 2;
-
-      let targetW = maxW;
-      let targetH = maxW * (canvas.height / canvas.width);
-
-      if (targetH > maxH) {
-        const scale = maxH / targetH;
-        targetW = targetW * scale;
-        targetH = targetH * scale;
-      }
-
-      const x = (pageW - targetW) / 2;
-      const y = (pageH - targetH) / 2;
-      pdf.addImage(img, "JPEG", x, y, targetW, targetH, undefined, "FAST");
-
-      // Strictly guarantee exactly 1 single page
-      while (pdf.getNumberOfPages() > 1) {
-        pdf.deletePage(pdf.getNumberOfPages());
-      }
-
       const role = bio.birth.sex === "M" ? "Groom" : "Bride";
       const file = (bio.birth.name ? `${bio.birth.name}-${role}` : `${role}-marriage-biodata`).replace(/\s+/g, "-");
-      pdf.save(`${file}(astro.codepackr.com).pdf`);
+      await exportElementToPdf(el, {
+        filename: `${file}(astro.codepackr.com).pdf`,
+        title: `${bio.birth.name || role} - Marriage Biodata`,
+      });
     } catch (err) {
       console.error("PDF generation error:", err);
       window.print();

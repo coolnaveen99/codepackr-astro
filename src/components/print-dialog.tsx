@@ -1,8 +1,8 @@
-// Codepackr Astro - Printable Sheet Dialog
-import { useEffect } from "react";
-import { Printer, ExternalLink, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Printer, ExternalLink, X, FileDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { Lang } from "@/lib/astro/i18n";
+import { exportElementToPdf } from "@/lib/pdf-export";
 
 interface PrintDialogProps {
   open: boolean;
@@ -21,6 +21,9 @@ export function PrintDialog({
   children,
   newTabUrl,
 }: PrintDialogProps) {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,6 +40,23 @@ export function PrintDialog({
       window.print();
     } catch {
       // ignore
+    }
+  };
+
+  const handleExportPdf = async () => {
+    if (!contentRef.current) return;
+    setDownloading(true);
+    try {
+      const safeTitle = title.replace(/\s+/g, "-").replace(/[^a-zA-Z0-9-_]+/g, "");
+      await exportElementToPdf(contentRef.current, {
+        filename: `${safeTitle || "astro-report"}(astro.codepackr.com).pdf`,
+        title,
+      });
+    } catch (e) {
+      console.error("PDF export failed:", e);
+      window.print();
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -73,6 +93,19 @@ export function PrintDialog({
                 {lang === "ta" ? "புதிய விண்டோவில் அச்சிட திறக்க" : "Open in New Tab to Print / PDF"}
               </a>
             ) : null}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportPdf}
+              disabled={downloading}
+              className="border-accent text-accent hover:bg-accent hover:text-accent-fg text-xs font-semibold"
+            >
+              <FileDown className="size-3.5 mr-1" />
+              {downloading
+                ? (lang === "ta" ? "தயாராகிறது..." : "Generating...")
+                : (lang === "ta" ? "PDF பதிவிறக்க" : "Export PDF")}
+            </Button>
 
             <Button
               variant="primary"
@@ -112,7 +145,7 @@ export function PrintDialog({
 
         {/* Modal Body - Scrollable A4 Preview */}
         <div className="print-dialog-body flex-1 overflow-y-auto p-3 sm:p-6 bg-elevated/20 print:p-0 print:bg-white print:overflow-visible">
-          <div className="mx-auto max-w-[210mm] print:max-w-none print:w-full print:m-0">
+          <div ref={contentRef} className="mx-auto max-w-[210mm] print:max-w-none print:w-full print:m-0">
             {children}
           </div>
         </div>

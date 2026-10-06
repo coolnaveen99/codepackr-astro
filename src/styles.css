@@ -209,7 +209,8 @@
   }
   .watermark {
     display: flex !important;
-    opacity: 0.06 !important;
+    opacity: 0.08 !important;
+    color: #0f172a !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -230,7 +231,7 @@
     text-align: left !important;
     width: 210mm !important;
     min-height: 286mm !important;
-    padding: 8mm !important;
+    padding: 6mm 8mm !important;
     margin: 0 !important;
     background: #ffffff !important;
     page-break-after: auto !important;
@@ -266,6 +267,23 @@
 
 
 @layer components {
+  .watermark {
+    display: flex !important;
+    opacity: 0.08 !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .print-page,
+  .biodata-sheet,
+  .astro-export-one-page {
+    box-sizing: border-box;
+    width: 210mm;
+    max-width: 210mm;
+    position: relative;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .astro-export-host {
     position: fixed;
     left: -100000px;

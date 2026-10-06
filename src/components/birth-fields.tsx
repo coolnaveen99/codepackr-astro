@@ -267,32 +267,4 @@ export function DateTimeFields({
   );
 }
 
-export { PlaceSearch } from "./place-search-field";          <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "day")}</span>
-            <NumericDateInput
-              value={safe.day}
-              min={1}
-              max={dayLimit}
-              maxLength={2}
-              ariaLabel={lang === "ta" ? "நாள்" : "Day"}
-              testId="birth-day"
-              onCommit={(day) => setDate({ day })}
-            />
-          </div>
-          <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "calMonth")}</span>
-            <NumericDateInput
-              value={safe.month}
-              min={1}
-              max={monthLimit}
-              maxLength={2}
-              ariaLabel={lang === "ta" ? "மாதம்" : "Month"}
-              testId="birth-month"
-              onCommit={(month) => setDate({ month })}
-            />
-          </div>
-          <div>
-            <span className="mb-1 block text-xs tracking-wide text-muted whitespace-nowrap truncate">{t(lang, "year")}</span>
-            <YearInput year={safe.year} min={MIN_BIRTH_YEAR} max={maxYear} onCommit={(year) => setDate({ year })} />
-          </div>
-
+export { PlaceSearch } from "./place-search-field";
