@@ -20,6 +20,7 @@ export type Page =
   | "disclaimer"
   | "privacy"
   | "about"
+  | "terms"
   | "tamil-calendar"
   | "forecast"
   | "calculation-method"
@@ -44,6 +45,7 @@ export const PAGE_SET = new Set<string>([
   "disclaimer",
   "privacy",
   "about",
+  "terms",
   "tamil-calendar",
   "forecast",
   "calculation-method",
@@ -69,6 +71,7 @@ export const PAGE_PATHS: Record<Page, string> = {
   disclaimer: "/disclaimer",
   privacy: "/privacy",
   about: "/about",
+  terms: "/terms",
   "tamil-calendar": "/tamil-calendar",
   forecast: "/forecast",
   "calculation-method": "/calculation-method",
