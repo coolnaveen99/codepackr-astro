@@ -152,6 +152,12 @@
 
   <!-- Privacy Policy -->
   <url>
+    <loc>https://astro.codepackr.com/terms</loc>
+    <lastmod>2026-10-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://astro.codepackr.com/privacy</loc>
     <lastmod>2026-09-26</lastmod>
     <changefreq>monthly</changefreq>
