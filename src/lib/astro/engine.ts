@@ -755,9 +755,9 @@ export function nowJD() {
  * - vakya → same linear Thirukanitham ayan (mean-motion bodies use vakyaMean)
  */
 export function ayanamsaFor(jd: number, school: School) {
-  if (school === "lahiri") {
-    return ayanamsaLahiri(jd);
-  }
+  if (school === "lahiri") return ayanamsaLahiri(jd);
+  if (school === "kp") return ayanamsaKP(jd);
+  if (school === "raman") return ayanamsaRaman(jd);
   // thirukanitham (Drik) and vakya both use the Tamil linear ayanamsa
   return ayanamsaThirukanitham(jd);
 }

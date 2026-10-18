@@ -20,3 +20,24 @@ A full migration to Astro static output is a larger effort that should be done i
 3. Add proper hreflang + sitemap generation once multi-locale routing is decided.
 
 Do not replace the existing Vite/React app until the Astro version reaches feature parity.
+
+## Accuracy Comparison (2026-10-18)
+
+Experimental linear Ayanamsa vs production polynomial models:
+
+### Lahiri
+| Date | Experimental | Production | Delta |
+|------|--------------|------------|-------|
+| 1900-01-01 | 22.4602° | 22.4543° | +0.0059° |
+| 2000-01-01 | 23.8571° | 23.8523° | +0.0048° |
+| 2026-01-01 | 24.2203° | 24.2158° | +0.0046° |
+
+### Other systems (2026-01-01)
+- KP: Experimental 24.1272° vs Production 24.0418° (Δ +0.0854°)
+- Raman: Experimental 22.7272° vs Production 22.8231° (Δ −0.0959°)
+- Thirukanitham: Production 24.2106° (experimental does not implement)
+
+**Conclusion:** Keep production `src/lib/astro/astronomy/sidereal.ts` functions. They are more accurate. Experimental module is reference only.
+
+## Next Integration Step
+Expose KP and Raman (already implemented) in the existing school selector alongside Thirukanitham and Lahiri.
