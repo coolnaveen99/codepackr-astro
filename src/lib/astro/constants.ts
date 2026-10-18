@@ -328,7 +328,7 @@ export function planetName(id: PlanetId, lang: "ta" | "en") {
   return lang === "ta" ? p.ta : p.en;
 }
 
-export type School = "thirukanitham" | "vakya" | "lahiri";
+export type School = "thirukanitham" | "vakya" | "lahiri" | "kp" | "raman";
 
 export const SCHOOLS: { id: School; en: string; ta: string; hintEn: string; hintTa: string }[] = [
   {
@@ -351,5 +351,19 @@ export const SCHOOLS: { id: School; en: string; ta: string; hintEn: string; hint
     ta: "லாஹிரி",
     hintEn: "Drik ephemeris + Lahiri/Chitrapaksha ayanamsa (Indian National Ephemeris)",
     hintTa: "திரிக் கணிதம் + லாஹிரி/சித்திரபக்ஷ அயனாம்சம் (தேசிய தரம்)",
+  },
+  {
+    id: "kp",
+    en: "Krishnamurti (KP)",
+    ta: "கே.பி.",
+    hintEn: "Drik ephemeris + KP Ayanamsa (Newcomb basis)",
+    hintTa: "திரிக் கணிதம் + கே.பி. அயனாம்சம்",
+  },
+  {
+    id: "raman",
+    en: "B.V. Raman",
+    ta: "ராமன்",
+    hintEn: "Drik ephemeris + B.V. Raman Ayanamsa",
+    hintTa: "திரிக் கணிதம் + பி.வி. ராமன் அயனாம்சம்",
   },
 ];
