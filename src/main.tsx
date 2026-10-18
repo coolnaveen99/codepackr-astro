@@ -1,4 +1,5 @@
 // Codepackr Astro - Client Entry Point
+// Keep this entry point tracked as application code for Vercel's ignore-build check.
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
