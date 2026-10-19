@@ -62,7 +62,7 @@ export const ui: Record<SupportedLocale, BasicUIStrings> = {
   },
 };
 
-export function getUI(locale: string): BasicUIStrings {
-  const normalized = locale.toLowerCase().split(/[-_]/)[0] as SupportedLocale;
+export function getUI(locale: string | null | undefined): BasicUIStrings {
+  const normalized = (locale ?? "").trim().toLowerCase().split(/[-_]/)[0] as SupportedLocale;
   return ui[normalized] ?? ui.en;
 }
