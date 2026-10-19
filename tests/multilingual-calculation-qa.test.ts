@@ -7,7 +7,7 @@ import { calculateNavamsa, calculateVargaSign, VARGA_DEFINITIONS } from "../src/
 import { currentTithi } from "../src/lib/astro/calendar/tithi";
 import { julianDay } from "../src/lib/astro/astronomy/time";
 import { evaluateDasakoota } from "../src/lib/astro/porutham/dasakoota";
-import { evaluateAshtakoota } from "../src/lib/astro/porutham/ashtakoota";
+import { calculateAshtakoota } from "../src/lib/astro/porutham/ashtakoota";
 import { compute, type BirthInput } from "../src/lib/astro/engine";
 
 const NON_TAMIL_ENGLISH: SupportedLocale[] = ["hi", "te", "kn", "ml"];
@@ -115,13 +115,16 @@ describe("New calculation-method regression coverage", () => {
       expect(item.points).toBeGreaterThanOrEqual(0);
       expect(item.points).toBeLessThanOrEqual(item.maxPoints);
     }
-    const ashta = evaluateAshtakoota(45, 185);
-    expect(ashta.items.length).toBeGreaterThan(0);
-    for (const item of ashta.items) {
+    const ashta = calculateAshtakoota(45, 185);
+    expect(ashta.kootas.length).toBe(8);
+    expect(ashta.maxPoints).toBe(36);
+    expect(ashta.totalPoints).toBeGreaterThanOrEqual(0);
+    expect(ashta.totalPoints).toBeLessThanOrEqual(36);
+    for (const item of ashta.kootas) {
       expect(item.id).toBeTruthy();
-      expect(item.nameEn).toBeTruthy();
-      expect(item.points).toBeGreaterThanOrEqual(0);
-      expect(item.points).toBeLessThanOrEqual(item.maxPoints);
+      expect(item.name).toBeTruthy();
+      expect(item.obtainedPoints).toBeGreaterThanOrEqual(0);
+      expect(item.obtainedPoints).toBeLessThanOrEqual(item.maxPoints);
     }
   });
 
