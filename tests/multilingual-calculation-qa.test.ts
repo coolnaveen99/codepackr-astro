@@ -138,9 +138,9 @@ describe("New calculation-method regression coverage", () => {
     expect(chart).toBeTruthy();
     expect(chart.planets.length).toBeGreaterThanOrEqual(7);
     for (const planet of chart.planets) {
-      expect(Number.isFinite(planet.longitude)).toBe(true);
-      expect(planet.longitude).toBeGreaterThanOrEqual(0);
-      expect(planet.longitude).toBeLessThan(360);
+      expect(Number.isFinite(planet.lon)).toBe(true);
+      expect(planet.lon).toBeGreaterThanOrEqual(0);
+      expect(planet.lon).toBeLessThan(360);
     }
   });
 });
