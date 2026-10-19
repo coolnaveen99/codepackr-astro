@@ -21,7 +21,7 @@ import {
   TrendingUp,
   Cpu,
 } from "lucide-react";
-import { t } from "@/lib/astro/i18n";
+import { t, ui } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
 import { REGIONAL_PRESETS, type SupportedLocale } from "@/lib/astro/locales/multi-lang";
 import { useNav, type Page } from "@/lib/nav";
@@ -209,7 +209,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             aria-label="Toggle menu"
             aria-expanded={mobileMenuOpen}
             aria-controls="mobile-nav-drawer"
-            title={lang === "ta" ? "பட்டி (மெனு)" : "Navigation Menu"}
+            title={ui(lang, "navigationMenu")}
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -284,14 +284,14 @@ export function AppShell({ children }: { children: ReactNode }) {
                     : "text-muted hover:text-fg hover:bg-elevated/70"
                 )}
               >
-                <span>{t(lang, "more") || (lang === "ta" ? "மேலும்" : "More")}</span>
+                <span>{t(lang, "more") || (ui(lang, "more"))}</span>
                 <ChevronDown className={cn("size-3.5 transition-transform duration-200", moreMenuOpen && "rotate-180")} />
               </button>
 
               {moreMenuOpen && (
                 <div className="absolute right-0 top-full mt-2 w-64 rounded-xl border border-border/80 bg-surface/98 p-1.5 shadow-xl backdrop-blur-md z-50 animate-in fade-in slide-in-from-top-1 duration-150">
                   <div className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted border-b border-border/50 mb-1">
-                    {lang === "ta" ? "கூடுதல் சேவைகள்" : "More Astrological Tools"}
+                    {ui(lang, "moreTools")}
                   </div>
                   {MORE_NAV.map((m) => {
                     const Icon = m.icon;
@@ -366,7 +366,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 </div>
                 <div>
                   <p className="text-xs font-bold text-ink leading-tight">{t(lang, "brand")}</p>
-                  <p className="text-[10px] text-muted leading-none mt-0.5">{lang === "ta" ? "பட்டி (மெனு)" : "Navigation Menu"}</p>
+                  <p className="text-[10px] text-muted leading-none mt-0.5">{ui(lang, "navigationMenu")}</p>
                 </div>
               </div>
               <button
@@ -380,7 +380,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </div>
             <div>
               <p className="text-[10.5px] font-bold uppercase tracking-wider text-accent mb-2 px-1">
-                {lang === "ta" ? "முக்கிய ஜோதிட சேவைகள்" : "Core Astrological Services"}
+                {ui(lang, "coreServices")}
               </p>
               <div className="grid grid-cols-2 gap-1.5">
                 {PRIMARY_NAV.map((n) => {

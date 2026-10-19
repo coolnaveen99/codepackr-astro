@@ -7,6 +7,7 @@ import { Watermark } from "@/components/watermark";
 import type { BirthInput, ChartResult } from "@/lib/astro/engine";
 import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
+import { signName as sharedSignName } from "@/lib/astro/constants";
 import type { Lang } from "@/lib/astro/i18n";
 import { t } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
@@ -203,9 +204,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
   </main>;
 }
 
-function signName(lang: Lang, i: number) {
-  return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
-}
+// using shared signName
 function nakName(lang: Lang, i: number) {
   return lang === "ta" ? NAK_TA[i] : NAK_EN[i];
 }
@@ -236,7 +235,7 @@ function TraditionalPreview({result,lang,chartStyle = 'SOUTH',ayanamsaMode}:{res
   const birthTime = `${String(result.input.hour).padStart(2,"0")}:${String(result.input.minute).padStart(2,"0")}`;
   const moon = result.list.find((p) => p.id === "moon");
   const lagna = result.list.find((p) => p.id === "lagna");
-  const sign = (i: number) => (lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i]);
+  const sign = (i: number) => sharedSignName(lang, i);
   const nak = moon ? (lang === "ta" ? NAK_TA[moon.nak] : NAK_EN[moon.nak]) : "—";
   const rows = result.list;
   const firstDasa = result.dasa?.periods?.[0];

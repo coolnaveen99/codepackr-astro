@@ -355,3 +355,28 @@ export function t(lang: Lang, key: CopyKey | string): string {
   if (item) return item.en ?? item.ta ?? String(key);
   return String(key);
 }
+
+// Extended UI strings for all 6 languages (core navigation & common labels)
+const UI_STRINGS: Record<string, Partial<Record<Lang, string>>> = {
+  more: { en: "More", ta: "மேலும்", hi: "अधिक", te: "మరిన్ని", kn: "ಇನ್ನಷ್ಟು", ml: "കൂടുതൽ" },
+  menu: { en: "Menu", ta: "பட்டி", hi: "मेनू", te: "మెనూ", kn: "ಮೆನು", ml: "മെനു" },
+  navigationMenu: { en: "Navigation Menu", ta: "பட்டி (மெனு)", hi: "नेविगेशन मेनू", te: "నావిగేషన్ మెనూ", kn: "ನ್ಯಾವಿಗೇಶನ್ ಮೆನು", ml: "നാവിഗേഷൻ മെനു" },
+  moreTools: { en: "More Astrological Tools", ta: "கூடுதல் சேவைகள்", hi: "अधिक ज्योतिष उपकरण", te: "మరిన్ని జ్యోతిష్య సాధనాలు", kn: "ಹೆಚ್ಚಿನ ಜ್ಯೋತಿಷ್ಯ ಸಾಧನಗಳು", ml: "കൂടുതൽ ജ്യോതിഷ ഉപകരണങ്ങൾ" },
+  coreServices: { en: "Core Astrological Services", ta: "முக்கிய ஜோதிட சேவைகள்", hi: "मुख्य ज्योतिष सेवाएं", te: "ప్రధాన జ్యోతిష్య సేవలు", kn: "ಪ್ರಮುಖ ಜ್ಯೋತಿಷ್ಯ ಸೇವೆಗಳು", ml: "പ്രധാന ജ്യോതിഷ സേവനങ്ങൾ" },
+  home: { en: "Home", ta: "முகப்பு", hi: "होम", te: "హోమ్", kn: "ಹೋಮ್", ml: "ഹോം" },
+  horoscope: { en: "Horoscope", ta: "ஜாதகம்", hi: "कुंडली", te: "జాతకం", kn: "ಜಾತಕ", ml: "ജാതകം" },
+  calendar: { en: "Calendar & Panchangam", ta: "காலண்டர் & பஞ்சாங்கம்", hi: "कैलेंडर और पंचांग", te: "క్యాలెండర్ & పంచాంగం", kn: "ಕ್ಯಾಲೆಂಡರ್ ಮತ್ತು ಪಂಚಾಂಗ", ml: "കലണ്ടറും പഞ്ചാംഗവും" },
+  forecast: { en: "Forecast", ta: "பலன்கள்", hi: "भविष्यवाणी", te: "భవిష్యవాణి", kn: "ಭವಿಷ್ಯವಾಣಿ", ml: "പ്രവചനം" },
+  porutham: { en: "Porutham", ta: "திருமணம்", hi: "कुंडली मिलान", te: "పొంతన", kn: "ಹೊಂದಾಣಿಕೆ", ml: "പൊരുത്തം" },
+  printFull: { en: "Print Full 30-Page Horoscope", ta: "முழு 30 பக்க ஜாதகம் (அச்சிடுக)", hi: "पूर्ण 30-पृष्ठ कुंडली प्रिंट करें", te: "పూర్తి 30-పేజీ జాతకం ప్రింట్", kn: "ಪೂರ್ಣ 30-ಪುಟ ಜಾತಕ ಮುದ್ರಿಸಿ", ml: "പൂർണ്ണ 30-പേജ് ജാതകം പ്രിന്റ്" },
+  printSummary: { en: "6-Page Summary", ta: "6 பக்க சுருக்கம்", hi: "6-पृष्ठ सारांश", te: "6-పేజీ సారాంశం", kn: "6-ಪುಟ ಸಾರಾಂಶ", ml: "6-പേജ് സംഗ്രഹം" },
+  chartStyle: { en: "Chart Style", ta: "சக்கர வடிவம்", hi: "कुंडली शैली", te: "చార్ట్ శైలి", kn: "ಚಾರ್ಟ್ ಶೈಲಿ", ml: "ചാർട്ട് ശൈലി" },
+  southIndian: { en: "South Indian", ta: "தென்னிந்திய முறை", hi: "दक्षिण भारतीय", te: "దక్షిణ భారతీయ", kn: "ದಕ್ಷಿಣ ಭಾರತೀಯ", ml: "ദക്ഷിണേന്ത്യൻ" },
+  northDiamond: { en: "North Diamond", ta: "வட இந்திய டைமண்ட்", hi: "उत्तर भारतीय डायमंड", te: "ఉత్తర భారతీయ డైమండ్", kn: "ಉತ್ತರ ಭಾರತೀಯ ಡೈಮಂಡ್", ml: "ഉത്തരേന്ത്യൻ ഡയമണ്ട്" },
+};
+
+export function ui(lang: Lang, key: keyof typeof UI_STRINGS): string {
+  const item = UI_STRINGS[key];
+  if (!item) return key;
+  return item[lang] ?? item.en ?? item.ta ?? key;
+}

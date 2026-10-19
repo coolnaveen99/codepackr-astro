@@ -19,9 +19,7 @@ import { BHAVA_EN, BHAVA_TA } from "@/lib/astro/tables";
 import { cn } from "@/lib/utils";
 import { getKpSubLordDetails } from "@/lib/astro/astronomy/ayanamsa-models";
 
-function signName(lang: Lang, i: number) {
-  return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
-}
+// using shared signName from constants
 
 export function PhalanPane({ result, analysis, lang }: { result: ChartResult; analysis: Analysis; lang: Lang }) {
   const moon = result.list.find((p) => p.id === "moon")!;

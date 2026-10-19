@@ -30,7 +30,7 @@ import {
   type BodyPos,
   type ChartResult,
 } from "@/lib/astro/engine";
-import { t, type Lang } from "@/lib/astro/i18n";
+import { t, ui, type Lang } from "@/lib/astro/i18n";
 import { ASTRO_LOCALES } from "@/lib/astro/locales/multi-lang";
 import { useNav } from "@/lib/nav";
 import { triggerPrint } from "@/lib/print-helper";
@@ -187,7 +187,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
             }}
           >
             <Printer className="size-4 mr-1.5" />
-            {lang === "ta" ? "முழு 30 பக்க ஜாதகம் (அச்சிடுக)" : "Print Full 30-Page Horoscope"}
+            {ui(lang, "printFull")}
           </Button>
           <Button
             variant="outline"
@@ -198,7 +198,7 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
               setShowPrintModal(true);
             }}
           >
-            {lang === "ta" ? "6 பக்க சுருக்கம்" : "6-Page Summary"}
+            {ui(lang, "printSummary")}
           </Button>
         </div>
       </div>
