@@ -218,8 +218,8 @@ export function ChartViews({ result, lang }: { result: ChartResult; lang: Lang }
         onClose={() => setShowPrintModal(false)}
         title={
           reportType === "full30"
-            ? (lang === "ta" ? "முழு 30 பக்க வேத ஜாதக புத்தகம் (A4 அச்சுப் பிரதி)" : "Full 30-Page Vedic Horoscope Booklet (A4 Print)")
-            : (lang === "ta" ? "சுருக்க வேத ஜாதகம் (6 பக்கங்கள்)" : "Vedic Horoscope Summary (6 Pages)")
+            ? (ui(lang, "fullReportTitle"))
+            : (ui(lang, "summaryTitle"))
         }
         lang={lang}
         newTabUrl={`/jathagam?print=auto&mode=${reportType === "full30" ? "thirty" : "six"}`}
@@ -455,7 +455,7 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
       {currentPeriod ? (
         <div className="mb-5 rounded-xl border-2 border-accent/30 bg-accent/5 px-4 py-4 shadow-card">
           <p className="text-xs font-bold uppercase tracking-wide text-accent">
-            {lang === "ta" ? "தற்போதைய தசை காலம்" : "Current dasa period"}
+            {ui(lang, "currentDasa")}
           </p>
           <p className="mt-1 font-display text-xl font-semibold text-fg">
             {planetName(currentPeriod.lord, lang)}
@@ -472,7 +472,7 @@ function DasaPane({ result, lang }: { result: ChartResult; lang: Lang }) {
           {upcoming.length > 1 ? (
             <div className="mt-3 border-t border-border/60 pt-3">
               <p className="text-xs font-semibold text-muted">
-                {lang === "ta" ? "அடுத்த மகாதசைகள்" : "Upcoming mahadasas"}
+                {ui(lang, "upcomingDasa")}
               </p>
               <ul className="mt-1 space-y-1 text-xs text-muted">
                 {upcoming.slice(1).map((p) => (

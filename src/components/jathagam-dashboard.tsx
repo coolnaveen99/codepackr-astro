@@ -104,10 +104,10 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
         onClick={() => go("home")}
         className="hover:text-accent transition-colors flex items-center gap-1"
       >
-        <span>{lang === "ta" ? "முகப்பு" : "Home"}</span>
+        <span>{ui(lang, "home")}</span>
       </button>
       <span className="text-slate-300">/</span>
-      <span className="text-slate-800">{lang === "ta" ? "ஜாதகம்" : "Jathagam"}</span>
+      <span className="text-slate-800">{ui(lang, "horoscope")}</span>
     </nav>
 
     <section className="astro-hero mb-5 flex flex-col justify-between gap-5 rounded-2xl border border-accent/20 bg-white/90 p-5 shadow-sm sm:p-7 lg:flex-row lg:items-center">

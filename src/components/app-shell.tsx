@@ -414,7 +414,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
             <div className="mt-4 pt-3 border-t border-border/60">
               <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted mb-2 px-1">
-                {lang === "ta" ? "கூடுதல் கருவிகள் & தகவல்" : "More Tools & Information"}
+                {ui(lang, "moreToolsInfo")}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
                 {MORE_NAV.map((m) => {
@@ -509,7 +509,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   }}
                   className="rounded border border-accent/40 bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent hover:bg-accent/20 transition-colors"
                 >
-                  {lang === "ta" ? "பொறுப்புத் துறப்பு" : "Disclaimer"} &rarr;
+                  {ui(lang, "disclaimer")} &rarr;
                 </a>
               </div>
             </div>
@@ -519,10 +519,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-display text-xs sm:text-sm font-bold text-ink flex items-center gap-2">
                 <span className="inline-block size-2 rounded-full bg-accent" />
-                {lang === "ta" ? "இலவச தமிழ் ஜோதிட சேவைகள் & கருவிகள்" : "Vedic Astrology Tools & Online Calculators"}
+                {ui(lang, "freeTools")}
               </h3>
               <span className="text-[11px] text-muted hidden sm:inline">
-                {lang === "ta" ? "அனைத்து கருவிகளுக்கும் தனி முகவரி (URL)" : "Independent Dedicated URLs & Instant Access"}
+                {ui(lang, "dedicatedUrls")}
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
@@ -531,7 +531,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 const url = getUrl(n.id);
                 const label =
                   n.id === "contact"
-                    ? (lang === "ta" ? "தொடர்புக்கு" : "Contact")
+                    ? (ui(lang, "contact"))
                     : t(lang, n.labelKey as any);
                 return (
                   <a
