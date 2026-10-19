@@ -183,6 +183,16 @@ describe("Locale edge cases and translation completeness", () => {
     expect(calculateAyanamsa(jd, "TRUE_PUSHYA")).toBeCloseTo(lahiri + 0.061111, 6);
   });
 
+  it("assigns exact KP sub-lord and sub-sub-lord boundaries to the next interval", () => {
+    const nakshatraSpan = 360 / 27;
+    const firstSubSpan = (7 / 120) * nakshatraSpan; // Ketu's first sub in Ashwini
+    expect(getKpSubLordDetails(firstSubSpan).subLord).toBe("Venus");
+
+    const venusSubSpan = (20 / 120) * nakshatraSpan;
+    const firstSubSubSpan = (20 / 120) * venusSubSpan; // Venus sub's first sub-sub is Venus
+    expect(getKpSubLordDetails(firstSubSpan + firstSubSubSpan).subSubLord).toBe("Sun");
+  });
+
   it("returns finite, valid KP fields for every zodiac sign and nakshatra boundary", () => {
     const nakshatraSpan = 360 / 27;
     const boundaries = [
