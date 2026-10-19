@@ -166,9 +166,12 @@ describe("Locale edge cases and translation completeness", () => {
 
   it("normalizes uppercase, regional, underscore, empty and unsupported locale input", () => {
     expect(getUI("HI").panchangam).toBe(basicUI.hi.panchangam);
+    expect(getUI(" hi ").panchangam).toBe(basicUI.hi.panchangam);
     expect(getUI("te-IN").panchangam).toBe(basicUI.te.panchangam);
     expect(getUI("kn_IN").tools).toBe(basicUI.kn.tools);
     expect(getUI("").search).toBe(basicUI.en.search);
+    expect(getUI(null).search).toBe(basicUI.en.search);
+    expect(getUI(undefined).search).toBe(basicUI.en.search);
     expect(getUI("xx-YY").search).toBe(basicUI.en.search);
   });
 
