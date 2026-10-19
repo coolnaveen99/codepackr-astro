@@ -63,46 +63,29 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
             <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-bold tracking-wide text-accent">
               <Sparkles className="size-3.5" />
               <span>
-                {isTa
-                  ? "⚡ Next-Gen தமிழ் வேத ஜோதிடம் · விண்வெளி அறிவியல் துல்லியம்"
-                  : isHi
-                    ? "⚡ नेक्स्ट-जेन वैदिक ज्योतिष · सटीक ग्रह गणना"
-                    : "⚡ Next-Gen Vedic Technology · Precision Planetary Ephemeris"}
+                {ui(lang, "heroBadge")}
               </span>
             </div>
 
             <h1 className="font-display text-2xl sm:text-4xl lg:text-[2.65rem] font-black tracking-tight text-slate-900 leading-tight">
-              {isTa ? (
-                <>
-                  கோட்பேக்ர் ஆஸ்ட்ரோ
+              {ui(lang, "heroTitle")}
                   <span className="block text-accent text-xl sm:text-3xl lg:text-[2.1rem] mt-1 font-bold">
-                    நவீன தலைமுறை ஜாதகம், பஞ்சாங்கம் & ஜோதிடக் கருவிகள்
+                    {ui(lang, "heroSubtitle")}
                   </span>
-                </>
-              ) : (
-                <>
-                  CodePackr Astro
-                  <span className="block text-accent text-xl sm:text-3xl lg:text-[2.1rem] mt-1 font-bold">
-                    Next-Gen Vedic Astrology & Ephemeris Tech
-                  </span>
-                </>
-              )}
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-xl">
-              {isTa
-                ? "நாசா JPL DE440 & VSOP87 விண்வெளி கணிதங்கள். 100% இலவசம் · Zero Data Tracking."
-                : "Powered by NASA JPL DE440 & VSOP87. 100% Free · Client-Side Private · Zero Data Leak."}
+              {ui(lang, "heroLead")}
             </p>
 
             <div className="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-1 text-[11px] sm:text-xs font-semibold text-slate-700">
               <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1">
                 <CheckCircle2 className="size-3.5 text-emerald-600" />
-                <span>{isTa ? "🚀 உடனடி HD Chart & PDF" : "🚀 Instant HD PDF & Chart"}</span>
+                <span>{ui(lang, "generateHoroscope").includes("Free") || lang === "en" ? "🚀 Instant HD PDF & Chart" : ui(lang, "generateHoroscope")}</span>
               </div>
               <div className="flex items-center gap-1.5 rounded-lg bg-white/85 border border-slate-200/90 px-2.5 py-1">
                 <CheckCircle2 className="size-3.5 text-emerald-600" />
-                <span>{isTa ? "🔒 100% தனியுரிமை" : "🔒 100% Client-Side Privacy"}</span>
+                <span>{lang === "ta" ? "🔒 100% தனியுரிமை" : lang === "hi" ? "🔒 100% क्लाइंट-साइड गोपनीयता" : lang === "te" ? "🔒 100% క్లయింట్-సైడ్ గోప్యత" : "🔒 100% Client-Side Privacy"}</span>
               </div>
             </div>
 
@@ -113,7 +96,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
                 className="inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 sm:px-6 sm:py-3 text-sm font-bold text-white shadow-md hover:bg-accent/90 active:scale-95 cursor-pointer"
               >
                 <ScrollText className="size-4" />
-                <span>{isTa ? "ஜாதகம் உருவாக்க (Free)" : "Generate Free Horoscope"}</span>
+                <span>{ui(lang, "generateHoroscope")}</span>
                 <ArrowRight className="size-4" />
               </button>
               <button
@@ -121,7 +104,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
                 onClick={scrollToTools}
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2.5 sm:px-5 sm:py-3 text-xs sm:text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer"
               >
-                <span>{isTa ? "அனைத்து கருவிகள்" : "Explore All Tools"}</span>
+                <span>{ui(lang, "exploreTools")}</span>
                 <span className="text-[11px] bg-accent/15 text-accent px-2 py-0.5 rounded-full font-extrabold">20+</span>
               </button>
             </div>
@@ -134,7 +117,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
 
       <section className="space-y-4">
         <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-          {isTa ? "பிரபலமான கருவிகள்" : "Most Popular Astro Tools"}
+          {ui(lang, "popularTools")}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {popularTools.map((tool) => {
@@ -157,7 +140,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
                   </p>
                 </div>
                 <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-accent">
-                  <span>{isTa ? "திறக்க" : "Open"}</span>
+                  <span>{ui(lang, "open")}</span>
                   <ArrowRight className="size-3.5" />
                 </div>
               </div>
@@ -170,10 +153,10 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-              {isTa ? "ஜோதிடக் கருவிகள் களஞ்சியம்" : "Explore All Vedic Astrology Tools"}
+              {ui(lang, "allToolsTitle")}
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
-              {isTa ? `${filteredTools.length} கருவிகள்` : `${filteredTools.length} tools available`}
+              {`${filteredTools.length} ${ui(lang, "toolsAvailable")}`}
             </p>
           </div>
           <div className="relative w-full md:w-80">
@@ -182,7 +165,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={isTa ? "கருவியை தேடுங்கள்..." : "Search tool..."}
+              placeholder={ui(lang, "searchPlaceholder")}
               className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-10 pr-3 text-xs sm:text-sm focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20"
             />
           </div>
@@ -202,7 +185,7 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
                     : "border border-slate-200 bg-white text-slate-700 hover:border-accent/40"
                 }`}
               >
-                {isTa ? cat.nameTa : cat.nameEn}
+                {lang === "ta" ? cat.nameTa : (cat.id === "all" ? ui(lang, "allTools") : ui(lang, `cat${cat.id.charAt(0).toUpperCase() + cat.id.slice(1)}` as any) || cat.nameEn)}
               </button>
             );
           })}
@@ -249,10 +232,10 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
       <section className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-xs">
         <div className="inline-flex items-center gap-1.5 text-xs font-bold text-accent mb-2">
           <ShieldCheck className="size-4" />
-          <span>{isTa ? "தனியுரிமை உத்தரவாதம்" : "Privacy Guarantee"}</span>
+          <span>{ui(lang, "privacyGuarantee")}</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
-          {isTa ? "உங்கள் ஜாதகத் தரவு உங்களுடன் மட்டுமே" : "Your birth data never leaves your device"}
+          {lang === "ta" ? "உங்கள் ஜாதகத் தரவு உங்களுடன் மட்டுமே" : lang === "hi" ? "आपका जन्म डेटा कभी आपके डिवाइस से बाहर नहीं जाता" : lang === "te" ? "మీ జనన డేటా మీ పరికరం నుండి ఎప్పుడూ బయటకు వెళ్లదు" : "Your birth data never leaves your device"}
         </h2>
         <p className="text-sm text-slate-600 mt-2 leading-relaxed max-w-2xl">
           {isTa
