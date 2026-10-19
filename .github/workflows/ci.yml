@@ -22,11 +22,10 @@ on:
       - '.node-version'
       - '.nvmrc'
 
-# Do not cancel the only validation run for a PR whenever another commit arrives.
-# This keeps a final, actionable CI result available instead of repeated cancellations.
+# Cancel stale runs when a newer commit arrives; after the final push, the latest head is validated.
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  queue: max
+  cancel-in-progress: true
 
 permissions:
   contents: read
