@@ -1,6 +1,6 @@
 // Codepackr Astro - Detailed Astrological Analysis Panes
 import { type ReactNode } from "react";
-import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
+import { NAK_EN, NAK_TA, SIGNS_EN, SIGNS_TA, WEEK_EN, WEEK_TA, planetName, signName } from "@/lib/astro/constants";
 import { kaalSarpaName, type Analysis } from "@/lib/astro/analysis";
 import type { ChartResult } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";

@@ -9,7 +9,7 @@ import { formatClock } from "@/lib/astro/engine";
 import { SIGNS_EN, SIGNS_TA, NAK_EN, NAK_TA, TITHI_EN, TITHI_TA, YOGA_EN, YOGA_TA, KARANA_EN, KARANA_TA, WEEK_EN, WEEK_TA, planetName } from "@/lib/astro/constants";
 import { signName as sharedSignName } from "@/lib/astro/constants";
 import type { Lang } from "@/lib/astro/i18n";
-import { t } from "@/lib/astro/i18n";
+import { t, ui } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
 import { BirthForm } from "@/components/birth-form";
 import { SouthChart } from "@/components/south-chart";
