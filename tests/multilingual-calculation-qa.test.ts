@@ -49,7 +49,7 @@ describe("Non-Tamil / non-English locale completeness (hi, te, kn, ml)", () => {
 
 describe("New calculation-method regression coverage", () => {
   const jd = julianDay(2026, 1, 1, 12);
-  it.each(["LAHIRI", "KP_NEW", "BV_RAMAN", "YUKTESHWAR", "TRUE_PUSHYA"] as const)("returns a finite, distinct/consistent ayanamsa result for %s", (mode) => {
+  it.each(["LAHIRI", "KP_NEW", "BV_RAMAN", "YUKTESHWAR", "TRUE_PUSHYA"] as const)("returns a finite, bounded ayanamsa result for %s", (mode) => {
     const value = calculateAyanamsa(jd, mode);
     expect(Number.isFinite(value)).toBe(true);
     expect(value).toBeGreaterThan(20);
