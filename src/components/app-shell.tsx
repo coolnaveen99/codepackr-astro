@@ -247,7 +247,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               const Icon = n.icon;
               const active = page === n.id;
               const url = getUrl(n.id);
-              const label = lang === "ta" ? n.shortTa : n.shortEn;
+              const label = t(lang, n.labelKey);
 
               return (
                 <a
@@ -284,7 +284,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                     : "text-muted hover:text-fg hover:bg-elevated/70"
                 )}
               >
-                <span>{lang === "ta" ? "மேலும்" : "More"}</span>
+                <span>{t(lang, "more") || (lang === "ta" ? "மேலும்" : "More")}</span>
                 <ChevronDown className={cn("size-3.5 transition-transform duration-200", moreMenuOpen && "rotate-180")} />
               </button>
 
@@ -387,7 +387,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   const Icon = n.icon;
                   const active = page === n.id;
                   const url = getUrl(n.id);
-                  const label = lang === "ta" ? n.shortTa : n.shortEn;
+                  const label = t(lang, n.labelKey);
                   return (
                     <a
                       key={n.id}

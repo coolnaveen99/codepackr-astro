@@ -1,5 +1,6 @@
 // Codepackr Astro - Multi-Language i18n Dictionary (Tamil, English, Hindi, Telugu, Kannada, Malayalam)
 import type { SupportedLocale } from "./locales/multi-lang";
+import { ASTRO_LOCALES } from "./locales/multi-lang";
 export type Lang = SupportedLocale;
 
 const COPY = {
@@ -335,6 +336,22 @@ export type CopyKey = keyof typeof COPY;
 
 export function t(lang: Lang, key: CopyKey | string): string {
   const item = (COPY as Record<string, Partial<Record<Lang, string>>>)[key as string];
-  if (!item) return String(key);
-  return item[lang] ?? item.en ?? item.ta ?? String(key);
+  if (item && item[lang]) return item[lang] as string;
+  
+  // Fallback to ASTRO_LOCALES for key astro terms
+  const locales = ASTRO_LOCALES[lang];
+  if (locales) {
+    if (key === 'brand' || key === 'appTitle') return locales.appTitle;
+    if (key === 'lagna') return locales.lagna;
+    if (key === 'horoscope' || key === 'navChart') return locales.horoscope;
+    if (key === 'matchmaking' || key === 'navPorutham' || key === 'poruthamTitle') return locales.matchmaking;
+    if (key === 'panchangam' || key === 'navPanchang') return locales.panchangam;
+    if (key === 'rasiChart' || key === 'd1') return locales.rasiChart;
+    if (key === 'navamsaChart' || key === 'd9') return locales.navamsaChart;
+    if (key === 'ashtakootaGuna' || key === 'koot') return locales.ashtakootaGuna;
+    if (key === 'dasakootaPorutham' || key === 'dasakoot') return locales.dasakootaPorutham;
+  }
+  
+  if (item) return item.en ?? item.ta ?? String(key);
+  return String(key);
 }

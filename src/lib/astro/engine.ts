@@ -29,6 +29,7 @@ import { analyzeBirthTimeSensitivity } from "./dasha/sensitivity";
 import { getTamilDate } from "./calendar/tamil-calendar";
 import { calculateSunTimes } from "./astronomy/sunrise";
 import { resolveIanaTimezoneAssignment, resolveHistoricalUtcOffset, isLocationVerified, validateCoordinates } from "./astronomy/timezone";
+import { calculateAyanamsa, type AyanamsaMode } from "./astronomy/ayanamsa-models";
 
 export type City = { n: string; tz: number; lon: number; lat: number };
 
@@ -754,7 +755,8 @@ export function nowJD() {
  * - thirukanitham → Tamil linear Thirukanitham (distinct from Lahiri)
  * - vakya → same linear Thirukanitham ayan (mean-motion bodies use vakyaMean)
  */
-export function ayanamsaFor(jd: number, school: School) {
+export function ayanamsaFor(jd: number, school: School, mode?: AyanamsaMode) {
+  if (mode) return calculateAyanamsa(jd, mode);
   if (school === "lahiri") return ayanamsaLahiri(jd);
   if (school === "kp") return ayanamsaKP(jd);
   if (school === "raman") return ayanamsaRaman(jd);

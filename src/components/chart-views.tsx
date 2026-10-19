@@ -31,9 +31,12 @@ import {
   type ChartResult,
 } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
+import { ASTRO_LOCALES } from "@/lib/astro/locales/multi-lang";
 import { useNav } from "@/lib/nav";
 import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
+import { AstroModelSwitcher } from "@/components/astro-model-switcher";
+import type { AyanamsaMode } from "@/lib/astro/astronomy/ayanamsa-models";
 import { NorthChart } from "@/components/north-chart";
 import { PrintDialog } from "@/components/print-dialog";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
@@ -55,6 +58,8 @@ import { cn } from "@/lib/utils";
 type Tab = "chart" | "phalan" | "yoga" | "pan" | "dasa" | "gochara" | "varga" | "remedies";
 
 function signName(lang: Lang, i: number) {
+  const locales = ASTRO_LOCALES[lang as keyof typeof ASTRO_LOCALES];
+  if (locales && locales.rasis && locales.rasis[i]) return locales.rasis[i];
   return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
 }
 function nakName(lang: Lang, i: number) {
@@ -313,33 +318,14 @@ function ChartsPane({
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <span className="text-xs font-semibold text-muted">
-          {lang === "ta" ? "சக்கர வடிவம் (Chart Style):" : "Chart Style:"}
-        </span>
-        <div className="flex rounded-lg border border-border bg-elevated p-0.5 text-xs">
-          <button
-            type="button"
-            onClick={() => setStyle("SOUTH")}
-            className={cn(
-              "rounded-md px-3 py-1 font-semibold transition-all cursor-pointer",
-              style === "SOUTH" ? "bg-accent text-accent-fg shadow-xs" : "text-muted hover:text-fg"
-            )}
-          >
-            {lang === "ta" ? "தென்னிந்திய முறை" : "South Indian"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setStyle("NORTH")}
-            className={cn(
-              "rounded-md px-3 py-1 font-semibold transition-all cursor-pointer",
-              style === "NORTH" ? "bg-accent text-accent-fg shadow-xs" : "text-muted hover:text-fg"
-            )}
-          >
-            {lang === "ta" ? "வட இந்திய டைமண்ட்" : "North Diamond"}
-          </button>
-        </div>
-      </div>
+      <AstroModelSwitcher
+        locale={lang}
+        onChangeLocale={() => {}} // handled at app level
+        chartStyle={style}
+        onChangeChartStyle={setStyle}
+        ayanamsa={"LAHIRI" as AyanamsaMode}
+        onChangeAyanamsa={() => {}}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
         <figure className="rounded-lg bg-surface p-3 shadow-card sm:p-4">

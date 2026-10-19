@@ -3,8 +3,10 @@ import { Printer } from "lucide-react";
 import { useMemo, useState } from "react";
 import { NAK_EN, NAK_TA, SCHOOLS, SIGNS_EN, SIGNS_TA, type School } from "@/lib/astro/constants";
 import { analyse, dasakoota } from "@/lib/astro/analysis";
+import { calculateAshtakoota } from "@/lib/astro/porutham/ashtakoota";
 import { compute, type BirthInput } from "@/lib/astro/engine";
 import { t, type Lang } from "@/lib/astro/i18n";
+import { ASTRO_LOCALES, REGIONAL_PRESETS } from "@/lib/astro/locales/multi-lang";
 import { gradeLabel, matchVerdict } from "@/lib/astro/phalan";
 import { DEFAULT_INPUT } from "@/lib/astro/samples";
 import { triggerPrint } from "@/lib/print-helper";
@@ -22,6 +24,8 @@ function blank(sex: "M" | "F"): BirthInput {
 }
 
 function signName(lang: Lang, i: number) {
+  const locales = ASTRO_LOCALES[lang as keyof typeof ASTRO_LOCALES];
+  if (locales && locales.rasis && locales.rasis[i]) return locales.rasis[i];
   return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
 }
 function nakName(lang: Lang, i: number) {
@@ -32,6 +36,10 @@ export function PoruthamView({ lang }: { lang: Lang }) {
   const [girl, setGirl] = useState<BirthInput>(() => blank("F"));
   const [boy, setBoy] = useState<BirthInput>(() => blank("M"));
   const [school, setSchool] = useState<School>("thirukanitham");
+  const [matchSystem, setMatchSystem] = useState<'DASAKOOTA_10' | 'ASHTAKOOTA_36'>(() => {
+    const preset = REGIONAL_PRESETS[lang as keyof typeof REGIONAL_PRESETS];
+    return preset?.defaultMatchSystem || 'DASAKOOTA_10';
+  });
   const [done, setDone] = useState(false);
   const [showPrintModal, setShowPrintModal] = useState(false);
 
