@@ -185,7 +185,10 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
                     : "border border-slate-200 bg-white text-slate-700 hover:border-accent/40"
                 }`}
               >
-                {lang === "ta" ? cat.nameTa : (cat.id === "all" ? ui(lang, "allTools") : ui(lang, `cat${cat.id.charAt(0).toUpperCase() + cat.id.slice(1)}` as any) || cat.nameEn)}
+                {lang === "ta" ? cat.nameTa : (() => {
+                    const map: Record<string, string> = { all: "allTools", jathagam: "catJathagam", panchangam: "catPanchangam", palangal: "catPredictions", marriage: "catMarriage", tools: "catTools", info: "catInfo" };
+                    return ui(lang, (map[cat.id] || "allTools") as any) || cat.nameEn;
+                  })()}
               </button>
             );
           })}
