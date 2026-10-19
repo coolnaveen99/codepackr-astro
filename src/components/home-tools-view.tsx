@@ -10,7 +10,7 @@ import {
   CheckCircle2,
   HelpCircle,
 } from "lucide-react";
-import type { Lang } from "@/lib/astro/i18n";
+import { ui, type Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
 import { HeroPreviewCards } from "@/components/hero-preview-cards";
 import {
@@ -35,6 +35,7 @@ interface HomeToolsViewProps {
 
 export function HomeToolsView({ lang }: HomeToolsViewProps) {
   const isTa = lang === "ta";
+  const isHi = lang === "hi";
   const { go } = useNav();
   const [selectedCategory, setSelectedCategory] = useState<ToolCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -64,7 +65,9 @@ export function HomeToolsView({ lang }: HomeToolsViewProps) {
               <span>
                 {isTa
                   ? "⚡ Next-Gen தமிழ் வேத ஜோதிடம் · விண்வெளி அறிவியல் துல்லியம்"
-                  : "⚡ Next-Gen Vedic Technology · Precision Planetary Ephemeris"}
+                  : isHi
+                    ? "⚡ नेक्स्ट-जेन वैदिक ज्योतिष · सटीक ग्रह गणना"
+                    : "⚡ Next-Gen Vedic Technology · Precision Planetary Ephemeris"}
               </span>
             </div>
 
