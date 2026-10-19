@@ -144,3 +144,62 @@ describe("New calculation-method regression coverage", () => {
     }
   });
 });
+
+
+describe("Locale edge cases and translation completeness", () => {
+  it.each(NON_TAMIL_ENGLISH)("has non-empty native text across all core strings for %s", (locale) => {
+    const strings = ASTRO_LOCALES[locale];
+    for (const [key, value] of Object.entries(strings)) {
+      if (key === "planets") {
+        for (const planetName of Object.values(value as Record<string, string>)) {
+          expect(planetName.trim(), `${locale}.planets value`).not.toBe("");
+        }
+      } else if (key === "rasis") {
+        expect(value as string[]).toHaveLength(12);
+        for (const rasi of value as string[]) expect(rasi.trim()).not.toBe("");
+      } else {
+        expect(typeof value).toBe("string");
+        expect((value as string).trim(), `${locale}.${key}`).not.toBe("");
+      }
+    }
+  });
+
+  it("normalizes uppercase, regional, underscore, empty and unsupported locale input", () => {
+    expect(getUI("HI").panchangam).toBe(basicUI.hi.panchangam);
+    expect(getUI("te-IN").panchangam).toBe(basicUI.te.panchangam);
+    expect(getUI("kn_IN").tools).toBe(basicUI.kn.tools);
+    expect(getUI("").search).toBe(basicUI.en.search);
+    expect(getUI("xx-YY").search).toBe(basicUI.en.search);
+  });
+
+  it("keeps documented model offsets distinct and stable", () => {
+    const lahiri = calculateAyanamsa(jd, "LAHIRI");
+    expect(calculateAyanamsa(jd, "KP_NEW")).toBeCloseTo(lahiri - 0.101389, 6);
+    expect(calculateAyanamsa(jd, "BV_RAMAN")).toBeCloseTo(lahiri - 1.443889, 6);
+    expect(calculateAyanamsa(jd, "YUKTESHWAR")).toBeCloseTo(lahiri - 1.382778, 6);
+    expect(calculateAyanamsa(jd, "TRUE_PUSHYA")).toBeCloseTo(lahiri + 0.061111, 6);
+  });
+
+  it("returns finite, valid KP fields for every zodiac sign and nakshatra boundary", () => {
+    const nakshatraSpan = 360 / 27;
+    const boundaries = [
+      ...Array.from({ length: 13 }, (_, i) => i * 30),
+      ...Array.from({ length: 28 }, (_, i) => i * nakshatraSpan),
+    ];
+    for (const boundary of boundaries) {
+      for (const longitude of [boundary - 1e-7, boundary, boundary + 1e-7]) {
+        const detail = getKpSubLordDetails(longitude);
+        expect(Number.isFinite(detail.longitude)).toBe(true);
+        expect(detail.rasiIndex).toBe(Math.floor(detail.longitude / 30));
+        expect(detail.nakshatraIndex).toBeGreaterThanOrEqual(0);
+        expect(detail.nakshatraIndex).toBeLessThan(27);
+        expect(detail.pada).toBeGreaterThanOrEqual(1);
+        expect(detail.pada).toBeLessThanOrEqual(4);
+        expect(detail.signLord).toBeTruthy();
+        expect(detail.starLord).toBeTruthy();
+        expect(detail.subLord).toBeTruthy();
+        expect(detail.subSubLord).toBeTruthy();
+      }
+    }
+  });
+});
