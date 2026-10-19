@@ -46,6 +46,7 @@ export type BirthInput = {
   lon: number;
   place: string;
   school: School;
+  ayanamsaMode?: AyanamsaMode;
   locationVerified?: boolean;
   ianaTimezone?: string;
   birthTimeQuality?: BirthTimeQuality;
@@ -76,6 +77,7 @@ export type ChartResult = {
   jd: number;
   aya: number;
   school: School;
+  ayanamsaMode?: AyanamsaMode;
   weekday: number;
   isDay: boolean;
   sunriseJD: number | null;
@@ -764,8 +766,8 @@ export function ayanamsaFor(jd: number, school: School, mode?: AyanamsaMode) {
   return ayanamsaThirukanitham(jd);
 }
 
-export function siderealGrahas(jd: number, school: School) {
-  const aya = ayanamsaFor(jd, school);
+export function siderealGrahas(jd: number, school: School, mode?: AyanamsaMode) {
+  const aya = ayanamsaFor(jd, school, mode);
   if (school === "vakya") {
     const m = vakyaMean(jd);
     return {
@@ -818,7 +820,7 @@ export function compute(input: BirthInput): ChartResult {
   const hourUT = input.hour + input.minute / 60 - input.tz;
   const jd = julianDay(input.year, input.month, input.day, hourUT);
   const school = input.school;
-  const grahas = siderealGrahas(jd, school);
+  const grahas = siderealGrahas(jd, school, input.ayanamsaMode);
   const lagnaTrop = tropicalAscendant(jd, input.lat, input.lon);
   const lagna = norm360(lagnaTrop - grahas.aya);
   const ss = sunTimes(input.year, input.month, input.day, input.lat, input.lon, input.tz);
@@ -1052,6 +1054,7 @@ export type DailyPanchang = {
   lon: number;
   place: string;
   school: School;
+  ayanamsaMode?: AyanamsaMode;
   jdNoon: number;
   weekday: number;
   aya: number;

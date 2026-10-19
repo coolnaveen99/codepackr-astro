@@ -56,9 +56,7 @@ export function JathagamDashboard({lang,draft,onChange,onSubmit,result}:{lang:La
       YUKTESHWAR: 'lahiri',
       TRUE_PUSHYA: 'lahiri',
     };
-    if (schoolMap[newMode]) {
-      onChange({ ...draft, school: schoolMap[newMode] });
-    }
+    onChange({ ...draft, school: schoolMap[newMode] || 'lahiri', ayanamsaMode: newMode });
   };
 
   const setMode = (newMode: ReportMode) => {
