@@ -13,6 +13,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc --noEmit && vite build && node scripts/copy-spa-routes.mjs && node scripts/indexnow.mjs",
+    "test:qa:i18n": "vitest run tests/multilingual-calculation-qa.test.ts",
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "preview": "vite preview"
