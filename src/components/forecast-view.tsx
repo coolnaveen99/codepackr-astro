@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { generateHorizonForecast, type HorizonType } from "@/lib/astro/prediction/horizons";
 import { DOMAIN_METADATA } from "@/lib/astro/prediction/domains";
 import type { ChartResult } from "@/lib/astro/engine";
+import type { Lang } from "@/lib/astro/i18n";
 import {
   Sparkles,
   TrendingUp,
@@ -26,7 +27,7 @@ import {
 } from "lucide-react";
 
 interface ForecastViewProps {
-  lang: "ta" | "en";
+  lang: Lang;
   result?: ChartResult | null;
 }
 

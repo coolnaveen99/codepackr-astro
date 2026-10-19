@@ -323,9 +323,23 @@ export const PLANET_BY_ID = Object.fromEntries(PLANETS.map((p) => [p.id, p])) as
   (typeof PLANETS)[number]
 >;
 
-export function planetName(id: PlanetId, lang: "ta" | "en") {
-  const p = PLANET_BY_ID[id];
+import { ASTRO_LOCALES, type SupportedLocale } from "./locales/multi-lang";
+
+export function planetName(id: PlanetId | string, lang: string) {
+  const p = PLANET_BY_ID[id as PlanetId];
+  if (!p) return id;
+  const loc = ASTRO_LOCALES[lang as SupportedLocale];
+  if (loc) {
+    const key = (id.charAt(0).toUpperCase() + id.slice(1).toLowerCase()) as keyof typeof loc.planets;
+    if (loc.planets[key]) return loc.planets[key];
+  }
   return lang === "ta" ? p.ta : p.en;
+}
+
+export function signName(lang: string, i: number): string {
+  const loc = ASTRO_LOCALES[lang as SupportedLocale];
+  if (loc?.rasis?.[i]) return loc.rasis[i];
+  return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
 }
 
 export type School = "thirukanitham" | "vakya" | "lahiri" | "kp" | "raman";

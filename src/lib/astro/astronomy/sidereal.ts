@@ -54,3 +54,10 @@ export function getAyanamsa(jd: number, type: AyanamsaType = "lahiri"): number {
       return ayanamsaLahiri(jd);
   }
 }
+
+export {
+  calculateAyanamsa,
+  getKpSubLordDetails,
+  type AyanamsaMode,
+  type KpPositionDetail,
+} from "./ayanamsa-models";

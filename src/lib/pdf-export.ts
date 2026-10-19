@@ -66,10 +66,8 @@ export async function exportElementToPdf(
 
   const pageW = 210;
   const pageH = 297;
-  const marginX = 4; // 4mm safe side margin matching print
-  const marginY = 4; // 4mm safe top/bottom margin
-  const maxW = pageW - marginX * 2;
-  const maxH = pageH - marginY * 2;
+  const maxW = pageW;
+  const maxH = pageH;
 
   for (let i = 0; i < pages.length; i++) {
     const page = pages[i];
@@ -85,7 +83,7 @@ export async function exportElementToPdf(
       onclone: (doc) => {
         // Enforce exact A4 print properties on all pages
         const clonedPages = doc.querySelectorAll<HTMLElement>(
-          ".print-page, .biodata-sheet, .astro-export-one-page, .porutham-print-sheet"
+          ".print-page, .biodata-sheet, .jathagam-sheet, .astro-export-one-page, .porutham-print-sheet"
         );
         clonedPages.forEach((cp) => {
           cp.style.position = "relative";
@@ -110,9 +108,20 @@ export async function exportElementToPdf(
           cp.style.textAlign = "left";
         });
 
+        // Ensure export root is positioned cleanly in cloned DOM
+        const exportRoot = doc.getElementById("jathagam-export-root");
+        if (exportRoot) {
+          exportRoot.style.position = "static";
+          exportRoot.style.left = "auto";
+          exportRoot.style.top = "auto";
+          exportRoot.style.width = "210mm";
+          exportRoot.style.maxWidth = "210mm";
+          exportRoot.style.visibility = "visible";
+        }
+
         // Ensure inner flex wrapper fills the full 297mm parent height
         const innerWrappers = doc.querySelectorAll<HTMLElement>(
-          ".print-page > .relative.z-1, .biodata-sheet > .relative.z-1, .astro-export-one-page > .relative.z-1, .astro-export-one-page .astro-traditional-preview, .astro-export-one-page .astro-traditional-preview > .relative.z-1, .porutham-print-sheet > .relative.z-1"
+          ".print-page > .relative.z-1, .biodata-sheet > .relative.z-1, .jathagam-sheet > .relative.z-1, .astro-traditional-preview > .relative.z-1, .porutham-print-sheet > .relative.z-1"
         );
         innerWrappers.forEach((iw) => {
           iw.style.display = "flex";
@@ -125,7 +134,7 @@ export async function exportElementToPdf(
 
         // Ensure all page footers are anchored to the bottom
         const footers = doc.querySelectorAll<HTMLElement>(
-          ".print-page footer, .biodata-sheet footer, .astro-export-one-page footer, .porutham-print-sheet footer"
+          ".print-page footer, .biodata-sheet footer, .jathagam-sheet footer, .astro-traditional-preview footer, .porutham-print-sheet footer"
         );
         footers.forEach((ft) => {
           ft.style.marginTop = "auto";
@@ -142,20 +151,12 @@ export async function exportElementToPdf(
           wm.style.visibility = "visible";
         });
 
-        // Align chart columns and preview bodies if present
-        const chartCols = doc.querySelectorAll<HTMLElement>(".astro-charts-col");
-        chartCols.forEach((cc) => {
-          cc.style.display = "flex";
-          cc.style.flexDirection = "column";
-          cc.style.gap = "12px";
-          cc.style.width = "290px";
-        });
-
-        const previewBodies = doc.querySelectorAll<HTMLElement>(".astro-preview-body");
-        previewBodies.forEach((pb) => {
-          pb.style.display = "grid";
-          pb.style.gridTemplateColumns = "minmax(0, 1fr) 290px";
-          pb.style.gap = "14px";
+        // Ensure internal grids (charts, birth details, panchangam) maintain grid layout
+        const grids = doc.querySelectorAll<HTMLElement>(
+          ".print-page .grid, .biodata-sheet .grid, .jathagam-sheet .grid, .astro-traditional-preview .grid"
+        );
+        grids.forEach((g) => {
+          g.style.display = "grid";
         });
       },
     });

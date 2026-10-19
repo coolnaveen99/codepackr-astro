@@ -34,6 +34,7 @@ import { t, type Lang } from "@/lib/astro/i18n";
 import { useNav } from "@/lib/nav";
 import { triggerPrint } from "@/lib/print-helper";
 import { SouthChart } from "@/components/south-chart";
+import { NorthChart } from "@/components/north-chart";
 import { PrintDialog } from "@/components/print-dialog";
 import { PrintHoroscopeSheet } from "@/components/print-horoscope-sheet";
 import { FullReport } from "@/components/full-report";
@@ -293,16 +294,77 @@ function ChartsPane({
   analysis: ReturnType<typeof analyse>;
   lang: Lang;
 }) {
+  const [style, setStyle] = useState<"SOUTH" | "NORTH">("SOUTH");
+  const lagna = result.list.find((p) => p.id === "lagna");
+  const d1Planets = result.list.map((p) => ({
+    id: p.id,
+    label: planetName(p.id, lang),
+    rasiIndex: p.sign,
+    isRetrograde: p.retrograde,
+    degreeText: p.dms,
+  }));
+  const d9Planets = result.list.map((p) => ({
+    id: p.id,
+    label: planetName(p.id, lang),
+    rasiIndex: p.navamsa,
+    isRetrograde: p.retrograde,
+    degreeText: p.dms,
+  }));
+
   return (
     <div className="flex flex-col gap-5">
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <span className="text-xs font-semibold text-muted">
+          {lang === "ta" ? "சக்கர வடிவம் (Chart Style):" : "Chart Style:"}
+        </span>
+        <div className="flex rounded-lg border border-border bg-elevated p-0.5 text-xs">
+          <button
+            type="button"
+            onClick={() => setStyle("SOUTH")}
+            className={cn(
+              "rounded-md px-3 py-1 font-semibold transition-all cursor-pointer",
+              style === "SOUTH" ? "bg-accent text-accent-fg shadow-xs" : "text-muted hover:text-fg"
+            )}
+          >
+            {lang === "ta" ? "தென்னிந்திய முறை" : "South Indian"}
+          </button>
+          <button
+            type="button"
+            onClick={() => setStyle("NORTH")}
+            className={cn(
+              "rounded-md px-3 py-1 font-semibold transition-all cursor-pointer",
+              style === "NORTH" ? "bg-accent text-accent-fg shadow-xs" : "text-muted hover:text-fg"
+            )}
+          >
+            {lang === "ta" ? "வட இந்திய டைமண்ட்" : "North Diamond"}
+          </button>
+        </div>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2">
         <figure className="rounded-lg bg-surface p-3 shadow-card sm:p-4">
           <figcaption className="mb-2 font-display text-lg">{t(lang, "d1")}</figcaption>
-          <SouthChart positions={result.list} lang={lang} caption={result.input.name} />
+          {style === "NORTH" ? (
+            <NorthChart
+              title={t(lang, "d1")}
+              lagnaRasiIndex={lagna?.sign ?? 0}
+              planets={d1Planets}
+            />
+          ) : (
+            <SouthChart positions={result.list} lang={lang} caption={result.input.name} />
+          )}
         </figure>
         <figure className="rounded-lg bg-surface p-3 shadow-card sm:p-4">
           <figcaption className="mb-2 font-display text-lg">{t(lang, "d9")}</figcaption>
-          <SouthChart positions={result.list} lang={lang} mode="navamsa" caption="D9" />
+          {style === "NORTH" ? (
+            <NorthChart
+              title={t(lang, "d9")}
+              lagnaRasiIndex={lagna?.navamsa ?? 0}
+              planets={d9Planets}
+            />
+          ) : (
+            <SouthChart positions={result.list} lang={lang} mode="navamsa" caption="D9" />
+          )}
         </figure>
       </div>
       <BhavaStrip analysis={analysis} lang={lang} />

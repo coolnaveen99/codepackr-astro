@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { t } from "@/lib/astro/i18n";
 import { useLang } from "@/lib/lang";
+import { REGIONAL_PRESETS, type SupportedLocale } from "@/lib/astro/locales/multi-lang";
 import { useNav, type Page } from "@/lib/nav";
 import { RotatingQuote } from "@/components/rotating-quote";
 import { cn } from "@/lib/utils";
@@ -197,7 +198,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-bg text-fg flex flex-col justify-between">
-      <CodepackrFamilyBar language={lang} className="no-print" />
+      <CodepackrFamilyBar language={lang === "ta" ? "ta" : "en"} className="no-print" />
       <header className="no-print sticky top-0 z-40 border-b border-border/80 bg-surface/95 backdrop-blur-md transition-shadow">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           <button
@@ -332,22 +333,19 @@ export function AppShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="flex items-center gap-2">
-            <div className="flex rounded-full bg-elevated p-0.5 border border-border/60">
-              {(["ta", "en"] as const).map((l) => (
-                <button
-                  key={l}
-                  type="button"
-                  onClick={() => setLang(l)}
-                  className={cn(
-                    "h-7 rounded-full px-2.5 text-xs font-semibold transition-all cursor-pointer",
-                    lang === l
-                      ? "bg-accent text-accent-fg shadow-2xs"
-                      : "text-muted hover:text-fg"
-                  )}
-                >
-                  {l === "ta" ? "தமிழ்" : "EN"}
-                </button>
-              ))}
+            <div className="relative">
+              <select
+                aria-label="Select Language"
+                value={lang}
+                onChange={(e) => setLang(e.target.value as SupportedLocale)}
+                className="h-8 rounded-lg border border-border/80 bg-elevated px-2.5 py-1 text-xs font-semibold text-ink cursor-pointer focus:outline-none focus:ring-1 focus:ring-accent"
+              >
+                {(Object.keys(REGIONAL_PRESETS) as SupportedLocale[]).map((locKey) => (
+                  <option key={locKey} value={locKey}>
+                    {REGIONAL_PRESETS[locKey].nativeName} ({REGIONAL_PRESETS[locKey].englishName})
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

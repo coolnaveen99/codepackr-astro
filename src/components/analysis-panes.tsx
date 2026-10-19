@@ -17,6 +17,7 @@ import { getRemediesFor, remedyDisclaimer } from "@/lib/astro/remedies";
 import { strengthText, withStrength } from "@/lib/astro/strength";
 import { BHAVA_EN, BHAVA_TA } from "@/lib/astro/tables";
 import { cn } from "@/lib/utils";
+import { getKpSubLordDetails } from "@/lib/astro/astronomy/ayanamsa-models";
 
 function signName(lang: Lang, i: number) {
   return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
@@ -306,12 +307,15 @@ export function GrahaTable({ result, analysis, lang }: { result: ChartResult; an
             <th className="hidden px-4 py-3 sm:table-cell">{t(lang, "dignity")}</th>
             <th className="hidden px-4 py-3 md:table-cell">{t(lang, "strength")}</th>
             <th className="px-3 py-3 sm:px-4">{t(lang, "nakshatra")}</th>
+            <th className="px-3 py-3 sm:px-4">{lang === "ta" ? "நட்சத்திராதிபதி" : "Star Lord"}</th>
+            <th className="px-3 py-3 sm:px-4">{lang === "ta" ? "உப அதிபதி (Sub)" : "Sub Lord"}</th>
             <th className="hidden px-4 py-3 md:table-cell">{t(lang, "navamsa")}</th>
           </tr>
         </thead>
         <tbody>
           {result.list.map((p) => {
             const g = byId[p.id as keyof typeof byId];
+            const kp = getKpSubLordDetails(p.lon);
             return (
               <tr key={p.id} className="border-t border-border">
                 <td className="px-3 py-2.5 font-medium sm:px-4">
@@ -347,6 +351,12 @@ export function GrahaTable({ result, analysis, lang }: { result: ChartResult; an
                 </td>
                 <td className="px-3 py-2.5 sm:px-4">
                   {lang === "ta" ? NAK_TA[p.nak] : NAK_EN[p.nak]} {p.pada}
+                </td>
+                <td className="px-3 py-2.5 sm:px-4 font-medium text-accent">
+                  {kp.starLord}
+                </td>
+                <td className="px-3 py-2.5 sm:px-4 font-bold text-accent">
+                  {kp.subLord}
                 </td>
                 <td className="hidden px-4 py-2.5 md:table-cell">{signName(lang, p.navamsa)}</td>
               </tr>

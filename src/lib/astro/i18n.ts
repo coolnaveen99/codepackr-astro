@@ -1,5 +1,6 @@
-// Codepackr Astro - Bilingual i18n Dictionary (Tamil & English)
-export type Lang = "ta" | "en";
+// Codepackr Astro - Multi-Language i18n Dictionary (Tamil, English, Hindi, Telugu, Kannada, Malayalam)
+import type { SupportedLocale } from "./locales/multi-lang";
+export type Lang = SupportedLocale;
 
 const COPY = {
   brand: { ta: "Codepackr Astro", en: "Codepackr Astro" },
@@ -333,7 +334,7 @@ const COPY = {
 export type CopyKey = keyof typeof COPY;
 
 export function t(lang: Lang, key: CopyKey | string): string {
-  const item = (COPY as Record<string, Record<Lang, string>>)[key as string];
+  const item = (COPY as Record<string, Partial<Record<Lang, string>>>)[key as string];
   if (!item) return String(key);
-  return item[lang] ?? item.en ?? String(key);
+  return item[lang] ?? item.en ?? item.ta ?? String(key);
 }

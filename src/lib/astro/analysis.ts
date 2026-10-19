@@ -933,7 +933,7 @@ export function dasakoota(boyMoonLon: number, girlMoonLon: number) {
   };
 }
 
-export function kaalSarpaName(type: number | null, lang: "ta" | "en") {
+export function kaalSarpaName(type: number | null, lang: string) {
   if (type === null) return "";
   return lang === "ta" ? KAAL_SARPA_TA[type] : KAAL_SARPA_EN[type];
 }

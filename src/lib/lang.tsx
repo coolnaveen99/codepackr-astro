@@ -8,7 +8,8 @@ function readStoredLang(): Lang {
   try {
     if (typeof window === "undefined") return "ta";
     const v = window.localStorage.getItem(LANG_KEY);
-    if (v === "en" || v === "ta") return v;
+    const valid: Lang[] = ["ta", "en", "hi", "te", "kn", "ml"];
+    if (v && (valid as string[]).includes(v)) return v as Lang;
   } catch {
     /* private mode / blocked storage */
   }

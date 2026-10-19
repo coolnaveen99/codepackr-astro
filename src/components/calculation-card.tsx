@@ -3,10 +3,11 @@ import { useState } from "react";
 import type { ChartResult } from "@/lib/astro/engine";
 import { CheckCircle2, AlertTriangle, ShieldCheck, Hash, Cpu, Compass, Info, ChevronDown, ChevronUp } from "lucide-react";
 import { SIGNS_TA, SIGNS_EN, NAK_TA, NAK_EN, planetName } from "@/lib/astro/constants";
+import type { Lang } from "@/lib/astro/i18n";
 
 interface CalculationCardProps {
   result: ChartResult;
-  lang: "ta" | "en";
+  lang: Lang;
 }
 
 export function CalculationCard({ result, lang }: CalculationCardProps) {

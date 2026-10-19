@@ -98,9 +98,9 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  header,
-  nav,
-  footer,
+  body > header,
+  body > nav,
+  body > footer,
   aside,
   button,
   .no-print,
@@ -142,17 +142,22 @@
     background: transparent !important;
   }
 
-  /* Reset layout grids so print sheets take full width */
-  .grid,
-  .astro-dashboard,
-  main {
+  /* Reset outer layout wrappers so print sheets take full width */
+  main.astro-dashboard {
     display: block !important;
-    grid-template-columns: none !important;
-    gap: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
+  }
+
+  /* Ensure grid columns in print sheets maintain proper layout */
+  .print-page .grid,
+  .biodata-sheet .grid,
+  .jathagam-sheet .grid,
+  .astro-traditional-preview .grid,
+  #jathagam-export-root .grid {
+    display: grid !important;
   }
 
   html,
@@ -229,7 +234,9 @@
   .print-page footer,
   .biodata-sheet footer,
   .astro-export-one-page footer,
-  .porutham-print-sheet footer {
+  .porutham-print-sheet footer,
+  .astro-traditional-preview footer {
+    display: flex !important;
     margin-top: auto !important;
     padding-top: 6px !important;
     flex-shrink: 0 !important;
@@ -262,7 +269,8 @@
     border: 0 !important;
     background: #ffffff !important;
   }
-  #jathagam-export-root .astro-export-one-page {
+  #jathagam-export-root .astro-export-one-page,
+  #jathagam-export-root .astro-traditional-preview {
     box-sizing: border-box !important;
     text-align: left !important;
     width: 210mm !important;
@@ -270,7 +278,7 @@
     height: 297mm !important;
     max-height: 297mm !important;
     padding: 7mm 9mm !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     background: #ffffff !important;
     display: flex !important;
     flex-direction: column !important;
@@ -279,24 +287,6 @@
     overflow: hidden !important;
     page-break-after: auto !important;
     break-after: auto !important;
-  }
-  #jathagam-export-root .astro-traditional-preview {
-    border: 0 !important;
-    padding: 0 !important;
-  }
-  #jathagam-export-root .astro-traditional-preview .astro-preview-body {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 290px !important;
-    gap: 14px !important;
-  }
-  #jathagam-export-root .astro-traditional-preview .astro-charts-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 290px !important;
-  }
-  #jathagam-export-root .astro-traditional-preview .astro-charts-col > div {
-    width: 100% !important;
   }
   #jathagam-export-root .print-page { text-align: left !important; }
   #jathagam-export-root .print-page table,
@@ -320,6 +310,7 @@
   .print-page,
   .biodata-sheet,
   .astro-export-one-page,
+  .astro-traditional-preview,
   .porutham-print-sheet {
     box-sizing: border-box;
     width: 210mm;
@@ -337,8 +328,7 @@
   .print-page > .relative.z-1,
   .biodata-sheet > .relative.z-1,
   .astro-export-one-page > .relative.z-1,
-  .astro-export-one-page .astro-traditional-preview,
-  .astro-export-one-page .astro-traditional-preview > .relative.z-1,
+  .astro-traditional-preview > .relative.z-1,
   .porutham-print-sheet > .relative.z-1 {
     display: flex;
     flex-direction: column;
@@ -350,7 +340,9 @@
   .print-page footer,
   .biodata-sheet footer,
   .astro-export-one-page footer,
+  .astro-traditional-preview footer,
   .porutham-print-sheet footer {
+    display: flex;
     margin-top: auto;
     flex-shrink: 0;
     width: 100%;
@@ -364,26 +356,6 @@
     pointer-events: none;
     z-index: -1;
     background: #fff;
-  }
-  .astro-export-one-page {
-    text-align: left !important;
-  }
-  .astro-export-one-page .astro-traditional-preview .astro-preview-body {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 290px !important;
-    gap: 14px !important;
-  }
-  .astro-export-one-page .astro-traditional-preview .astro-charts-col {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 290px !important;
-  }
-  .astro-export-one-page .astro-traditional-preview .astro-charts-col > div {
-    width: 100% !important;
-  }
-  .astro-export-one-page .astro-traditional-preview .overflow-x-auto {
-    overflow: visible !important;
   }
   .astro-dashboard { position: relative; }
   .astro-dashboard::before {
@@ -418,8 +390,6 @@
   .astro-action:hover { border-color:#fdba74; background:#fff7ed; color:#7c2d12; }
   .astro-action-primary { border-color:#9a3412; background:#9a3412; color:#fff; box-shadow:0 5px 14px rgba(154,52,18,.18); }
   .astro-action-primary:hover { border-color:#7c2d12; background:#7c2d12; color:#fff; }
-  .astro-traditional-preview table th { padding: 7px 8px; font-weight: 700; }
-  .astro-traditional-preview table td { padding: 7px 8px; }
 }
 
 /* Floating Staggered Hero Preview Cards Keyframes & Animations */
