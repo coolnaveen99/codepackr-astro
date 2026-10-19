@@ -19,15 +19,16 @@ import {
   WEEK_TA,
   WEEK_EN,
   planetName,
+  signName as sharedSignName,
   type PlanetId,
 } from "@/lib/astro/constants";
-import { t, type Lang } from "@/lib/astro/i18n";
+import { t, ui, type Lang } from "@/lib/astro/i18n";
 import { SouthChart } from "@/components/south-chart";
 import { Watermark } from "@/components/watermark";
 import { useGanesh } from "@/lib/ganesh-context";
 
 function signName(lang: Lang, i: number) {
-  return lang === "ta" ? SIGNS_TA[i] : SIGNS_EN[i];
+  return sharedSignName(lang, i);
 }
 function nakName(lang: Lang, i: number) {
   return lang === "ta" ? NAK_TA[i] : NAK_EN[i];
@@ -69,10 +70,10 @@ export function FullReport({
         className="h-8 sm:h-9 w-auto object-contain"
       />
       <p className="text-[9.5px] font-bold tracking-[0.2em] text-accent mt-0.5 uppercase">
-        {lang === "ta" ? "|| ஓம் ஸ்ரீ கணேசாய நமஹ ||" : "|| OM SRI GANESHAYA NAMAHA ||"}
+        {ui(lang, "omHeader")}
       </p>
       <div className="mt-0.5 flex w-full flex-col items-center px-1 text-center">
-        <span className="max-w-full break-words text-[10.5px] font-bold leading-tight text-ink">{nativeName?.trim() || (lang === "ta" ? "ஜாதகர்" : "Native")}</span>
+        <span className="max-w-full break-words text-[10.5px] font-bold leading-tight text-ink">{nativeName?.trim() || ui(lang, "native")}</span>
         <span className="mt-0.5 max-w-full break-words font-display font-semibold text-accent text-xs leading-tight">{title}</span>
         <span className="mt-0.5 max-w-full break-words text-[9.5px] leading-tight font-medium text-ink">{signName(lang, moon.sign)} · {nakName(lang, moon.nak)} ({moon.pada}) · {t(lang, "lagna")}: {signName(lang, lagna.sign)}</span>
       </div>
@@ -102,11 +103,11 @@ export function FullReport({
           rel="noopener noreferrer"
           className="text-accent underline font-medium hover:text-accent/80"
         >
-          {lang === "ta" ? "பொறுப்புத் துறப்பு" : "Disclaimer"}
+          {ui(lang, "disclaimer")}
         </a>
         <span>&bull;</span>
         <span className="font-semibold text-accent">
-          {lang === "ta" ? `பக்கம் ${pageNum} / ${totalPages}` : `Page ${pageNum} of ${totalPages}`}
+          {`${ui(lang, "pageOf")} ${pageNum} ${ui(lang, "of")} ${totalPages}`}
         </span>
       </div>
     </footer>
@@ -121,7 +122,7 @@ export function FullReport({
         <Watermark />
         <div className="relative z-1 flex flex-col justify-between h-full">
           <div>
-            {renderGodHeader(1, lang === "ta" ? "வேத ஜோதிட ஜாதக புத்தகம்" : "Vedic Horoscope Booklet")}
+            {renderGodHeader(1, ui(lang, "bookletTitle"))}
 
             <div className="mt-4 text-center">
               <span className="inline-block rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent border border-accent/25">
@@ -131,14 +132,14 @@ export function FullReport({
                 {nativeName}
               </h1>
               <p className="text-xs text-muted mt-1">
-                {lang === "ta" ? "முழுமையான வாழ்க்கை வழிகாட்டி ஜாதக அறிக்கை" : "Comprehensive Astrological Life Guidance Report"}
+                {ui(lang, "lifeGuidance")}
               </p>
             </div>
 
             {/* Birth Specifications Box */}
             <div className="mt-4 rounded-lg border border-accent/30 bg-elevated/30 p-3 text-xs">
               <h2 className="font-display text-xs font-bold text-accent uppercase tracking-wider mb-2 border-b border-accent/20 pb-1">
-                {lang === "ta" ? "பிறப்பு விவரங்கள் (Birth Specifications)" : "Birth Specifications"}
+                {ui(lang, "birthSpecs")}
               </h2>
               <div className="grid grid-cols-2 gap-y-1.5 gap-x-4 text-[11px]">
                 <div className="flex justify-between border-b border-border/30 pb-0.5">
@@ -171,7 +172,7 @@ export function FullReport({
                 </div>
                 <div className="flex justify-between border-b border-border/30 pb-0.5">
                   <span className="text-muted">{t(lang, "sex")}:</span>
-                  <span className="font-medium text-ink">{result.input.sex === "M" ? (lang === "ta" ? "ஆண்" : "Male") : (lang === "ta" ? "பெண்" : "Female")}</span>
+                  <span className="font-medium text-ink">{result.input.sex === "M" ? ui(lang, "male") : ui(lang, "female")}</span>
                 </div>
               </div>
             </div>
@@ -179,13 +180,13 @@ export function FullReport({
             {/* Core Astrological Identity */}
             <div className="mt-3 rounded-lg border border-accent/30 bg-surface p-3 text-xs shadow-2xs">
               <h2 className="font-display text-xs font-bold text-accent uppercase tracking-wider mb-2 border-b border-accent/20 pb-1">
-                {lang === "ta" ? "அங்க அடையாள ஜோதிட அமைப்புகள்" : "Core Astrological Coordinates"}
+                {ui(lang, "coreCoords")}
               </h2>
               <div className="grid grid-cols-3 gap-2 text-center">
                 <div className="bg-elevated/40 rounded p-2 border border-border/50">
                   <span className="text-[10px] text-muted block uppercase">{t(lang, "rasi")}</span>
                   <strong className="text-accent text-sm font-display block mt-0.5">{signName(lang, moon.sign)}</strong>
-                  <span className="text-[10px] text-muted">{lang === "ta" ? "சந்திர ராசி" : "Moon Sign"}</span>
+                  <span className="text-[10px] text-muted">{ui(lang, "moonSign")}</span>
                 </div>
                 <div className="bg-elevated/40 rounded p-2 border border-border/50">
                   <span className="text-[10px] text-muted block uppercase">{t(lang, "nakshatra")}</span>
@@ -203,11 +204,11 @@ export function FullReport({
             {/* Auspicious Naming & Lucky Attributes */}
             <div className="mt-3 rounded-lg border border-accent/30 bg-elevated/30 p-3 text-xs">
               <h2 className="font-display text-xs font-bold text-accent uppercase tracking-wider mb-1.5 border-b border-accent/20 pb-1">
-                {lang === "ta" ? "பெயரின் தொடக்க எழுத்துக்கள் & அதிர்ஷ்ட குறிப்புகள்" : "Auspicious Naming Syllables & Lucky Factors"}
+                {ui(lang, "auspiciousNaming")}
               </h2>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div>
-                  <span className="text-muted block text-[10px] uppercase">{lang === "ta" ? "பெயர் தொடக்க எழுத்துக்கள்" : "Naming Syllables"}:</span>
+                  <span className="text-muted block text-[10px] uppercase">{ui(lang, "namingSyllables")}:</span>
                   <span className="font-bold text-accent text-xs">
                     {lang === "ta" ? analysis.naming.allTa.join(", ") : analysis.naming.allEn.join(", ")}
                   </span>
