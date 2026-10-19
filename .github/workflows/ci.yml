@@ -22,15 +22,20 @@ on:
       - '.node-version'
       - '.nvmrc'
 
+# Do not cancel the only validation run for a PR whenever another commit arrives.
+# This keeps a final, actionable CI result available instead of repeated cancellations.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  queue: max
+
+permissions:
+  contents: read
 
 jobs:
   validate:
-    name: Typecheck & Build Verification
+    name: Typecheck, Tests & Build Verification
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,18 +43,23 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Report toolchain versions
+        run: |
+          node --version
+          npm --version
 
       - name: Install Dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm install --legacy-peer-deps --no-audit --no-fund
 
-      - name: Run Tests
+      - name: Run Full Test Suite
         run: npm test
+
+      - name: Run Multilingual / Calculation QA Explicitly
+        run: npm run test:qa:i18n
 
       - name: Typecheck
         run: npm run lint
