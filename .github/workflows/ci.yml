@@ -22,15 +22,19 @@ on:
       - '.node-version'
       - '.nvmrc'
 
+# Cancel stale runs when a newer commit arrives; after the final push, the latest head is validated.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
   validate:
-    name: Typecheck & Build Verification
+    name: Typecheck, Tests & Build Verification
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -38,18 +42,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Report toolchain versions
+        run: |
+          node --version
+          npm --version
 
       - name: Install Dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm install --legacy-peer-deps --no-audit --no-fund
 
-      - name: Run Tests
+      - name: Run Full Test Suite
         run: npm test
+
+      - name: Run Multilingual / Calculation QA Explicitly
+        run: npm run test:qa:i18n
 
       - name: Typecheck
         run: npm run lint
