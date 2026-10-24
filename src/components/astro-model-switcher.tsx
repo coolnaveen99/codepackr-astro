@@ -1,7 +1,7 @@
 import React from 'react';
 import { Globe, Compass, LayoutGrid } from 'lucide-react';
 import { AyanamsaMode } from '../lib/astro/astronomy/ayanamsa-models';
-import { SupportedLocale, REGIONAL_PRESETS } from '../lib/astro/locales/multi-lang';
+import { SupportedLocale, REGIONAL_PRESETS, ACTIVE_LOCALES } from '../lib/astro/locales/multi-lang';
 
 export interface AstroModelSwitcherProps {
   locale: SupportedLocale;
@@ -38,9 +38,9 @@ export const AstroModelSwitcher: React.FC<AstroModelSwitcherProps> = ({
           <span>Language:</span>
         </span>
         <div className="flex flex-wrap gap-1">
-          {(Object.keys(REGIONAL_PRESETS) as SupportedLocale[]).map((locKey) => {
+          {ACTIVE_LOCALES.map((locKey) => {
             const item = REGIONAL_PRESETS[locKey];
-            const active = locale === locKey;
+            const active = (locale === "en" ? "en" : "ta") === locKey;
             return (
               <button
                 key={locKey}

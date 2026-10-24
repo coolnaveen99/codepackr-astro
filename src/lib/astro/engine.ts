@@ -83,6 +83,7 @@ export type ChartResult = {
   sunriseJD: number | null;
   sunsetJD: number | null;
   list: BodyPos[];
+  planets?: BodyPos[];
   bodies: Record<PlanetId, number>;
   pan: {
     tithiNum: number;
@@ -1020,6 +1021,7 @@ export function compute(input: BirthInput): ChartResult {
     sunriseJD: ss.sunriseJD,
     sunsetJD: ss.sunsetJD,
     list,
+    planets: list,
     bodies,
     pan,
     muh,

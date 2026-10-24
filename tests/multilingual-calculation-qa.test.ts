@@ -12,6 +12,7 @@ import { compute, type BirthInput } from "../src/lib/astro/engine";
 
 const NON_TAMIL_ENGLISH: SupportedLocale[] = ["hi", "te", "kn", "ml"];
 const ALL_LOCALES: SupportedLocale[] = ["ta", "en", ...NON_TAMIL_ENGLISH];
+const jd = julianDay(2026, 1, 1, 12);
 
 describe("Non-Tamil / non-English locale completeness (hi, te, kn, ml)", () => {
   it.each(NON_TAMIL_ENGLISH)("provides native core labels and correct region defaults for %s", (locale) => {
@@ -48,7 +49,6 @@ describe("Non-Tamil / non-English locale completeness (hi, te, kn, ml)", () => {
 });
 
 describe("New calculation-method regression coverage", () => {
-  const jd = julianDay(2026, 1, 1, 12);
   it.each(["LAHIRI", "KP_NEW", "BV_RAMAN", "YUKTESHWAR", "TRUE_PUSHYA"] as const)("returns a finite, bounded ayanamsa result for %s", (mode) => {
     const value = calculateAyanamsa(jd, mode);
     expect(Number.isFinite(value)).toBe(true);

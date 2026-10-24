@@ -1,5 +1,8 @@
 export type SupportedLocale = 'en' | 'ta' | 'hi' | 'te' | 'kn' | 'ml';
 
+// Active locales exposed in the UI (only Tamil and English)
+export const ACTIVE_LOCALES: SupportedLocale[] = ['ta', 'en'];
+
 export interface RegionalPreset {
   locale: SupportedLocale;
   nativeName: string;

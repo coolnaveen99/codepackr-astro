@@ -97,12 +97,13 @@ export function getKpSubLordDetails(siderealLongitude: number): KpPositionDetail
   let offsetInSub = 0;
   let currentSubSpan = 0;
 
+  const EPS = 1e-9;
   for (let i = 0; i < 9; i++) {
     const idx = (starLordIndex + i) % 9;
     const lord = VIMSHOTTARI_LORDS[idx];
     const span = (VIMSHOTTARI_YEARS[lord] / 120) * nakshatraSpan;
 
-    if (offsetInNakshatra < accumulatedSpan + span || i === 8) {
+    if (offsetInNakshatra < accumulatedSpan + span - EPS || i === 8) {
       subLord = lord;
       subLordIndex = idx;
       offsetInSub = Math.max(0, offsetInNakshatra - accumulatedSpan);
@@ -121,7 +122,7 @@ export function getKpSubLordDetails(siderealLongitude: number): KpPositionDetail
     const lord = VIMSHOTTARI_LORDS[idx];
     const span = (VIMSHOTTARI_YEARS[lord] / 120) * currentSubSpan;
 
-    if (offsetInSub < accSubSubSpan + span || j === 8) {
+    if (offsetInSub < accSubSubSpan + span - EPS || j === 8) {
       subSubLord = lord;
       break;
     }

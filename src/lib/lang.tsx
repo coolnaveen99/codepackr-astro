@@ -8,7 +8,7 @@ function readStoredLang(): Lang {
   try {
     if (typeof window === "undefined") return "ta";
     const v = window.localStorage.getItem(LANG_KEY);
-    const valid: Lang[] = ["ta", "en", "hi", "te", "kn", "ml"];
+    const valid: Lang[] = ["ta", "en"];
     if (v && (valid as string[]).includes(v)) return v as Lang;
   } catch {
     /* private mode / blocked storage */
@@ -26,9 +26,10 @@ export function LangProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setLang = useCallback((l: Lang) => {
-    setLangState(l);
+    const target = l === "en" ? "en" : "ta";
+    setLangState(target);
     try {
-      window.localStorage.setItem(LANG_KEY, l);
+      window.localStorage.setItem(LANG_KEY, target);
     } catch {
       /* ignore */
     }

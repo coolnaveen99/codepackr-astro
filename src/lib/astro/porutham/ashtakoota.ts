@@ -81,11 +81,30 @@ const MAITRI_MATRIX: number[][] = [
  * Moon Rasi (0..11) and Nakshatra (0..26).
  */
 export function calculateAshtakoota(
-  brideRasi: number,
-  brideNakshatra: number,
-  groomRasi: number,
-  groomNakshatra: number
+  brideRasiOrMoonLon: number,
+  brideNakshatraOrGroomMoonLon: number,
+  groomRasiInput?: number,
+  groomNakshatraInput?: number
 ): AshtakootaSummary {
+  let brideRasi: number;
+  let brideNakshatra: number;
+  let groomRasi: number;
+  let groomNakshatra: number;
+
+  if (groomRasiInput === undefined || groomNakshatraInput === undefined) {
+    const bLon = ((brideRasiOrMoonLon % 360) + 360) % 360;
+    const gLon = ((brideNakshatraOrGroomMoonLon % 360) + 360) % 360;
+    brideRasi = Math.floor(bLon / 30);
+    brideNakshatra = Math.min(26, Math.floor(bLon / (360 / 27)));
+    groomRasi = Math.floor(gLon / 30);
+    groomNakshatra = Math.min(26, Math.floor(gLon / (360 / 27)));
+  } else {
+    brideRasi = brideRasiOrMoonLon;
+    brideNakshatra = brideNakshatraOrGroomMoonLon;
+    groomRasi = groomRasiInput;
+    groomNakshatra = groomNakshatraInput;
+  }
+
   const kootas: KootaItemResult[] = [];
 
   // 1. Varna Koota (Max 1)
